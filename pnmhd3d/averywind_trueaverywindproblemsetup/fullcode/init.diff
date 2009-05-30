@@ -1,0 +1,3208 @@
+85a86,104
+>     //
+>     // -1=test solution 1
+>     // 0=no analytic solution output
+>     // 1=sod solution(MHD Riemann problem too)
+>     // 2=advection test solution(includes coord=3 test)
+>     // 3=gaussian advection(setup for periodic boundary conditions)
+>     // 4=bondi solution(including magnetic WD solution)
+>     // 5=tori1
+>     // 6=visc check(must manually turn off all components except viscreal, and make all boundaries dirichlet, also turn off floor checks!). (NOT SETUP, MUST UNCOMMENT ANALOUTPUT==6 lines in step.c)
+>     // 7=pulsesol(general pulse type tests)
+>     // 8=inject: initial setup of just atmosphere
+>     // 9 = magnetic breaking solution
+>     // 10 = Orszag-Tang Vortex
+>     // 11 = Low1984 Multidimensional Solar Coronal Transient Model(not yet)
+>     // 12 = wave tests(including current sheet and rotated alfven waves)
+>     // INITIALDATASET
+>     analoutput=4;
+> 
+> 
+123d141
+<     // modified in stepvar_2d for other algorithms
+131d148
+< 
+328c345
+<   DTmode = DTl*100.0 ; // negative means do every time step (must be multiple of DTl)
+---
+>   DTmode = DTl*10.0 ; // negative means do every time step (must be multiple of DTl)
+333,334c350
+<   DTtimescale = DTl*100.0;
+<   DTdivb = DTl*100.0;
+---
+> 
+364,373d379
+< 
+<   // courant factor
+<   // <1.0 works for linear waves without shocks
+<   // <0.5 works well for all shocks
+<   // <
+< 
+<   // the lower the courant number the less diffusive the evolution
+< 
+<   // the nonsplit moc_ct routine requires a lower courant per dimension
+< 
+376,388c382,384
+<   if(SPLITMETHOD==0){
+<     cour = 0.4999;
+<     if(N1OFF+N2OFF+N3OFF==1){
+<       cour/=1.0;
+<     }
+<   }
+<   else{
+<     cour = 0.4999;
+<   }
+<   cour   = 0.4999 ; // courant condition
+<   //  cour=1.0; // for 1D linear waves
+<   cour=0.45;
+<   //  cour=0.25;
+---
+>   cour = 0.4999;
+>   //cour   = 0.4999 ; // courant condition
+>   //cour   = .36 ; // courant condition
+407d402
+< 
+467,497c462,487
+<   if(BOUNDTYPE==1){
+<     ///
+<     // both inner and outer must be 5 above!
+<     periodicx1=((bcix1==5)||(bcox1==5) ? 1 : 0); // 0: not periodic on x1-dir 1: is
+<     // if 1, implies global reflection on that boundary
+<     reflectix1=((bcix1==1)||(bcix1==2) ? 1 : 0); // if r=0 is inner edge, so reflecting in spc
+<     reflectox1=((bcox1==1)||(bcox1==2) ? 1 : 0); // outer radial reflection
+<     // skips used to avoid computing inner edge values for that direction.  Needed to ensure compute all relevant stuff and only relevant stuff.  Generally 0 for periodic and 1 otherwise.
+<     skipix1=((periodicx1==1) ? 0 : 1); // what zone to start at on inner edge
+<     // allows not to compute inner r-edge zones.  Set to 0 if not reflecting at r=0 OR 1 if reflecting at r=0 or if don't want to calculate inner r-edge zone because it's a boundary zone(e.g. outflow)
+<     
+<     periodicx2=((bcix2==5)||(bcox2==5) ? 1 : 0);
+<     // if 1, implies global reflection on that boundary
+<     reflectix2=((bcix2==1)||(bcix2==2) ? 1 : 0); // as above but with x2 dir
+<     reflectox2=((bcox2==1)||(bcox2==2) ? 1 : 0); // as above but with x2 dir
+<     skipix2=((periodicx2==1) ? 0 : 1); // what zone to start at on inner edge of x2-grid
+<     // skip inner x2 edge when is boundary zone.
+<     
+<     periodicx3=((bcix3==5)||(bcox3==5) ? 1 : 0);
+<     reflectix3=((bcix3==1)||(bcix3==2) ? 1 : 0);
+<     reflectox3=((bcox3==1)||(bcox3==2) ? 1 : 0);
+<     skipix3=((periodicx3==1) ? 0 : 1);
+< 
+< 
+<     // overrides for limited dimensions (assumes valid choice for grid edge positions(e.g. N2==1 and reflecti/ox2 makes no sense with location of v2)
+<     if(N1==1){ skipix1=0;}
+<     if(N2==1){ skipix2=0;}
+<     if(N3==1){ skipix3=0;}
+< 
+<   }
+< 
+---
+>   ///
+>   // both inner and outer must be 5 above!
+>   periodicx1=((bcix1==5)||(bcox1==5) ? 1 : 0); // 0: not periodic on x1-dir 1: is
+>   // if 1, implies global reflection on that boundary
+>   reflectix1=((bcix1==1)||(bcix1==2) ? 1 : 0); // if r=0 is inner edge, so reflecting in spc
+>   reflectox1=((bcox1==1)||(bcox1==2) ? 1 : 0); // outer radial reflection
+>   // skips used to avoid computing inner edge values for that direction.  Needed to ensure compute all relevant stuff and only relevant stuff.  Generally 0 for periodic and 1 otherwise.
+>   skipix1=((periodicx1==1) ? 0 : 1); // what zone to start at on inner edge
+>   // allows not to compute inner r-edge zones.  Set to 0 if not reflecting at r=0 OR 1 if reflecting at r=0 or if don't want to calculate inner r-edge zone because it's a boundary zone(e.g. outflow)
+> 
+>   periodicx2=((bcix2==5)||(bcox2==5) ? 1 : 0);
+>   // if 1, implies global reflection on that boundary
+>   reflectix2=((bcix2==1)||(bcix2==2) ? 1 : 0); // as above but with x2 dir
+>   reflectox2=((bcox2==1)||(bcox2==2) ? 1 : 0); // as above but with x2 dir
+>   skipix2=((periodicx2==1) ? 0 : 1); // what zone to start at on inner edge of x2-grid
+>   // skip inner x2 edge when is boundary zone.
+> 
+>   periodicx3=((bcix3==5)||(bcox3==5) ? 1 : 0);
+>   reflectix3=((bcix3==1)||(bcix3==2) ? 1 : 0);
+>   reflectox3=((bcox3==1)||(bcox3==2) ? 1 : 0);
+>   skipix3=((periodicx3==1) ? 0 : 1);
+> 
+>   // overrides for limited dimensions (assumes valid choice for grid edge positions(e.g. N2==1 and reflecti/ox2 makes no sense with location of v2)
+>   if(N1==1){ skipix1=0; transx1=0;}
+>   if(N2==1){ skipix2=0; transx2=0;}
+>   if(N3==1){ skipix3=0; transx3=0;}
+501,505d490
+<     // still care about skips, but used differently by init_bc_gen now when BOUNDTYPE>1
+<     // start out at 1
+<     skipix1=1;
+<     skipix2=1;
+<     skipix3=1;
+506a492,494
+>     skipix1=0;
+>     skipix2=0;
+>     skipix3=0;
+515d502
+< 
+517,520d503
+<   if(N1==1){ transx1=0;}
+<   if(N2==1){ transx2=0;}
+<   if(N3==1){ transx3=0;}
+< 
+758c741
+<       sprintf(temps,"%s%s0_numimages%s",DATADIR,IMAGEDIR,DATEXT);
+---
+>       sprintf(temps,"%s%s0_numimages%s",DATADIR,"i/",DATEXT);
+1026,1030c1009
+<   int itemp,itemp2i,itemp2o;
+<   int looper;
+< 
+< 
+<   if(PUREBC>0) return(0); // no need/can't initialize bcs/bcv
+---
+>   int itemp;
+1037,1040c1016,1018
+<   // use optimized idea of boundary
+<   numbc[1]=N1BND*N1OFF;
+<   numbc[2]=N2BND*N2OFF;
+<   numbc[3]=N3BND*N3OFF;
+---
+>   numbc[1]=N1BND;
+>   numbc[2]=N2BND;
+>   numbc[3]=N3BND;
+1046,1048d1023
+<     LOOPF{
+<       bcs[l][1][k][j][i]=5; // default is periodic for 3D (i.e. 1-zone would be just like periodic)
+<     }
+1056,1058d1030
+<     LOOPF{
+<       bcv[l][1][k][j][i]=5; // default is periodic for 3D (i.e. 1-zone would be just like periodic)
+<     }
+1075,1090c1047
+< 	  if(numbc[m]==0) looper=1; else looper=numbc[m]; // account for degenerate case
+< 
+< 	  // but don't want to overwrite comp domain!
+< 	  if(m==3){
+< 	    if((numbc[m]==0)&&(i>=0)&&(i<N1)&&(j>=0)&&(j<N2)) continue;
+< 	  }
+< 	  if(m==2){
+< 	    if((numbc[m]==0)&&(i>=0)&&(i<N1)&&(k>=0)&&(k<N3)) continue;
+< 	  }
+< 	  if(m==1){
+< 	    if((numbc[m]==0)&&(k>=0)&&(k<N3)&&(j>=0)&&(j<N2)) continue;
+< 	  }
+< 
+< 	  for(n=0;n<looper;n++){
+< 	    
+< 	    if(numbc[m]==0){ itemp2i=0; itemp2o=0;} else{ itemp2i=-numbc[m]+n; itemp2o=N[m]+n; }
+---
+> 	  for(n=0;n<numbc[m];n++){
+1092c1049
+< 	    if((m==1)&&(N1OFF==1)){ /* Assign over x=const boundaries */
+---
+> 	    if(m==1){ /* Assign over x=const boundaries */
+1096,1101c1053,1056
+< 
+< 		if(bcs[l][1][j][i][itemp2i]<90){ // otherwise don't change
+< 		  bcs[l][1][j][i][itemp2i]=itemp;
+< 		  bcs[l][2][j][i][itemp2i]=m;
+< 		  bcs[l][3][j][i][itemp2i]=1;
+< 		}
+---
+> 		
+> 		bcs[l][1][j][i][-numbc[m]+n]=itemp;
+> 		bcs[l][2][j][i][-numbc[m]+n]=m;
+> 		bcs[l][3][j][i][-numbc[m]+n]=1;
+1103c1058
+< 	      else bcs[l][1][j][i][itemp2i]=99;
+---
+> 	      else bcs[l][1][j][i][-numbc[m]+n]=99;
+1128,1132c1083,1086
+< 		if(bcs[l][1][j][i][itemp2o]<90){ // otherwise don't change		
+< 		  bcs[l][1][j][i][itemp2o]=itemp;
+< 		  bcs[l][2][j][i][itemp2o]=m;
+< 		  bcs[l][3][j][i][itemp2o]=-1;
+< 		}
+---
+> 		
+> 		bcs[l][1][j][i][N[m]+n]=itemp;
+> 		bcs[l][2][j][i][N[m]+n]=m;
+> 		bcs[l][3][j][i][N[m]+n]=-1;
+1134c1088
+< 	      else bcs[l][1][j][i][itemp2o]=99;
+---
+> 	      else bcs[l][1][j][i][N[m]+n]=99;
+1136c1090
+< 	    if((m==2)&&(N2OFF==1)){  /* Assign over y=const boundaries */
+---
+> 	    if(m==2){  /* Assign over y=const boundaries */
+1144,1148c1098,1100
+< 		if(bcs[l][1][i][itemp2i][j]<90){ // otherwise don't change
+< 		  bcs[l][1][i][itemp2i][j]=itemp;
+< 		  bcs[l][2][i][itemp2i][j]=m;
+< 		  bcs[l][3][i][itemp2i][j]=1;
+< 		}
+---
+> 		bcs[l][1][i][-numbc[m]+n][j]=itemp;
+> 		bcs[l][2][i][-numbc[m]+n][j]=m;
+> 		bcs[l][3][i][-numbc[m]+n][j]=1;
+1150c1102
+< 	      else bcs[l][1][i][itemp2i][j]=99;
+---
+> 	      else bcs[l][1][i][-numbc[m]+n][j]=99;
+1156,1160c1108,1110
+< 		if(bcs[l][1][i][itemp2o][j]<90){ // otherwise don't change
+< 		  bcs[l][1][i][itemp2o][j]=itemp;
+< 		  bcs[l][2][i][itemp2o][j]=m;
+< 		  bcs[l][3][i][itemp2o][j]=-1;
+< 		}
+---
+> 		bcs[l][1][i][N[m]+n][j]=itemp;
+> 		bcs[l][2][i][N[m]+n][j]=m;
+> 		bcs[l][3][i][N[m]+n][j]=-1;
+1162c1112
+< 	      else bcs[l][1][i][itemp2o][j]=99;
+---
+> 	      else bcs[l][1][i][N[m]+n][j]=99;
+1164c1114
+< 	    if((m==3)&&(N3OFF==1)){ /* Assign over z=const boundaries */
+---
+> 	    if((COMPDIM==3)&&(m==3)){ /* Assign over z=const boundaries */
+1170,1174c1120,1122
+< 		if(bcs[l][1][itemp2i][j][i]<90){ // otherwise don't change
+< 		  bcs[l][1][itemp2i][j][i]=itemp;
+< 		  bcs[l][2][itemp2i][j][i]=m;
+< 		  bcs[l][3][itemp2i][j][i]=1;
+< 		}
+---
+> 		bcs[l][1][-numbc[m]+n][j][i]=itemp;
+> 		bcs[l][2][-numbc[m]+n][j][i]=m;
+> 		bcs[l][3][-numbc[m]+n][j][i]=1;
+1176c1124
+< 	      else bcs[l][1][itemp2i][j][i]=99;
+---
+> 	      else bcs[l][1][-numbc[m]+n][j][i]=99;
+1182,1186c1130,1132
+< 		if(bcs[l][1][itemp2o][j][i]<90){ // otherwise don't change
+< 		  bcs[l][1][itemp2o][j][i]=itemp;
+< 		  bcs[l][2][itemp2o][j][i]=m;
+< 		  bcs[l][3][itemp2o][j][i]=-1;
+< 		}
+---
+> 		bcs[l][1][N[m]+n][j][i]=itemp;
+> 		bcs[l][2][N[m]+n][j][i]=m;
+> 		bcs[l][3][N[m]+n][j][i]=-1;
+1188c1134
+< 	      else bcs[l][1][itemp2o][j][i]=99;
+---
+> 	      else bcs[l][1][N[m]+n][j][i]=99;
+1193a1140,1160
+>     // make corner zones special ( just notify the first corner zone)
+>     // COMPDIM==1 has no corner zones
+>     // COMPDIM==1 has no corner zones
+>     if(COMPDIM==2){
+>       bcs[l][1][0][-1][-1]=-1;
+>       bcs[l][1][0][-1][N1]=-1;
+>       bcs[l][1][0][N2][-1]=-1;
+>       bcs[l][1][0][N2][N1]=-1;
+>     }
+>  
+> #if(COMPDIM==3)
+>       bcs[l][1][-1][-1][-1]=-1;
+>       bcs[l][1][-1][N2][-1]=-1;
+>       bcs[l][1][-1][N2][N1]=-1;
+>       bcs[l][1][-1][-1][N1]=-1;
+>  
+>       bcs[l][1][N3][-1][-1]=-1;
+>       bcs[l][1][N3][N2][-1]=-1;
+>       bcs[l][1][N3][N2][N1]=-1;
+>       bcs[l][1][N3][-1][N1]=-1;
+> #endif              
+1214,1231c1181,1182
+< 	  if(numbc[m]==0) looper=1; else looper=numbc[m]; // account for degenerate case
+< 
+< 	  // but don't want to overwrite comp domain!
+< 	  if(m==3){
+< 	    if((numbc[m]==0)&&(i>=0)&&(i<N1)&&(j>=0)&&(j<N2)) continue;
+< 	  }
+< 	  if(m==2){
+< 	    if((numbc[m]==0)&&(i>=0)&&(i<N1)&&(k>=0)&&(k<N3)) continue;
+< 	  }
+< 	  if(m==1){
+< 	    if((numbc[m]==0)&&(k>=0)&&(k<N3)&&(j>=0)&&(j<N2)) continue;
+< 	  }
+< 
+< 	  for(n=0;n<looper;n++){
+< 
+< 	    if(numbc[m]==0){ itemp2i=0; itemp2o=0;} else{ itemp2i=-numbc[m]+n; itemp2o=N[m]+n; }
+< 
+< 	    if((m==1)&&(N1OFF==1)){ /* Assign over x=const boundaries */
+---
+> 	  for(n=0;n<numbc[m];n++){
+> 	    if(m==1){ /* Assign over x=const boundaries */
+1236,1241c1187,1190
+< 		else itemp=4;	 
+< 		if(bcv[l][1][j][i][itemp2i]<90){ // otherwise don't change
+< 		  bcv[l][1][j][i][itemp2i]=itemp;
+< 		  bcv[l][2][j][i][itemp2i]=m;
+< 		  bcv[l][3][j][i][itemp2i]=1;
+< 		}
+---
+> 		else itemp=4;	      
+> 		bcv[l][1][j][i][-numbc[m]+n]=itemp;
+> 		bcv[l][2][j][i][-numbc[m]+n]=m;
+> 		bcv[l][3][j][i][-numbc[m]+n]=1;
+1243c1192
+< 	      else bcv[l][1][j][i][itemp2i]=99;
+---
+> 	      else bcv[l][1][j][i][-numbc[m]+n]=99;
+1268,1272c1217,1219
+< 		if(bcv[l][1][j][i][itemp2o]<90){ // otherwise don't change
+< 		  bcv[l][1][j][i][itemp2o]=itemp;
+< 		  bcv[l][2][j][i][itemp2o]=m;
+< 		  bcv[l][3][j][i][itemp2o]=-1;
+< 		}
+---
+> 		bcv[l][1][j][i][N[m]+n]=itemp;
+> 		bcv[l][2][j][i][N[m]+n]=m;
+> 		bcv[l][3][j][i][N[m]+n]=-1;
+1274c1221
+< 	      else bcv[l][1][j][i][itemp2o]=99;
+---
+> 	      else bcv[l][1][j][i][N[m]+n]=99;
+1276c1223
+< 	    if((m==2)&&(N2OFF==1)){  /* Assign over y=const boundaries */
+---
+> 	    if(m==2){  /* Assign over y=const boundaries */
+1283,1287c1230,1232
+< 		if(bcv[l][1][i][itemp2i][j]<90){ // otherwise don't change
+< 		  bcv[l][1][i][itemp2i][j]=itemp;
+< 		  bcv[l][2][i][itemp2i][j]=m;
+< 		  bcv[l][3][i][itemp2i][j]=1;
+< 		}
+---
+> 		bcv[l][1][i][-numbc[m]+n][j]=itemp;
+> 		bcv[l][2][i][-numbc[m]+n][j]=m;
+> 		bcv[l][3][i][-numbc[m]+n][j]=1;
+1289c1234
+< 	      else bcv[l][1][i][itemp2i][j]=99;
+---
+> 	      else bcv[l][1][i][-numbc[m]+n][j]=99;
+1294,1299c1239,1242
+< 		else itemp=1;	
+< 		if(bcv[l][1][i][itemp2o][j]<90){ // otherwise don't change
+< 		  bcv[l][1][i][itemp2o][j]=itemp;
+< 		  bcv[l][2][i][itemp2o][j]=m;
+< 		  bcv[l][3][i][itemp2o][j]=-1;
+< 		}
+---
+> 		else itemp=1;	      
+> 		bcv[l][1][i][N[m]+n][j]=itemp;
+> 		bcv[l][2][i][N[m]+n][j]=m;
+> 		bcv[l][3][i][N[m]+n][j]=-1;
+1301c1244
+< 	      else bcv[l][1][i][itemp2o][j]=99;
+---
+> 	      else bcv[l][1][i][N[m]+n][j]=99;
+1303c1246
+< 	    if((m==3)&&(N3OFF==1)){ /* Assign over z=const boundaries */
+---
+> 	    if((COMPDIM==3)&&(m==3)){ /* Assign over z=const boundaries */
+1307,1312c1250,1253
+< 		else itemp=1;	
+< 		if(bcv[l][1][itemp2i][j][i]<90){ // otherwise don't change
+< 		  bcv[l][1][itemp2i][j][i]=itemp;
+< 		  bcv[l][2][itemp2i][j][i]=m;
+< 		  bcv[l][3][itemp2i][j][i]=1;
+< 		}
+---
+> 		else itemp=1;	      
+> 		bcv[l][1][-numbc[m]+n][j][i]=itemp;
+> 		bcv[l][2][-numbc[m]+n][j][i]=m;
+> 		bcv[l][3][-numbc[m]+n][j][i]=1;
+1314c1255
+< 	      else bcv[l][1][itemp2i][j][i]=99;
+---
+> 	      else bcv[l][1][-numbc[m]+n][j][i]=99;
+1320,1324c1261,1263
+< 		if(bcv[l][1][itemp2o][j][i]<90){ // otherwise don't change
+< 		  bcv[l][1][itemp2o][j][i]=itemp;
+< 		  bcv[l][2][itemp2o][j][i]=m;
+< 		  bcv[l][3][itemp2o][j][i]=-1;
+< 		}
+---
+> 		bcv[l][1][N[m]+n][j][i]=itemp;
+> 		bcv[l][2][N[m]+n][j][i]=m;
+> 		bcv[l][3][N[m]+n][j][i]=-1;
+1326c1265
+< 	      else bcv[l][1][itemp2o][j][i]=99;
+---
+> 	      else bcv[l][1][N[m]+n][j][i]=99;
+1332a1272,1291
+>     // make corner zones special ( just notify the first corner zone)
+>     // COMPDIM==1 has no corner zones
+>     if(COMPDIM==2){
+>       bcv[l][1][0][-1][-1]=-1;
+>       bcv[l][1][0][-1][N1]=-1;
+>       bcv[l][1][0][N2][-1]=-1;
+>       bcv[l][1][0][N2][N1]=-1;
+>     }
+>  
+> #if(COMPDIM==3)
+>       bcv[l][1][-1][-1][-1]=-1;
+>       bcv[l][1][-1][N2][-1]=-1;
+>       bcv[l][1][-1][N2][N1]=-1;
+>       bcv[l][1][-1][-1][N1]=-1;
+>  
+>       bcv[l][1][N3][-1][-1]=-1;
+>       bcv[l][1][N3][N2][-1]=-1;
+>       bcv[l][1][N3][N2][N1]=-1;
+>       bcv[l][1][N3][-1][N1]=-1;
+> #endif                    
+1346d1304
+<   int skipfactor[2];
+1377c1335
+<   int maskfix[2];
+---
+> 
+1420d1377
+<   // below used according to boundary type
+1432,1433c1389,1391
+<     BCTYPEIN=3;
+<     BCTYPEOUT=3;   
+---
+>     periodicx1=periodicx2=periodicx3=0;
+>     BCTYPEIN=3; // GODMARK
+>     BCTYPEOUT=3;
+1437a1396
+>     periodicx1=periodicx2=periodicx3=0;
+1446a1406
+>     periodicx1=periodicx2=periodicx3=0;
+1450,1453d1409
+<   // below tells routines below whether to compute inner velocity edges or not based upon skipi[x] where x is the direction of interest(1,2,3)
+<   if(BCTYPEIN==5) skipfactor[0]=0; else skipfactor[0]=1;
+<   if(BCTYPEOUT==5) skipfactor[1]=0; else skipfactor[1]=1;
+<   
+1513c1469
+<       MPI_Allreduce(&itemp,&itemp_full,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
+---
+>       MPI_Allreduce(&itemp_full,&itemp,1,MPI_INT,MPI_SUM,MPI_WOMM_WORLD);
+1528,1529d1483
+<   // assumes nowhere NOT set yet
+<   
+1533,1534c1487
+<       // INTERIORS
+<       if((i<=-1)&&(k>=0)&&(k<=N3-1)&&(j>=0)&&(j<=N2-1)){ // INT#1 INT(i1,j,k)
+---
+>       if(i<=-1){
+1540,1548c1493
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=N1)&&(k>=0)&&(k<=N3-1)&&(j>=0)&&(j<=N2-1)){ // INT#2 INT(o1,j,k)
+< 	if(mycpupos[1]==ncpux1-1){
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1550c1495
+<       else if((i>=0)&&(i<=N1-1)&&(k>=0)&&(k<=N3-1)&&(j<=-1)){ // INT#3 INT(i2,i,k)
+---
+>       if(j<=-1){
+1556,1564c1501
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=0)&&(i<=N1-1)&&(k>=0)&&(k<=N3-1)&&(j>=N2)){ // INT#4 INT(o2,i,k)
+< 	if(mycpupos[2]==ncpux2-1){
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1566c1503
+<       else if((i>=0)&&(i<=N1-1)&&(k<=-1)&&(j>=0)&&(j<=N2-1)){ // INT#5 INT(i3,i,j)
+---
+>       if(k<=-1){
+1572,1645c1509
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=0)&&(i<=N1-1)&&(k>=N3)&&(j>=0)&&(j<=N2-1)){ // INT#6 INT(o3,i,j)
+< 	if(mycpupos[3]==ncpux3-1){
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       // NOW START BARS
+<       else if((i>=0)&&(i<=N1-1)&&(k<=-1)&&(j<=-1)){ // BAR(1,i2,i3) - 1
+< 	if((mycpupos[2]==0)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=0)&&(i<=N1-1)&&(k>=N3)&&(j<=-1)){ // BAR(1,i2,o3) - 2
+< 	if((mycpupos[2]==0)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=0)&&(i<=N1-1)&&(k<=-1)&&(j>=N2)){ // BAR(1,o2,i3) - 3
+< 	if((mycpupos[2]==ncpux2-1)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=0)&&(i<=N1-1)&&(k>=N3)&&(j>=N2)){ // BAR(1,o2,o3) - 4
+< 	if((mycpupos[2]==ncpux2-1)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((j>=0)&&(j<=N2-1)&&(k<=-1)&&(i<=-1)){ // BAR(2,i1,i3) - 5
+< 	if((mycpupos[1]==0)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((j>=0)&&(j<=N2-1)&&(k>=N3)&&(i<=-1)){ // BAR(2,i1,o3) - 6
+< 	if((mycpupos[1]==0)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((j>=0)&&(j<=N2-1)&&(k<=-1)&&(i>=N1)){ // BAR(2,o1,i3) - 7
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((j>=0)&&(j<=N2-1)&&(k>=N3)&&(i>=N1)){ // BAR(2,o1,o3) - 8
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1647,1721c1511,1512
+<       else if((k>=0)&&(k<=N3-1)&&(i<=-1)&&(j<=-1)){ // BAR(3,i1,i2) - 9
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((k>=0)&&(k<=N3-1)&&(i<=-1)&&(j>=N2)){ // BAR(3,i1,o2) - 10
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==ncpux2-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((k>=0)&&(k<=N3-1)&&(i>=N1)&&(j<=-1)){ // BAR(3,o1,i2) - 11
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((k>=0)&&(k<=N3-1)&&(i>=N1)&&(j>=N2)){ // BAR(3,o1,o2) - 12
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==ncpux2-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       // NOW START CORNERS
+<       else if((i<=-1)&&(j<=-1)&&(k<=-1)){ // CORNER(i1,i2,i3) - 1
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==0)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i<=-1)&&(j<=-1)&&(k>=N3)){ // CORNER(i1,i2,o3) - 2
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==0)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i<=-1)&&(j>=N2)&&(k<=-1)){ // CORNER(i1,o2,i3) - 3
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==ncpux2-1)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i<=-1)&&(j>=N2)&&(k>=N3)){ // CORNER(i1,o2,o3) - 4
+< 	if((mycpupos[1]==0)&&(mycpupos[2]==ncpux2-1)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=N1)&&(j<=-1)&&(k<=-1)){ // CORNER(o1,i2,i3) - 5
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==0)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+< 	  if(!( (l==6) ) ){ // don't add outer zones to inner boundary loop!
+< 	    mask[l][k][j][i]=BCTYPEOUT;
+< 	  }
+< 	}
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+<       }
+<       else if((i>=N1)&&(j<=-1)&&(k>=N3)){ // CORNER(o1,i2,o3) - 6
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==0)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+---
+>       if(i>=N1){
+> 	if(mycpupos[1]==ncpux1-1){
+1726c1517
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1728,1729c1519,1520
+<       else if((i>=N1)&&(j>=N2)&&(k<=-1)){ // CORNER(o1,o2,i3) - 7
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==ncpux2-1)&&(mycpupos[3]==0)){ // only real if both real, otherwise transfers will assign
+---
+>       if(j>=N2){
+> 	if(mycpupos[2]==ncpux2-1){
+1734c1525
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1736,1737c1527,1528
+<       else if((i>=N1)&&(j>=N2)&&(k>=N3)){ // CORNER(o1,o2,o3) - 8
+< 	if((mycpupos[1]==ncpux1-1)&&(mycpupos[2]==ncpux2-1)&&(mycpupos[3]==ncpux3-1)){ // only real if both real, otherwise transfers will assign
+---
+>       if(k>=N3){
+> 	if(mycpupos[3]==ncpux3-1){
+1742c1533
+< 	else mask[l][k][j][i]+=90; // always assign to outer boundary the MPI type if not real outer boundary
+---
+> 	else mask[l][k][j][i]=99;
+1746d1536
+<   
+1789,1793c1579,1582
+< 
+<     if(l==8) limits[l][1][0]=skipfactor[0]; // global statement about all real boundaries
+<     else if(l==23) limits[l][1][0]=1; // must get surface flux
+<     else if(l==9) limits[l][1][0]=skipfactor[1];
+<     else if(l==24) limits[l][1][0]=1; // must get surface flux
+---
+>     if(periodicx1==0){
+>       limits[l][1][0]=1;
+>     }
+>     else     limits[l][1][0]=0;
+1804,1807c1593,1596
+<     if(l==10) limits[l][2][0]=skipfactor[0];
+<     else if(l==25) limits[l][2][0]=1;
+<     else if(l==11) limits[l][2][0]=skipfactor[1];
+<     else if(l==26) limits[l][2][0]=1;
+---
+>     if(periodicx2==0){
+>       limits[l][2][0]=1;
+>     }
+>     else     limits[l][2][0]=0;
+1817,1820c1606,1609
+<     if(l==12) limits[l][3][0]=skipfactor[0];
+<     else if(l==27) limits[l][3][0]=1;
+<     else if(l==13) limits[l][3][0]=skipfactor[1];
+<     else if(l==28) limits[l][3][0]=1;
+---
+>     if(periodicx3==0){
+>       limits[l][3][0]=1;
+>     }
+>     else     limits[l][3][0]=0;
+1824c1613
+<   // LOOPBOUNDB1 (always compute edges, so this sets up killing of outer boundary zone since really on edge and should be computed)
+---
+>   // LOOPBOUNDB1
+1847c1636
+<   // comp loops (setups up same condition as LOOPBOUNDB1)
+---
+>   // comp loops
+1880d1668
+< 	   // no <90 for mask check since ok to change to MPI zone to comp zone
+1883,1885c1671,1672
+< 	   // 90 MPI zone is same as comp zone w.r.t. conversions (must then make sure MPI doesn't overwrite <90 zones!)
+< 	   (( (mask[6][k][j][i]==0)||(mask[6][k][j][i]==90))&&((l==8)||(l==10)||(l==12)||(l==23)||(l==25)||(l==27) ))|| // inner boundary loops
+< 	   (( (mask[7][k][j][i]==0)||(mask[7][k][j][i]==90))&&((l==9)||(l==11)||(l==13)||(l==24)||(l==26)||(l==28) ))|| // outer boundary loops
+---
+> 	   ((mask[6][k][j][i]==0)&&((l==8)||(l==10)||(l==12)||(l==23)||(l==25)||(l==27) ))|| // inner boundary loops
+> 	   ((mask[7][k][j][i]==0)&&((l==9)||(l==11)||(l==13)||(l==24)||(l==26)||(l==28) ))|| // outer boundary loops
+1905,1907c1692,1693
+< 		   // NOT ok for comp zone to change to MPI type boundary zone.  Must compute it so it can be exchanged.
+< 		   ((mask[6][kk][jj][ii]>0)&&(mask[6][kk][jj][ii]<90)&&((l==8)||(l==10)||(l==12)||(l==23)||(l==25)||(l==27) ))|| // inner boundary loops
+< 		   ((mask[7][kk][jj][ii]>0)&&(mask[7][kk][jj][ii]<90)&&((l==9)||(l==11)||(l==13)||(l==24)||(l==26)||(l==28) ))|| // outer boundary loops
+---
+> 		   ((mask[6][kk][jj][ii]>0)&&((l==8)||(l==10)||(l==12)||(l==23)||(l==25)||(l==27) ))|| // inner boundary loops
+> 		   ((mask[7][kk][jj][ii]>0)&&((l==9)||(l==11)||(l==13)||(l==24)||(l==26)||(l==28) ))|| // outer boundary loops
+1963,1966c1749
+<   }
+<     
+<     // do rest separately since want to define masks above and rest is independently done for each mask
+<   for(l=0;l<=NUMINDEX-1;l++){ // different cases
+---
+> 
+1973c1756
+< 	  if(mask[l][k][j][i]>0){ // ok to not have <90 here since ok to change MPI zone into NULL zone
+---
+> 	  if(mask[l][k][j][i]>0){
+2128a1912
+> 
+2137d1920
+< 	 // only want to iterate loops over non-boundary and non-mpi zones
+2144,2156d1926
+<     /*
+<   if(l==8){
+<     LOOPF{
+<       fprintf(log_file,"%d %d %d %d\n",k,j,i,mask[l][k][j][i]);
+<     }
+<     
+<     fflush(log_file);
+<     // GODMARK
+<     //  itemp+=init_outgparm(-1); // -1 means out all within define params
+<     myexit(0);
+<   }
+<     */
+< 
+2182d1951
+< 	   // only want to iterate loops over non-boundary and non-mpi zones
+2213d1981
+< 	     // only want to iterate loops over non-boundary and non-mpi zones
+2227d1994
+< 	     // only want to iterate loops over non-boundary and non-mpi zones
+2318,2319c2085
+< 	// this part only relevant to real boundary zones, not MPI boundary zones
+< 
+---
+> 	
+2777c2543
+< 
+---
+>     
+2782,2788d2547
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k][j][i+1]>=90) maskfix[0]=mask[l][k][j][i+1]-90;
+< 	else maskfix[0]=mask[l][k][j][i+1];
+< 
+< 	if(mask[l][k][j][i-1]>=90) maskfix[1]=mask[l][k][j][i-1]-90;
+< 	else maskfix[1]=mask[l][k][j][i-1];
+< 
+2790c2549
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k][j][i+1]==0)&&(mask[l][k][j][i-1]!=0))||((mask[l][k][j][i+1]!=0)&&(mask[l][k][j][i-1]==0)) ) ) bzs[l][temptempi][0]=0;
+2797,2803d2555
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k][j+1][i]>=90) maskfix[0]=mask[l][k][j+1][i]-90;
+< 	else maskfix[0]=mask[l][k][j+1][i];
+< 
+< 	if(mask[l][k][j-1][i]>=90) maskfix[1]=mask[l][k][j-1][i]-90;
+< 	else maskfix[1]=mask[l][k][j-1][i];
+< 
+2805c2557
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k][j+1][i]==0)&&(mask[l][k][j-1][i]!=0))|| ((mask[l][k][j+1][i]!=0)&&(mask[l][k][j-1][i]==0)) ) ) bzs[l][temptempi][0]=0;
+2812,2818d2563
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k+1][j][i]>=90) maskfix[0]=mask[l][k+1][j][i]-90;
+< 	else maskfix[0]=mask[l][k+1][j][i];
+< 
+< 	if(mask[l][k-1][j][i]>=90) maskfix[1]=mask[l][k-1][j][i]-90;
+< 	else maskfix[1]=mask[l][k-1][j][i];
+< 
+2820c2565
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k+1][j][i]==0)&&(mask[l][k-1][j][i]!=0))|| ((mask[l][k+1][j][i]!=0)&&(mask[l][k-1][j][i]==0)) ) )   bzs[l][temptempi][0]=0;
+2828,2834d2572
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k][j][i+1]>=90) maskfix[0]=mask[l][k][j][i+1]-90;
+< 	else maskfix[0]=mask[l][k][j][i+1];
+< 
+< 	if(mask[l][k][j][i-1]>=90) maskfix[1]=mask[l][k][j][i-1]-90;
+< 	else maskfix[1]=mask[l][k][j][i-1];
+< 
+2836c2574
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k][j][i+1]==0)&&(mask[l][k][j][i-1]!=0))||((mask[l][k][j][i+1]!=0)&&(mask[l][k][j][i-1]==0)) ) ) bzs[l][temptempi][0]=0;
+2843,2849d2580
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k][j+1][i]>=90) maskfix[0]=mask[l][k][j+1][i]-90;
+< 	else maskfix[0]=mask[l][k][j+1][i];
+< 
+< 	if(mask[l][k][j-1][i]>=90) maskfix[1]=mask[l][k][j-1][i]-90;
+< 	else maskfix[1]=mask[l][k][j-1][i];
+< 
+2851c2582
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k][j+1][i]==0)&&(mask[l][k][j-1][i]!=0))|| ((mask[l][k][j+1][i]!=0)&&(mask[l][k][j-1][i]==0)) ) ) bzs[l][temptempi][0]=0;
+2858,2864d2588
+< 	// this flux surface needs to know whether an MPI zone is really a boundary/null zone or comp zone so surface is smooth/correct across CPUs
+< 	if(mask[l][k+1][j][i]>=90) maskfix[0]=mask[l][k+1][j][i]-90;
+< 	else maskfix[0]=mask[l][k+1][j][i];
+< 
+< 	if(mask[l][k-1][j][i]>=90) maskfix[1]=mask[l][k-1][j][i]-90;
+< 	else maskfix[1]=mask[l][k-1][j][i];
+< 
+2866c2590
+< 	if(!( ((maskfix[0]==0)&&(maskfix[1]!=0))||((maskfix[0]!=0)&&(maskfix[1]==0)) ) ) bzs[l][temptempi][0]=0;
+---
+> 	if(!( ((mask[l][k+1][j][i]==0)&&(mask[l][k-1][j][i]!=0))|| ((mask[l][k+1][j][i]!=0)&&(mask[l][k-1][j][i]==0)) ) )   bzs[l][temptempi][0]=0;
+2881,2886c2605,2608
+<     if(numprocs==1){
+<       LOOPF{
+< 	if((l==23)||(l==24)){
+< 	  if((int)debugmask[k][j][i]!=-(int)debugmask[k][j][N1-i]){
+< 	    fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],k,j,N1-i,(int)debugmask[k][j][N1-i],mask[l][k][j][i-1],mask[l][k][j][i],mask[l][k][j][i+1]);
+< 	  }
+---
+>     LOOPF{
+>       if((l==23)||(l==24)){
+> 	if((int)debugmask[k][j][i]!=-(int)debugmask[k][j][N1-i]){
+> 	  fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],k,j,N1-i,(int)debugmask[k][j][N1-i],mask[l][k][j][i-1],mask[l][k][j][i],mask[l][k][j][i+1]);
+2888,2891c2610,2613
+< 	if((l==25)||(l==26)){
+< 	  if((int)debugmask[k][j][i]!=-(int)debugmask[k][N2-j][i]){
+< 	    fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],k,N2-j,i,(int)debugmask[k][N2-j][i],mask[l][k][j-1][i],mask[l][k][j][i],mask[l][k][j+1][i]);
+< 	  }
+---
+>       }
+>       if((l==25)||(l==26)){
+> 	if((int)debugmask[k][j][i]!=-(int)debugmask[k][N2-j][i]){
+> 	  fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],k,N2-j,i,(int)debugmask[k][N2-j][i],mask[l][k][j-1][i],mask[l][k][j][i],mask[l][k][j+1][i]);
+2893,2896c2615,2618
+< 	if((l==27)||(l==28)){
+< 	  if((int)debugmask[k][j][i]!=-(int)debugmask[N3-k][j][i]){
+< 	    fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],N3-k,j,i,(int)debugmask[N3-k][j][i],mask[l][k-1][j][i],mask[l][k][j][i],mask[l][k+1][j][i]);
+< 	  }
+---
+>       }
+>       if((l==27)||(l==28)){
+> 	if((int)debugmask[k][j][i]!=-(int)debugmask[N3-k][j][i]){
+> 	  fprintf(stdout,"bad l=%d: %d %d %d: %d  %d %d %d: %d :: -1m: %d 0m: %d 1m: %d\n",l,k,j,i,(int)debugmask[k][j][i],N3-k,j,i,(int)debugmask[N3-k][j][i],mask[l][k-1][j][i],mask[l][k][j][i],mask[l][k+1][j][i]);
+2898,2899c2620,2621
+<       }    
+<     }
+---
+>       }
+>     }    
+2974c2696
+<       fprintf(log_file,"%d ",mask[l][k][j][i]);
+---
+>       fprintf(stdout,"%d ",mask[l][k][j][i]);
+2976c2698
+<     fprintf(log_file,"\n");
+---
+>     fprintf(stdout,"\n");
+2978,2979c2700
+<   fflush(log_file);
+<   itemp+=init_outgparm(-1); // -1 means out all within define params
+---
+>   fflush(stdout);
+2981c2702
+<   */
+---
+>   */  
+3140d2860
+< #if(!PPCLEAN)
+3142d2861
+< #endif
+3207,3216d2925
+<   init_placeongrid();
+< 
+<   // get or set parameters needed for data(get/set)
+<   if( (runtype==3)||(runtype==2)||(runtype==22)){
+<     error+=init_runpar(); //function for par files
+<   }
+<   error+=init_paramspresets(seed,beta,nj); // must come before grid assignment/etc, must come after parameter set/read
+<   error+=init_otherparams(); // other parameter init
+< 
+< 
+3218d2926
+<   // (must come after parampresets())
+3221c2929
+<       sprintf(temps,"mkdir %s%s",DATADIR,IMAGEDIR);
+---
+>       sprintf(temps,"mkdir %s%s",DATADIR,"i/");
+3241a2950
+>   init_placeongrid();
+3242a2952,2957
+>   // get or set parameters needed for data(get/set)
+>   if( (runtype==3)||(runtype==2)||(runtype==22)){
+>     error+=init_runpar(); //function for par files
+>   }
+>   error+=init_paramspresets(seed,beta,nj); // must come before grid assignment/etc, must come after parameter set/read
+>   error+=init_otherparams(); // other parameter init
+3252c2967
+<   if(LOWMEMMODE==0) error+=init_diffs();
+---
+>   error+=init_diffs();
+3255c2970
+<   if(LOWMEMMODE==0) init_compsave();
+---
+>   init_compsave();
+3285d2999
+<     timereenter=t; // this is the real time that the run was restarted
+3294d3007
+<     // GODMARK
+3309c3022
+< 
+---
+>     
+3312,3330c3025,3035
+<   if((TVDLF==0)&&(POSTPROC==0)){
+<     //dump(NULL,998,DTYPE,0); // GODMARK 
+<     //image(998,-1,-1,0,0); // GODMARK (to show variables before bounding)
+<     fprintf(log_file,"before bound symmetry check\n"); fflush(log_file);
+<     symmetry_check(0); // before bound symmetry check// GODMARK (use -1 for image output of badness)
+<     fprintf(log_file,"before bound divb=0 check\n"); fflush(log_file);
+<     divb0check(0); // check before bound
+<     //image(666,-1,-1,0,0); // GODMARK  (to show asymmetry)
+<     //boundtest(0);
+<     //boundtest(1);
+<     //boundtest(2);
+<     fprintf(log_file,"at bound\n"); fflush(log_file);
+< #if(!PPCLEAN)
+<     bound(NULL,NULL,-1,-1,123);
+< #endif
+<     //dump(NULL,999,DTYPE,0); // GODMARK
+<     //image(999,-1,-1,0,0); // GODMARK (to show variables after bounding)
+<     //myexit(0);
+<   }
+---
+> #if((TVDLF==0)&&(POSTPROC==0))
+>   //  dump(NULL,998,DTYPE,0); // GODMARK -- commented
+>   //  image(998,-1,-1,0,0); // GODMARK (to show variables before bounding)
+>   fprintf(log_file,"before bound symmetry check\n"); fflush(stdout);// GODMARK-- commented
+>   symmetry_check(0); // before bound symmetry check// GODMARK (use -1 for image output of badness)
+>   //image(666,-1,-1,0,0); // GODMARK  (to show asymmetry)
+> 
+>   bound(NULL,NULL,-1,-1,123);
+>   //  image(999,-1,-1,0,0); // GODMARK (to show variables after bounding)
+>   //myexit(0);
+> #endif
+3333c3038,3039
+<     error+=init_outgparm(-1); // -1 means out all within define params
+---
+>     // GODMARK -- don't want to wait
+>     //    error+=init_outgparm(-1); // -1 means out all within define params
+3335,3336d3040
+< 
+< 
+3339c3043
+<   if((POSTPROC==0)&&(TVDLF==0)){
+---
+>   if(POSTPROC==0){
+3419,3425d3122
+<   //LOOPF{
+<   //	  fprintf(stderr,"%d %d %d %15.10g\n",k,j,i,v[2][1][k][j][i]); fflush(stderr);
+<   //	}
+<     //	myexit(0);
+< 
+< 
+< 
+3448,3456c3145,3152
+<   if(DOLOSSDIAG){
+<     // initialize loss data
+<     for(i=1;i<=NUMSCA;i++){
+<       for(j=1;j<=3;j++){
+< 	for(k=0;k<=1;k++){
+< 	  for(l=0;l<NS2[j];l++){ // only need to go over needed zones
+< 	    for(ll=0;ll<NS1[j];ll++){
+< 	      losss[i][j][k][l][ll]=0.0;
+< 	    }
+---
+> #if(DOLOSSDIAG)
+>   // initialize loss data
+>   for(i=1;i<=NUMSCA;i++){
+>     for(j=1;j<=3;j++){
+>       for(k=0;k<=1;k++){
+> 	for(l=0;l<NS2[j];l++){ // only need to go over needed zones
+> 	  for(ll=0;ll<NS1[j];ll++){
+> 	    losss[i][j][k][l][ll]=0.0;
+3461,3468c3157,3164
+<     for(i=1;i<=NUMVEC;i++){
+<       for(m=0;m<=3;m++){  // 0 for KE
+< 	for(j=1;j<=3;j++){
+< 	  for(k=0;k<=1;k++){
+< 	    for(l=0;l<NS2[j];l++){
+< 	      for(ll=0;ll<NS1[j];ll++){
+< 		lossv[i][m][j][k][l][ll]=0.0;
+< 	      }
+---
+>   }
+>   for(i=1;i<=NUMVEC;i++){
+>     for(m=0;m<=3;m++){  // 0 for KE
+>       for(j=1;j<=3;j++){
+> 	for(k=0;k<=1;k++){
+> 	  for(l=0;l<NS2[j];l++){
+> 	    for(ll=0;ll<NS1[j];ll++){
+> 	      lossv[i][m][j][k][l][ll]=0.0;
+3474,3480c3170,3176
+<     for(i=1;i<=1;i++){
+<       for(j=1;j<=3;j++){
+< 	for(k=0;k<=1;k++){
+< 	  for(l=0;l<NS1[j];l++){
+< 	    for(ll=0;ll<NS2[j];ll++){
+< 	      lossvisc[i][j][k][l][ll]=0.0;
+< 	    }
+---
+>   }
+>   for(i=1;i<=1;i++){
+>     for(j=1;j<=3;j++){
+>       for(k=0;k<=1;k++){
+> 	for(l=0;l<NS1[j];l++){
+> 	  for(ll=0;ll<NS2[j];ll++){
+> 	    lossvisc[i][j][k][l][ll]=0.0;
+3485a3182
+> #endif
+3511,3514c3208,3211
+<   
+<   if(DOLOSSDIAG){
+<     // initialize loss data
+<     for(i=1;i<=NUMLOSSVAR;i++){
+---
+> 
+> #if(DOLOSSDIAG)
+>   // initialize loss data
+>   for(i=1;i<=NUMLOSSVAR;i++){
+3518d3214
+<     }
+3519a3216
+> #endif
+3772c3469
+<   SFTYPE numcpux1low,numcpux1high,holdrealncpux1;
+---
+>   SFTYPE numcpux1low,numcpux1high,ncpux1,ncpux2,holdrealncpux1;
+3791,3796c3488
+<   init_optimalmpi(cpugeompick);
+< 
+<   if(myid<=0){
+<     fprintf(stderr,"numprocs=%d ncpux1=%d ncpux2=%d ncpux3=%d\n",numprocs,ncpux1,ncpux2,ncpux3);
+<   }
+< 
+---
+>   init_optimalmpi(CPUGEOMPICK);
+3889a3582,3584
+>     ncpux1=NCPUX1;
+>     ncpux2=NCPUX2;
+>     ncpux3=NCPUX3;
+3899c3594
+< 	fprintf(stderr,"CPUS: %d  ncpux1: %d  ncpux2: %d ncpux3: %d\n",numprocs,ncpux1,ncpux2,ncpux3);
+---
+> 	fprintf(stderr,"CPUS: %d  NCPUX1: %d  NCPUX2: %d NCPUX3: %d\n",numprocs,ncpux1,ncpux2,ncpux3);
+3912c3607
+< 	fprintf(stderr,"should use N1=%d N2=%d ncpux1=%d ncpux2=%d\n",(int)shouldn1,(int)shouldn2,(int)shouldncpux1,(int)shouldncpux2);
+---
+> 	fprintf(stderr,"should use N1=%d N2=%d NCPUX1=%d NCPUX2=%d\n",(int)shouldn1,(int)shouldn2,(int)shouldncpux1,(int)shouldncpux2);
+3915c3610
+< 	fprintf(stderr,"Good choice of N1,N2,ncpux1,ncpux2 for optimal MPI\n");
+---
+> 	fprintf(stderr,"Good choice of N1,N2,NCPUX1,NCPUX2 for optimal MPI\n");
+3918a3614,3618
+>   else{
+>     ncpux1=NCPUX1;
+>     ncpux2=NCPUX2;
+>     ncpux3=NCPUX3;
+>   }
+4141c3841
+<       nu_fact[k][j][i]=x[2][1][i]*pow(G4(2,j),n_real);
+---
+>       nu_fact[k][j][i]=x[2][1][i]*pow(g[2][4][j],n_real);
+4149c3849
+<       //nu_fact[k][j][i]=pow(x[2][1][i]*g4(2,j),1.5)/sqrt(GM);
+---
+>       //nu_fact[k][j][i]=pow(x[2][1][i]*g[2][4][j],1.5)/sqrt(GM);
+4160c3860
+<       //nu_fact[k][j][i]=alpha_real*sqrt(x[2][1][i]*g4(2,j)) ;
+---
+>       //nu_fact[k][j][i]=alpha_real*sqrt(x[2][1][i]*g[2][4][j]) ;
+4164c3864
+<       nu_fact[k][j][i]=pow(x[2][1][i]*g4(2,j),1.5)/sqrt(GM);
+---
+>       nu_fact[k][j][i]=pow(x[2][1][i]*g[2][4][j],1.5)/sqrt(GM);
+4196,4197c3896,3897
+<       if(OARC11(k,j,i)<OARC12(k,j,i)){ // i.e. dx1>dx2
+< 	nu_res_fact[k][j][i]=1.0/pow(OARC12(k,j,i),1.0);
+---
+>       if(OARCL[1][1][k][j][i]<OARCL[1][2][k][j][i]){ // i.e. dx1>dx2
+> 	nu_res_fact[k][j][i]=1.0/pow(OARCL[1][2][k][j][i],1.0);
+4200c3900
+< 	nu_res_fact[k][j][i]=1.0/pow(OARC11(k,j,i),1.0);
+---
+> 	nu_res_fact[k][j][i]=1.0/pow(OARCL[1][1][k][j][i],1.0);
+4211,4212c3911,3912
+<       if(OARC11(k,j,i)<OARC12(k,j,i)){ // i.e. dx1>dx2
+< 	nu_res_fact[k][j][i]=1.0/pow(OARC12(k,j,i),2.0);
+---
+>       if(OARCL[1][1][k][j][i]<OARCL[1][2][k][j][i]){ // i.e. dx1>dx2
+> 	nu_res_fact[k][j][i]=1.0/pow(OARCL[1][2][k][j][i],2.0);
+4216c3916
+< 	  nu_res_fact[k][j][i]=1.0/pow(OARC11(k,j,i),2.0);
+---
+> 	  nu_res_fact[k][j][i]=1.0/pow(OARCL[1][1][k][j][i],2.0);
+4219,4220c3919,3920
+< 	  if(OARC11(k,j,i)*ODX(2,3,k)<OARC13(k,j,i)*ODX(2,3,k)){ // i.e. dx1>dx3
+< 	    nu_res_fact[k][j][i]=1.0/pow(OARC13(k,j,i)*ODX(2,3,k),2.0);
+---
+> 	  if(OARCL[1][1][k][j][i]*ODX[2][3][k]<OARCL[1][3][k][j][i]*ODX[2][3][k]){ // i.e. dx1>dx3
+> 	    nu_res_fact[k][j][i]=1.0/pow(OARCL[1][3][k][j][i]*ODX[2][3][k],2.0);
+4242,4252c3942,3951
+<   if(FLOORDUMPFLAG){
+<     // init floor variables
+<     LOOP{
+<       for(l=1;l<=NUMSCA;l++){
+< 	floorvars[l][k][j][i]=0.0;
+<       }
+<       for(l=1;l<=NUMVEC;l++){
+< 	floorvar0[l][k][j][i]=0.0;
+< 	for(m=1;m<=3;m++){
+< 	  floorvarv[l][m][k][j][i]=0.0;
+< 	}
+---
+> #if(FLOORDUMPFLAG)
+>   // init floor variables
+>   LOOP{
+>     for(l=1;l<=NUMSCA;l++){
+>       floorvars[l][k][j][i]=0.0;
+>     }
+>     for(l=1;l<=NUMVEC;l++){
+>       floorvar0[l][k][j][i]=0.0;
+>       for(m=1;m<=3;m++){
+> 	floorvarv[l][m][k][j][i]=0.0;
+4255a3955
+> #endif
+4350,4351c4050,4051
+<   FILE* in[2];
+<   char fname[2][200];
+---
+>   FILE* in[3];
+>   char fname[200];
+4354,4358d4053
+< #if(FLOATTYPE==0)
+<   FTYPE dumfread;
+< #else
+<   SFTYPE dumfread;
+< #endif
+4363,4383d4057
+< #if(USEMPI)
+<   MPI_Request rrequest;
+<   MPI_Request srequest;
+< #endif
+< #if(USEMPI&&USEROMIO)
+<   MPI_Datatype newtype;
+<   MPI_File fh[2];
+<   MPI_Status status;
+<   MPI_Request request;
+< #endif
+<   FTYPE totalnorm,recvnorm,sendnorm;
+<   int ndims, array_of_gsizes[4], array_of_distribs[4];
+<   int order, len;
+<   int array_of_dargs[4], array_of_psizes[4];
+<   int bufcount, array_size;
+<   FTYPE *readbuf;
+<   int numcolumns;
+<   char truemyidtxt[100];
+<   int pdiddy,pdiddystart,pdiddyto;
+<   int nextbuf;
+<   int range;
+4397,4402d4070
+<   if(mpicombine==0){
+<     strcpy(truemyidtxt,myidtxt);
+<   }
+<   else strcpy(truemyidtxt,"");
+< 
+< 
+4407c4075
+<       sprintf(fname[0],"%s0_gparam%s",DATADIR,extension) ;
+---
+>       sprintf(fname,"%s0_gparam%s",DATADIR,extension) ;
+4409c4077
+<       if((in[0]=fopen(fname[0],"rt"))==NULL){
+---
+>       if((in[0]=fopen(fname,"rt"))==NULL){
+4486d4153
+< 
+4490,4502c4157,4176
+<     sprintf(fname[0],"%s0_grid1%s%s",DATADIR,extension,myidtxt) ;
+<     sprintf(fname[1],"%s0_grid2%s%s",DATADIR,extension,myidtxt) ;
+<     
+<     if(mpicombine==0){
+<       if((in[0]=fopen(fname[0],"rt"))==NULL){
+< 	fprintf(fail_file,"grid1: Cannot open: %s\n",fname);
+< 	myexit(1);
+<       }
+<       
+<       if((in[1]=fopen(fname[1],"rt"))==NULL){
+< 	fprintf(fail_file,"grid2: Cannot open: %s\n",fname);
+< 	myexit(1);
+<       }
+---
+>   sprintf(fname,"%s0_grid1%s%s",DATADIR,extension,myidtxt) ;
+>   
+>   
+>   if((in[1]=fopen(fname,"rt"))==NULL){
+>     fprintf(fail_file,"grid1: Cannot open: %s\n",fname);
+>     myexit(1);
+>   }
+>   sprintf(fname,"%s0_grid2%s%s",DATADIR,extension,myidtxt) ;
+>   
+>   if((in[2]=fopen(fname,"rt"))==NULL){
+>     fprintf(fail_file,"grid2: Cannot open: %s\n",fname);
+>     myexit(1);
+>   }
+>   
+>   
+>   for(l=1;l<=NUMGRID;l++){ 
+>     fprintf(log_file,"reading grid file %d\n",l); fflush(log_file);
+>     ch=fgetc(in[l]);
+>     if(ch=='#'){
+>       while(fgetc(in[l])!='\n');
+4505,4549c4179,4193
+< 
+<       numcolumns=21+NUMSCA*3+NUMVEC*3;
+< #if(USEMPI&&USEROMIO)
+<       //create the distributed array filetype
+<       ndims = 4;
+<       order = MPI_ORDER_C;
+<       
+<       array_of_gsizes[3] = numcolumns;
+<       array_of_gsizes[2] = totalsize[1];
+<       array_of_gsizes[1] = totalsize[2];
+<       array_of_gsizes[0] = totalsize[3];
+<       
+<       array_of_distribs[3] = MPI_DISTRIBUTE_BLOCK;
+<       array_of_distribs[2] = MPI_DISTRIBUTE_BLOCK;
+<       array_of_distribs[1] = MPI_DISTRIBUTE_BLOCK;
+<       array_of_distribs[0] = MPI_DISTRIBUTE_BLOCK;
+<       
+<       array_of_dargs[3] = MPI_DISTRIBUTE_DFLT_DARG;
+<       array_of_dargs[2] = MPI_DISTRIBUTE_DFLT_DARG;
+<       array_of_dargs[1] = MPI_DISTRIBUTE_DFLT_DARG;
+<       array_of_dargs[0] = MPI_DISTRIBUTE_DFLT_DARG;
+<       
+<       array_of_psizes[3]=1;
+<       array_of_psizes[2]=ncpux1;
+<       array_of_psizes[1]=ncpux2;
+<       array_of_psizes[0]=ncpux3;
+<       
+<       MPI_Type_create_darray(numprocs, myid, ndims, array_of_gsizes, 
+< 			     array_of_distribs, array_of_dargs,
+< 			     array_of_psizes, order, MPI_FTYPE, &newtype);
+<       MPI_Type_commit(&newtype);
+<       MPI_Type_size(newtype, &bufcount);
+<       bufcount = bufcount/sizeof(FTYPE);
+<       readbuf = (FTYPE *) malloc(bufcount * sizeof(FTYPE));
+<       // setup file handler
+<       
+<       MPI_File_open(MPI_COMM_WORLD, fname[0], MPI_MODE_CREATE | MPI_MODE_RDWR, 
+< 		    MPI_INFO_NULL, &fh[0]);
+<       MPI_File_set_view(fh[0], 0, MPI_FTYPE, newtype, "native", MPI_INFO_NULL);
+<       
+<       MPI_File_open(MPI_COMM_WORLD, fname[1], MPI_MODE_CREATE | MPI_MODE_RDWR, 
+< 		    MPI_INFO_NULL, &fh[1]);
+<       MPI_File_set_view(fh[1], 0, MPI_FTYPE, newtype, "native", MPI_INFO_NULL);
+<       // all that needs to be done now is fill readbuf with the data and write back to normal data arrays
+< #endif
+---
+>       fprintf(fail_file,"1: grid data file doesn't match expected format: %d\n",l);
+>       myexit(1);
+>     }
+>     fscanf(in[l],"%d %d\n",&dumi[0],&dumi[1]);
+>     if((dumi[0]!=GRIDVER)||(dumi[1]!=GRIDTYPE)){
+>       fprintf(fail_file,"expected gridver/gridtype: %d %d got %d %d\n",GRIDVER,GRIDTYPE,dumi[0],dumi[1]);
+>       myexit(6);
+>     }
+>     ch=fgetc(in[l]);
+>     if(ch=='#'){
+>       while(fgetc(in[l])!='\n');
+>     }
+>     else{
+>       fprintf(fail_file,"1.1: grid data file doesn't match expected format: %d\n",l);
+>       myexit(1);
+4552,4700c4196,4234
+<     
+<     for(l=1;l<=NUMGRID;l++){ 
+<       fprintf(log_file,"reading grid file %d\n",l); fflush(log_file);
+<       
+<       if(mpicombine==0){
+< 	ch=fgetc(in[l-1]);
+< 	if(ch=='#'){
+< 	  while(fgetc(in[l-1])!='\n');
+< 	}
+< 	else{
+< 	  fprintf(fail_file,"1: grid data file doesn't match expected format: %d\n",l);
+< 	  myexit(1);
+< 	}
+< 	fscanf(in[l-1],"%d %d\n",&dumi[0],&dumi[1]);
+< 	if((dumi[0]!=GRIDVER)||(dumi[1]!=GRIDTYPE)){
+< 	  fprintf(fail_file,"expected gridver/gridtype: %d %d got %d %d\n",GRIDVER,GRIDTYPE,dumi[0],dumi[1]);
+< 	  myexit(6);
+< 	}
+< 	ch=fgetc(in[l-1]);
+< 	if(ch=='#'){
+< 	  while(fgetc(in[l-1])!='\n');
+< 	}
+< 	else{
+< 	  fprintf(fail_file,"1.1: grid data file doesn't match expected format: %d\n",l);
+< 	  myexit(1);
+< 	}
+<       }
+<       if(mpicombine==0){
+< 	LOOPF{
+< 	  fscanf(in[l-1],HEADER4_S,
+< 		 &dumi[0],&dumi[1],&dumi[2],&dumi[3],
+< 		 &dx[l][1][i],&dx[l][2][j],&dx[l][3][k],
+< 		 &x[l][1][i],&x[l][2][j],&x[l][3][k],
+< #if(LOWMEMMODE==0)
+< 		 &g[l][1][i],&dg[l][1][i],&g[l][2][i],&dg[l][2][i],&g[l][3][i],&dg[l][3][i],&g[l][4][j],&dg[l][4][j],
+< 		 &dvl[l][1][i],&dvl[l][2][j],&dvl[l][3][k]
+< #else
+< 		 &dumfread,&dumfread,&dumfread,&dumfread,&dumfread,&dumfread,&dumfread,&dumfread,
+< 		 &dumfread,&dumfread,&dumfread
+< #endif
+< 		 );
+< 	  if((PUREBC==0)&&(BOUNDTYPE==1)){
+< 	    for(m=1;m<=NUMSCA;m++){
+< 	      fscanf(in[l-1],"%d ",&dumi[4+(m-1)*3]);
+< 	      fscanf(in[l-1],"%d ",&dumi[5+(m-1)*3]);
+< 	      fscanf(in[l-1],"%d ",&dumi[6+(m-1)*3]);
+< 	    }
+< 	    for(m=1;m<=NUMVEC;m++){
+< 	      fscanf(in[l-1],"%d ",&dumi[4+NUMSCA*3+(m-1)*3]);
+< 	      fscanf(in[l-1],"%d ",&dumi[5+NUMSCA*3+(m-1)*3]);
+< 	      fscanf(in[l-1],"%d",&dumi[6+NUMSCA*3+(m-1)*3]);
+< 	      if(m==NUMVEC) fscanf(in[l-1],"\n"); else fscanf(in[l-1]," ");
+< 	    }
+< 	    // must do it this way to read in properly and get memory writting correct too
+< 	    for(m=1;m<=NUMSCA;m++){
+< 	      bcs[m][1][k][j][i]=(short)dumi[4+(m-1)*3];
+< 	      bcs[m][2][k][j][i]=(short)dumi[5+(m-1)*3];
+< 	      bcs[m][3][k][j][i]=(short)dumi[6+(m-1)*3];
+< 	    }
+< 	    for(m=1;m<=NUMVEC;m++){
+< 	      bcv[m][1][k][j][i]=(short)dumi[4+NUMSCA*3+(m-1)*3];
+< 	      bcv[m][2][k][j][i]=(short)dumi[5+NUMSCA*3+(m-1)*3];
+< 	      bcv[m][3][k][j][i]=(short)dumi[6+NUMSCA*3+(m-1)*3];
+< 	    }
+< 	  }
+< 	  else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+< 	    for(m=1;m<=15;m++){
+< 	      fscanf(in[l-1],"%d ",&dumi[4+m-1]);
+< 	    }
+< 	    bzmask[k][j][i]=(short)dumi[4];
+< 	    bzmaskin[k][j][i]=(short)dumi[5];
+< 	    //	maskv2[k][j][i]=(short)dumi[6];
+< 	    //maskv3[k][j][i]=(short)dumi[7];
+< 	  }
+< 	  else{
+< 	    for(m=1;m<=15;m++){
+< 	      fscanf(in[l-1],"%d ",&dumi[4+m-1]);
+< 	    }
+< 	  }
+< 	}
+<       }
+<       else{	
+< #if(USEMPI&&USEROMIO)
+< 	MPI_File_read_all(fh[l-1], readbuf, bufcount, MPI_FTYPE, &status);
+< 	MPI_File_close(&fh[l-1]);
+< #endif
+< 	LOOP{// must figure out how to read in properly the full grid
+< 	  BUFFERINIT;
+< 	  dumi[0]=readbuf[BUFFERMAP];
+< 	  dumi[1]=readbuf[BUFFERMAP];
+< 	  dumi[2]=readbuf[BUFFERMAP];
+< 	  dx[l][1][i]=readbuf[BUFFERMAP];
+< 	  dx[l][2][i]=readbuf[BUFFERMAP];
+< 	  dx[l][3][i]=readbuf[BUFFERMAP];
+< 	  x[l][1][i]=readbuf[BUFFERMAP];
+< 	  x[l][2][i]=readbuf[BUFFERMAP];
+< 	  x[l][3][i]=readbuf[BUFFERMAP];
+< #if(LOWMEMMODE==0)
+< 	  g[l][1][i]=readbuf[BUFFERMAP];
+< 	  dg[l][2][i]=readbuf[BUFFERMAP];
+< 	  g[l][2][i]=readbuf[BUFFERMAP];
+< 	  dg[l][2][i]=readbuf[BUFFERMAP];
+< 	  g[l][3][i]=readbuf[BUFFERMAP];
+< 	  dg[l][3][i]=readbuf[BUFFERMAP];
+< 	  g[l][4][i]=readbuf[BUFFERMAP];
+< 	  dg[l][4][i]=readbuf[BUFFERMAP];
+< 	  dvl[l][1][i]=readbuf[BUFFERMAP];
+< 	  dvl[l][2][i]=readbuf[BUFFERMAP];
+< 	  dvl[l][3][i]=readbuf[BUFFERMAP];
+< #else
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< 	  dumf[1]=readbuf[BUFFERMAP];
+< #endif
+< 	  if((PUREBC==0)&&(BOUNDTYPE==1)){
+< 	    for(m=1;m<=NUMSCA;m++){
+< 	      bcs[m][1][k][j][i]=readbuf[BUFFERMAP];
+< 	      bcs[m][2][k][j][i]=readbuf[BUFFERMAP];
+< 	      bcs[m][3][k][j][i]=readbuf[BUFFERMAP];
+< 	    }
+< 	    for(m=1;m<=NUMVEC;m++){
+< 	      bcv[m][1][k][j][i]=readbuf[BUFFERMAP];
+< 	      bcv[m][2][k][j][i]=readbuf[BUFFERMAP];
+< 	      bcv[m][3][k][j][i]=readbuf[BUFFERMAP];
+< 	    }
+< 	  }
+< 	  else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+< 	    for(m=1;m<=15;m++){
+< 	      dumi[4+m-1]=readbuf[BUFFERMAP];
+< 	    }
+< 	    bzmask[k][j][i]=(short)dumi[4];
+< 	    bzmaskin[k][j][i]=(short)dumi[5];
+< 	    //	maskv2[k][j][i]=(short)dumi[6];
+< 	  //maskv3[k][j][i]=(short)dumi[7];
+< 	  }
+< 	  else{
+< 	    for(m=1;m<=15;m++){
+< 	      dumi[4+m-1]=readbuf[BUFFERMAP];
+< 	    }
+< 	  }
+< 	}
+---
+>     LOOPF{
+>       fscanf(in[l],HEADER4_S,
+> 	     &dumi[0],&dumi[1],&dumi[2],&dumi[3],
+> 	     &dx[l][1][i],&dx[l][2][j],&dx[l][3][k],
+> 	     &x[l][1][i],&x[l][2][j],&x[l][3][k],
+> 	     &g[l][1][i],&dg[l][1][i],&g[l][2][i],&dg[l][2][i],&g[l][3][i],&dg[l][3][i],&g[l][4][j],&dg[l][4][j],
+> 	     &dvl[l][1][i],&dvl[l][2][j],&dvl[l][3][k]);
+>       if(BOUNDTYPE==1){
+> 	for(m=1;m<=NUMSCA;m++){
+> 	  fscanf(in[l],"%d ",&dumi[4+(m-1)*3]);
+> 	  fscanf(in[l],"%d ",&dumi[5+(m-1)*3]);
+> 	  fscanf(in[l],"%d ",&dumi[6+(m-1)*3]);
+> 	}
+> 	for(m=1;m<=NUMVEC;m++){
+> 	  fscanf(in[l],"%d ",&dumi[4+NUMSCA*3+(m-1)*3]);
+> 	  fscanf(in[l],"%d ",&dumi[5+NUMSCA*3+(m-1)*3]);
+> 	  fscanf(in[l],"%d",&dumi[6+NUMSCA*3+(m-1)*3]);
+> 	  if(m==NUMVEC) fscanf(in[l],"\n"); else fscanf(in[l]," ");
+> 	}
+> 	// must do it this way to read in properly and get memory writting correct too
+> 	for(m=1;m<=NUMSCA;m++){
+> 	  bcs[m][1][k][j][i]=(short)dumi[4+(m-1)*3];
+> 	  bcs[m][2][k][j][i]=(short)dumi[5+(m-1)*3];
+> 	  bcs[m][3][k][j][i]=(short)dumi[6+(m-1)*3];
+> 	}
+> 	for(m=1;m<=NUMVEC;m++){
+> 	  bcv[m][1][k][j][i]=(short)dumi[4+NUMSCA*3+(m-1)*3];
+> 	  bcv[m][2][k][j][i]=(short)dumi[5+NUMSCA*3+(m-1)*3];
+> 	  bcv[m][3][k][j][i]=(short)dumi[6+NUMSCA*3+(m-1)*3];
+> 	}
+>       }
+>       else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+> 	for(m=1;m<=15;m++){
+> 	  fscanf(in[l],"%d ",&dumi[4+m-1]);
+> 	}
+> 	bzmask[k][j][i]=(short)dumi[4];
+> 	bzmaskin[k][j][i]=(short)dumi[5];
+> 	//	maskv2[k][j][i]=(short)dumi[6];
+> 	//maskv3[k][j][i]=(short)dumi[7];
+4701a4236
+>       
+4706,4711c4241
+< 	}
+<     }// over grids
+<   }// end if runtype==2
+<   if(mpicombine==0){
+<     for(l=1;l<=NUMGRID;l++){
+<       fclose(in[l-1]);
+---
+>       }
+4714,4715c4244,4247
+<   else{
+<     free(readbuf);
+---
+>   
+>   for(l=1;l<=NUMGRID;l++){
+>     fclose(in[l]);
+>   }
+4717d4248
+< 
+4737,4756c4268
+< #if(USEMPI)
+<   MPI_Request rrequest;
+<   MPI_Request srequest;
+< #endif
+< #if(USEMPI&&USEROMIO)
+<   MPI_Datatype newtype;
+<   MPI_File fh;
+<   MPI_Status status;
+<   MPI_Request request;
+< #endif
+<   FTYPE totalnorm,recvnorm,sendnorm;
+<   int ndims, array_of_gsizes[4], array_of_distribs[4];
+<   int order, len;
+<   int array_of_dargs[4], array_of_psizes[4];
+<   int bufcount, array_size;
+<   FTYPE *readbuf;
+<   int numcolumns;
+<   char truemyidtxt[100];
+<   int range;
+<   int nextbuf;
+---
+> 
+4768,4769d4279
+<     if(analoutput==13) numcolumns=7;
+<     else numcolumns=9;
+4781,4782d4290
+<     if(analoutput==13) numcolumns=7;
+<     else numcolumns=9;
+4788,4789d4295
+<     if(analoutput==13) numcolumns=7;
+<     else numcolumns=9;
+4796,4797d4301
+<     if(analoutput==13) numcolumns=7;
+<     else numcolumns=11;
+4801d4304
+<     numcolumns=7;
+4806d4308
+<     numcolumns=15;
+4812,4819c4314
+< 
+< 
+<   if(mpicombine==0){
+<     strcpy(truemyidtxt,myidtxt);
+<   }
+<   else strcpy(truemyidtxt,"");
+< 
+< 
+---
+>     
+4821c4316
+<     sprintf(fname,"%s0_%s%s%s",DATADIR,dfheader,INEXT,truemyidtxt) ; 
+---
+>     sprintf(fname,"%s0_%s%s%s",DATADIR,dfheader,INEXT,myidtxt) ; 
+4825c4320
+<       sprintf(fname,"%s%s%04d%s%s",DATADIR,dfheader,dump_cnt,DATEXT,truemyidtxt) ; 
+---
+>       sprintf(fname,"%s%s%04d%s%s",DATADIR,dfheader,dump_cnt,DATEXT,myidtxt) ; 
+4828c4323
+<       sprintf(fname,"%s%s%s%s",DATADIR,dfheader,DATEXT,truemyidtxt) ; 
+---
+>       sprintf(fname,"%s%s%s%s",DATADIR,dfheader,DATEXT,myidtxt) ; 
+4831a4327,4331
+>         
+>   if((data=fopen(fname,"rt"))==NULL){
+>     fprintf(fail_file,"data: Cannot open: %s\n",fname);
+>     myexit(1);
+>   }
+4833,4837c4333,4336
+<   if(mpicombine==0){
+<     if((data=fopen(fname,"rt"))==NULL){
+<       fprintf(fail_file,"data: Cannot open: %s\n",fname);
+<       myexit(1);
+<     }
+---
+>   // check version info
+>   ch=fgetc(data);
+>   if(ch=='#'){
+>     while(fgetc(data)!='\n');
+4840,4879c4339,4340
+< #if(USEMPI&&USEROMIO)
+<     //create the distributed array filetype
+<     ndims = 4;
+<     order = MPI_ORDER_C;
+<     
+<     array_of_gsizes[3] = numcolumns;
+<     array_of_gsizes[2] = totalsize[1];
+<     array_of_gsizes[1] = totalsize[2];
+<     array_of_gsizes[0] = totalsize[3];
+<     
+<     array_of_distribs[3] = MPI_DISTRIBUTE_BLOCK;
+<     array_of_distribs[2] = MPI_DISTRIBUTE_BLOCK;
+<     array_of_distribs[1] = MPI_DISTRIBUTE_BLOCK;
+<     array_of_distribs[0] = MPI_DISTRIBUTE_BLOCK;
+<     
+<     array_of_dargs[3] = MPI_DISTRIBUTE_DFLT_DARG;
+<     array_of_dargs[2] = MPI_DISTRIBUTE_DFLT_DARG;
+<     array_of_dargs[1] = MPI_DISTRIBUTE_DFLT_DARG;
+<     array_of_dargs[0] = MPI_DISTRIBUTE_DFLT_DARG;
+<     
+<     array_of_psizes[3]=1;
+<     array_of_psizes[2]=ncpux1;
+<     array_of_psizes[1]=ncpux2;
+<     array_of_psizes[0]=ncpux3;
+<     
+<     MPI_Type_create_darray(numprocs, myid, ndims, array_of_gsizes, 
+< 			   array_of_distribs, array_of_dargs,
+< 			   array_of_psizes, order, MPI_FTYPE, &newtype);
+<     MPI_Type_commit(&newtype);
+<     MPI_Type_size(newtype, &bufcount);
+<     bufcount = bufcount/sizeof(FTYPE);
+<     readbuf = (FTYPE *) malloc(bufcount * sizeof(FTYPE));
+<     // setup file handler
+<     
+<     MPI_File_open(MPI_COMM_WORLD, fname, MPI_MODE_CREATE | MPI_MODE_RDWR, 
+< 		  MPI_INFO_NULL, &fh);
+<     MPI_File_set_view(fh, 0, MPI_FTYPE, newtype, "native", MPI_INFO_NULL);
+<       // all that needs to be done now is fill readbuf with the data and write back to normal data arrays
+< #endif
+< 
+---
+>     fprintf(fail_file,"1:read: data file doesn't match expected format\n");
+>     myexit(1);
+4880a4342,4343
+>   // version header
+>   fscanf(data,"%d %d\n",&dumi[0],&dumi[1]);
+4882,4886c4345,4348
+<   if(mpicombine==0){
+<     // check version info
+<     ch=fgetc(data);
+<     if(ch=='#'){
+<       while(fgetc(data)!='\n');
+---
+>   if(which==DTYPE){
+>     if((dumi[0]!=DVER)||(dumi[1]!=DTYPE)){
+>       fprintf(fail_file,"read: Expected DVER/DTYPE %d %d got %d %d\n",DVER,DTYPE,dumi[0],dumi[1]);
+>       myexit(6);
+4888,4890c4350,4354
+<     else{
+<       fprintf(fail_file,"1:read: data file doesn't match expected format\n");
+<       myexit(1);
+---
+>   }
+>   else if(which==ADTYPE){
+>     if((dumi[0]!=ADVER)||(dumi[1]!=ADTYPE)){
+>       fprintf(fail_file,"read: Expected ADVER/ADTYPE %d %d got %d %d\n",ADVER,ADTYPE,dumi[0],dumi[1]);
+>       myexit(6);
+4892,4899c4356,4360
+<     // version header
+<     fscanf(data,"%d %d\n",&dumi[0],&dumi[1]);
+<     
+<     if(which==DTYPE){
+<       if((dumi[0]!=DVER)||(dumi[1]!=DTYPE)){
+< 	fprintf(fail_file,"read: Expected DVER/DTYPE %d %d got %d %d\n",DVER,DTYPE,dumi[0],dumi[1]);
+< 	myexit(6);
+<       }
+---
+>   }
+>   else if(which==PDTYPE){
+>     if((dumi[0]!=PDVER)||(dumi[1]!=PDTYPE)){
+>       fprintf(fail_file,"read: Expected PDVER/PDTYPE %d %d got %d %d\n",PDVER,PDTYPE,dumi[0],dumi[1]);
+>       myexit(6);
+4901,4905c4362,4366
+<     else if(which==ADTYPE){
+<       if((dumi[0]!=ADVER)||(dumi[1]!=ADTYPE)){
+< 	fprintf(fail_file,"read: Expected ADVER/ADTYPE %d %d got %d %d\n",ADVER,ADTYPE,dumi[0],dumi[1]);
+< 	myexit(6);
+<       }
+---
+>   }
+>   else if(which==FLTYPE){
+>     if((dumi[0]!=FLVER)||(dumi[1]!=FLTYPE)){
+>       fprintf(fail_file,"read: Expected FLVER/FLTYPE %d %d got %d %d\n",FLVER,FLTYPE,dumi[0],dumi[1]);
+>       myexit(6);
+4907,4910c4368,4378
+<     else if(which==PDTYPE){
+<       if((dumi[0]!=PDVER)||(dumi[1]!=PDTYPE)){
+< 	fprintf(fail_file,"read: Expected PDVER/PDTYPE %d %d got %d %d\n",PDVER,PDTYPE,dumi[0],dumi[1]);
+< 	myexit(6);
+---
+>   }
+>   else if(which==NPTYPE){
+>     if((dumi[0]!=NPVER)||(dumi[1]!=NPTYPE)){
+>       fprintf(fail_file,"read: Expected NPVER/NPTYPE %d %d got %d %d\n",NPVER,NPTYPE,dumi[0],dumi[1]);
+>       if( (dumi[1]==NPTYPE)&&(dumi[0]==1)){
+> 	npoldschool=1;
+> 	fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+>       }
+>       else if( (dumi[1]==NPTYPE)&&(dumi[0]==0)){
+> 	npoldschool=0;
+> 	fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+4912,4915c4380
+<     }
+<     else if(which==FLTYPE){
+<       if((dumi[0]!=FLVER)||(dumi[1]!=FLTYPE)){
+< 	fprintf(fail_file,"read: Expected FLVER/FLTYPE %d %d got %d %d\n",FLVER,FLTYPE,dumi[0],dumi[1]);
+---
+>       else{
+4919,4932c4384,4390
+<     else if(which==NPTYPE){
+<       if((dumi[0]!=NPVER)||(dumi[1]!=NPTYPE)){
+< 	fprintf(fail_file,"read: Expected NPVER/NPTYPE %d %d got %d %d\n",NPVER,NPTYPE,dumi[0],dumi[1]);
+< 	if( (dumi[1]==NPTYPE)&&(dumi[0]==1)){
+< 	  npoldschool=1;
+< 	  fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+< 	}
+< 	else if( (dumi[1]==NPTYPE)&&(dumi[0]==0)){
+< 	  npoldschool=0;
+< 	  fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+< 	}
+< 	else{
+< 	  myexit(6);
+< 	}
+---
+>   }
+>   else if(which==AVG2DTYPE){
+>     if((dumi[0]!=AVG2DVER)||(dumi[1]!=AVG2DTYPE)){
+>       fprintf(fail_file,"read: Expected AVG2DVER/AVG2DTYPE %d %d got %d %d\n",AVG2DVER,AVG2DTYPE,dumi[0],dumi[1]);
+>       if( (dumi[1]==AVG2DTYPE)&&(dumi[0]==1)){
+> 	avg2doldschool=1;
+> 	fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+4934,4944c4392,4393
+<     }
+<     else if(which==AVG2DTYPE){
+<       if((dumi[0]!=AVG2DVER)||(dumi[1]!=AVG2DTYPE)){
+< 	fprintf(fail_file,"read: Expected AVG2DVER/AVG2DTYPE %d %d got %d %d\n",AVG2DVER,AVG2DTYPE,dumi[0],dumi[1]);
+< 	if( (dumi[1]==AVG2DTYPE)&&(dumi[0]==1)){
+< 	  avg2doldschool=1;
+< 	  fprintf(fail_file,"read: Determined got %d %d\n",dumi[0],dumi[1]);
+< 	}
+< 	else{
+< 	  myexit(6);
+< 	}
+---
+>       else{
+> 	myexit(6);
+4947,4956c4396,4415
+<     else{
+<       fprintf(fail_file,"not setup for which=%d in init_rundat\n",which);
+<       myexit(1);
+<     }
+<     
+<     
+<     // continue with data file and normal header
+<     ch=fgetc(data);
+<     if(ch=='#'){
+<       while(fgetc(data)!='\n');
+---
+>   }
+>   else{
+>     fprintf(fail_file,"not setup for which=%d in init_rundat\n",which);
+>     myexit(1);
+>   }
+> 
+> 
+>   // continue with data file and normal header
+>   ch=fgetc(data);
+>   if(ch=='#'){
+>     while(fgetc(data)!='\n');
+>   }
+>   else{
+>     fprintf(fail_file,"1.1:read: data file doesn't match expected format\n");
+>     myexit(1);
+>   }
+>   if(POSTPROC==0){
+>     if(OLDSCHOOL==1){
+>       if( (which==DTYPE)||(which==PDTYPE) ) fscanf(data,INPUT1OLD,&t,&dumi[0]);
+>       else fscanf(data,INPUT1OLD,&dumfs[0],&dumi[0]);
+4958,4960c4417,4419
+<     else{
+<       fprintf(fail_file,"1.1:read: data file doesn't match expected format\n");
+<       myexit(1);
+---
+>     else if(OLDSCHOOL==0){
+>       if( (which==DTYPE)||(which==PDTYPE) ) fscanf(data,INPUT1,&t,&dumi[0],&dumi[1]);
+>       else fscanf(data,INPUT1,&dumfs[0],&dumi[0],&dumi[1]);
+4962,4970c4421,4424
+<     if(POSTPROC==0){
+<       if(OLDSCHOOL==1){
+< 	if( (which==DTYPE)||(which==PDTYPE) ) fscanf(data,INPUT1OLD,&t,&dumi[0]);
+< 	else fscanf(data,INPUT1OLD,&dumfs[0],&dumi[0]);
+<       }
+<       else if(OLDSCHOOL==0){
+< 	if( (which==DTYPE)||(which==PDTYPE) ) fscanf(data,INPUT1,&t,&dumi[0],&dumi[1]);
+< 	else fscanf(data,INPUT1,&dumfs[0],&dumi[0],&dumi[1]);
+<       }
+---
+>   }
+>   else{ // always read in time if postproc==1
+>     if(OLDSCHOOL==1){
+>       fscanf(data,INPUT1OLD,&t,&dumi[0]);
+4972,4979c4426,4427
+<     else{ // always read in time if postproc==1
+<       if(OLDSCHOOL==1){
+< 	fscanf(data,INPUT1OLD,&t,&dumi[0]);
+<       }
+<       else if(OLDSCHOOL==0){
+< 	fscanf(data,INPUT1,&t,&dumi[0],&dumi[1]);
+<       }
+<       
+---
+>     else if(OLDSCHOOL==0){
+>       fscanf(data,INPUT1,&t,&dumi[0],&dumi[1]);
+4981,4985c4429,4434
+<     if(POSTPROC==0){
+<       fprintf(log_file,"restarting at t=%15.10g\n",t);
+<       if(myid<=0){
+< 	fprintf(logfull_file,"restarting at t=%15.10g\n",t);
+<       }
+---
+> 
+>   }
+>   if(POSTPROC==0){
+>     fprintf(log_file,"restarting at t=%15.10g\n",t);
+>     if(myid<=0){
+>       fprintf(logfull_file,"restarting at t=%15.10g\n",t);
+4987,4992c4436,4440
+<     if(dumi[0]!=0){
+<       fprintf(log_file,"1.5: Warning: cannot take in interpolated data: expected: 0 got: %d\n",dumi[0]);
+<       if(myid<=0){
+< 	fprintf(logfull_file,"1.5: Warning: cannot take in interpolated data: expected: 0 got: %d\n",dumi[0]);
+<       }
+<       //myexit(1);
+---
+>   }
+>   if(dumi[0]!=0){
+>     fprintf(log_file,"1.5: Warning: cannot take in interpolated data: expected: 0 got: %d\n",dumi[0]);
+>     if(myid<=0){
+>       fprintf(logfull_file,"1.5: Warning: cannot take in interpolated data: expected: 0 got: %d\n",dumi[0]);
+4994,4996c4442,4446
+<     if(OLDSCHOOL==0){
+<       if(dumi[1]!=0){
+< 	fprintf(log_file,"1.6: Warning, data is not gridded correctly: expected: 0 got: %d\n",dumi[1]);
+---
+>     //myexit(1);
+>   }
+>   if(OLDSCHOOL==0){
+>     if(dumi[1]!=0){
+>       fprintf(log_file,"1.6: Warning, data is not gridded correctly: expected: 0 got: %d\n",dumi[1]);
+4998,5001c4448,4450
+< 	if(myid<=0){
+< 	  fprintf(logfull_file,"1.6: Warning, data is not gridded correctly: expected: 0 got: %d\n",dumi[1]);
+< 	  fflush(logfull_file);
+< 	}
+---
+>       if(myid<=0){
+> 	fprintf(logfull_file,"1.6: Warning, data is not gridded correctly: expected: 0 got: %d\n",dumi[1]);
+> 	fflush(logfull_file);
+5004,5011c4453,4468
+<     while(fgetc(data)!='\n'); // skip to next line
+<     
+<     ch=fgetc(data);
+<     if(ch=='#'){
+<       while(fgetc(data)!='\n'); // skip comment line
+<     }
+<     else{
+<       fprintf(fail_file,"2: data file doesn't match expected format\n");
+---
+>   }
+>   while(fgetc(data)!='\n'); // skip to next line
+> 
+>   ch=fgetc(data);
+>   if(ch=='#'){
+>     while(fgetc(data)!='\n'); // skip comment line
+>   }
+>   else{
+>     fprintf(fail_file,"2: data file doesn't match expected format\n");
+>     myexit(1);
+>   }
+>   
+>   fscanf(data,"%d %d %d",&dumi[0],&dumi[1],&dumi[2]);
+>   if(FULLINPUT==0){
+>     if( (dumi[0]!=N1)||(dumi[1]!=N2)||(dumi[2]!=N3)){
+>       fprintf(fail_file,"2.4: wrong data size\n");
+5014,5049c4471,4475
+<     
+<     fscanf(data,"%d %d %d",&dumi[0],&dumi[1],&dumi[2]);
+<     if(FULLINPUT==0){
+<       if( (dumi[0]!=N1)||(dumi[1]!=N2)||(dumi[2]!=N3)){
+< 	fprintf(fail_file,"2.4: wrong data size\n");
+< 	myexit(1);
+<       }
+<     }
+<     else if(FULLINPUT==1){
+<       if( (dumi[0]!=OUTFULL1)||(dumi[1]!=OUTFULL2)||(dumi[2]!=OUTFULL3)){
+< 	fprintf(fail_file,"2.4: wrong data size\n");
+< 	myexit(1);
+<       }
+<     }
+<     else if(FULLINPUT==2){
+<       if( (dumi[0]!=N1M)||(dumi[1]!=N2M)||(dumi[2]!=N3M)){
+< 	fprintf(fail_file,"2.4: wrong data size\n");
+< 	myexit(1);
+<       }
+<     }
+<     while(fgetc(data)!='\n'); // skip to next line
+<     
+<     
+<     if(which==AVG2DTYPE){
+<       // get avg type header data
+<       for(i=1;i<=16;i++) fgetc(data); // skip text
+<       fscanf(data,INPUTAVGH1,&tavgstart,&tavgfinal);
+<       while(fgetc(data)!='\n'); // skip to next line
+<       for(i=1;i<=12;i++) fgetc(data); // skip text
+<       fscanf(data,"%d",&avgcount);
+<       while(fgetc(data)!='\n'); // skip to next line
+<     }
+<     
+<     ch=fgetc(data);
+<     if(ch=='#'){
+<       while(fgetc(data)!='\n'); // skip comment line
+---
+>   }
+>   else if(FULLINPUT==1){
+>     if( (dumi[0]!=OUTFULL1)||(dumi[1]!=OUTFULL2)||(dumi[2]!=OUTFULL3)){
+>       fprintf(fail_file,"2.4: wrong data size\n");
+>       myexit(1);
+5051,5052c4477,4480
+<     else{
+<       fprintf(fail_file,"2.5: data file doesn't match expected format\n");
+---
+>   }
+>   else if(FULLINPUT==2){
+>     if( (dumi[0]!=N1M)||(dumi[1]!=N2M)||(dumi[2]!=N3M)){
+>       fprintf(fail_file,"2.4: wrong data size\n");
+5055c4483,4484
+<   }// end if mpicombine==0
+---
+>   }
+>   while(fgetc(data)!='\n'); // skip to next line
+5057a4487,4504
+>   if(which==AVG2DTYPE){
+>     // get avg type header data
+>     for(i=1;i<=16;i++) fgetc(data); // skip text
+>     fscanf(data,INPUTAVGH1,&tavgstart,&tavgfinal);
+>     while(fgetc(data)!='\n'); // skip to next line
+>     for(i=1;i<=12;i++) fgetc(data); // skip text
+>     fscanf(data,"%d",&avgcount);
+>     while(fgetc(data)!='\n'); // skip to next line
+>   }
+>   
+>   ch=fgetc(data);
+>   if(ch=='#'){
+>     while(fgetc(data)!='\n'); // skip comment line
+>   }
+>   else{
+>     fprintf(fail_file,"2.5: data file doesn't match expected format\n");
+>     myexit(1);
+>   }
+5059,5062c4506,4511
+<   if(mpicombine==1){
+< #if(USEMPI&&USEROMIO)
+<   MPI_File_read_all(fh, readbuf, bufcount, MPI_FTYPE, &status);
+<   MPI_File_close(&fh);
+---
+> #if(FULLINPUT==2)
+>     LOOPF
+> #elif(FULLINPUT==1)
+>     LOOPH
+> #elif(FULLINPUT==0)
+>     LOOP
+5064,5071c4513
+<   range=0;
+<   }
+<   else range=FULLINPUT;
+< 
+< 
+<   LOOPDIAGOUTPUT(range,range,range){
+<     BUFFERINIT;
+< 
+---
+>     {
+5074,5075c4516,4517
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sin[l][k][j][i]);
+< 	else if(mpicombine==1){ sin[l][k][j][i]=readbuf[BUFFERMAP];}
+---
+> 	fscanf(data,INPUT2,&sin[l][k][j][i]);
+> 	// MARK
+5079,5082c4521
+< 	if(which==FLTYPE){
+< 	  if(mpicombine==0) fscanf(data,INPUT2,&floorvar0[l][k][j][i]);
+< 	  else if(mpicombine==1){ floorvar0[l][k][j][i]=readbuf[BUFFERMAP];}
+< 	}
+---
+> 	if(which==FLTYPE) fscanf(data,INPUT2,&floorvar0[l][k][j][i]);
+5084,5091c4523,4525
+< 	  if(mpicombine==0){
+< 	    fscanf(data,INPUT3I,&vin[l][m][k][j][i]);
+< 	    if( (l==REALNUMVEC)&&(m==3)) fscanf(data,"\n");
+< 	    else fscanf(data," ");
+< 	  }
+< 	  else{
+< 	    vin[l][m][k][j][i]=readbuf[BUFFERMAP];
+< 	  }
+---
+> 	  fscanf(data,INPUT3I,&vin[l][m][k][j][i]);
+> 	  if( (l==REALNUMVEC)&&(m==3)) fscanf(data,"\n");
+> 	  else fscanf(data," ");
+5094c4528
+<     }
+---
+>     }// end if
+5096c4530
+<       if(npoldschool<=1){	
+---
+>       if(npoldschool<=1){
+5099,5100c4533
+< 	    if(mpicombine==0) fscanf(data,INPUT2,&sigma[l][m][k][j][i]);
+< 	    else if(mpicombine==1){ sigma[l][m][k][j][i]=readbuf[BUFFERMAP];}
+---
+> 	    fscanf(data,INPUT2,&sigma[l][m][k][j][i]);
+5105,5116c4538,4543
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[1][1][k][j][i]);
+< 	else if(mpicombine==1){ sigma[1][1][k][j][i]=readbuf[BUFFERMAP];}
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[1][2][k][j][i]);
+< 	else if(mpicombine==1){ sigma[1][2][k][j][i]=readbuf[BUFFERMAP];}
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[1][3][k][j][i]);
+< 	else if(mpicombine==1){ sigma[1][3][k][j][i]=readbuf[BUFFERMAP];}
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[2][2][k][j][i]);
+< 	else if(mpicombine==1){ sigma[2][2][k][j][i]=readbuf[BUFFERMAP];}
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[2][3][k][j][i]);
+< 	else if(mpicombine==1){ sigma[2][3][k][j][i]=readbuf[BUFFERMAP];}
+< 	if(mpicombine==0) fscanf(data,INPUT2,&sigma[3][3][k][j][i]);
+< 	else if(mpicombine==1){ sigma[3][3][k][j][i]=readbuf[BUFFERMAP];}
+---
+> 	fscanf(data,INPUT2,&sigma[1][1][k][j][i]);
+> 	fscanf(data,INPUT2,&sigma[1][2][k][j][i]);
+> 	fscanf(data,INPUT2,&sigma[1][3][k][j][i]);
+> 	fscanf(data,INPUT2,&sigma[2][2][k][j][i]);
+> 	fscanf(data,INPUT2,&sigma[2][3][k][j][i]);
+> 	fscanf(data,INPUT2,&sigma[3][3][k][j][i]);
+5123,5124c4550
+< 	if(mpicombine==0) fscanf(data,INPUT2B,&nu_real[k][j][i]);
+< 	else if(mpicombine==1){ nu_real[k][j][i]=readbuf[BUFFERMAP];}
+---
+> 	fscanf(data,INPUT2B,&nu_real[k][j][i]);
+5130,5131c4556
+< 	  if(mpicombine==0) fscanf(data,INPUT7,&avg2_3[l][j][i]);
+< 	  else if(mpicombine==1){ avg2_3[l][j][i]=readbuf[BUFFERMAP];}
+---
+> 	  fscanf(data,INPUT7,&avg2_3[l][j][i]);
+5136,5137c4561
+< 	  if(mpicombine==0) fscanf(data,INPUT7,&avg2_3[l][j][i]);
+< 	  else if(mpicombine==1){ avg2_3[l][j][i]=readbuf[BUFFERMAP];}
+---
+> 	  fscanf(data,INPUT7,&avg2_3[l][j][i]);
+5153,5154c4577
+<   if(mpicombine==0) fclose(data);
+<   else free(readbuf);
+---
+>   fclose(data);
+5158c4581,4588
+<     LOOPDIAGOUTPUT(range,range,range){
+---
+> #if(FULLINPUT==2)
+>     LOOPF
+> #elif(FULLINPUT==1)
+>     LOOPH
+> #elif(FULLINPUT==0)
+>     LOOP
+> #endif
+>     {
+5290c4720
+<       sprintf(temps,"%s%s",DATADIR,IMAGEDIR);
+---
+>       sprintf(temps,"%s%s",DATADIR,"i/");
+5373c4803
+<       for(iii=dualgostart;iii<=dualgoend;iii++){ // assume only the 0th tile(sliceloop)
+---
+>       for(iii=dualgostart;iii<=dualgoend;iii++){
+5375c4805
+< 	sprintf(temps,"%s%s",DATADIR,IMAGEDIR);
+---
+> 	sprintf(temps,"%s%s",DATADIR,"i/");
+5378,5380c4808,4833
+< 	  if(!OLDIMAGEFORMAT){
+< 	    sprintf(temps,"%simx%01d-%01d-0-s%01d/",temps,outtype,iii,ll);
+< 	    sprintf(ifnam,"%s%s%01d-%01d-0-s%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,myidtxt);
+---
+> 	  sprintf(temps,"%simx%01d-%01d-s%01d/",temps,outtype,iii,ll);
+> 	  sprintf(ifnam,"%s%s%01d-%01d-s%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,myidtxt);
+> 	
+> 	  if(IMAGEFORMATINPUT==0){
+> 	    strcat(ifnam,".r8");
+> 	    if(GZIPIMAGEINPUT==0){
+> 	      im_file = fopen(ifnam,"rb");
+> 	    }
+> 	    else if(GZIPIMAGEINPUT>0){
+> 	      strcat(ifnam,".gz");
+> 	      
+> 	      sprintf(temp,"gzip -d < %s",ifnam);
+> 	      im_file = popen(temp,"r");
+> 	      //fprintf(stdout,"%s %s\n",ifnam,temp);
+> 	    }
+> 	    if(im_file==NULL){
+> 	      fprintf(fail_file,"error opening image file: %s\n",ifnam) ;
+> 	      myexit(2) ;
+> 	    }
+> 	    // skip 4 comment lines
+> #if(OLDSCHOOL2==0)
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> #endif
+5382,5384c4835,4837
+< 	  else{
+< 	    sprintf(temps,"%simx%01d-%01d-s%01d/",temps,outtype,iii,ll);
+< 	    sprintf(ifnam,"%s%s%01d-%01d-s%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,myidtxt);
+---
+> 	  if(IMAGEFORMATINPUT==1){
+> 	    fprintf(fail_file,"Can't input this format of image, since not simple to reverse lookup function value to interpolate\n");
+> 	    myexit(1);
+5388,5401c4841,4843
+< 	  sprintf(ifnam,"%s%sim%01dp%04d",DATADIR,IMAGEDIR,ll-1,im_cnts[outtype][ll]); // gets RHO and UU
+< 	}
+< 	if(IMAGEFORMATINPUT==0){
+< 	  strcat(ifnam,".r8");
+< 	  if(GZIPIMAGEINPUT==0){
+< 	    im_file = fopen(ifnam,"rb");
+< 	  }
+< 	  else if(GZIPIMAGEINPUT>0){
+< 	    strcat(ifnam,".gz");
+< 	    
+< 	    sprintf(temp,"gzip -d < %s",ifnam);
+< 	    im_file = popen(temp,"r");
+< 	    //fprintf(stdout,"%s %s\n",ifnam,temp);
+< 	  }
+---
+> 	  sprintf(ifnam,"%s/i/im%04d.gz",DATADIR,im_cnts[outtype][ll]);
+> 	  sprintf(temp,"gzip -d < %s",ifnam);
+> 	  im_file = popen(temp,"r");
+5406,5416d4847
+< 	  // skip 4 comment lines
+< 	  if(OLDSCHOOL2==0){
+< 	    while(fgetc(im_file)!='\n'); // skip to next line
+< 	    while(fgetc(im_file)!='\n'); // skip to next line
+< 	    while(fgetc(im_file)!='\n'); // skip to next line
+< 	    while(fgetc(im_file)!='\n'); // skip to next line
+< 	  }
+< 	}
+< 	if(IMAGEFORMATINPUT==1){
+< 	  fprintf(fail_file,"Can't input this format of image, since not simple to reverse lookup function value to interpolate\n");
+< 	  myexit(1);
+5454a4886
+> 	  // GODMARK
+5514c4946
+<       if(GAMMIEIMAGE&&(ll==2)) break; // stop at UU
+---
+>       if(GAMMIEIMAGE) break;
+5522c4954
+<   if(wvec!=0){
+---
+>   if((!GAMMIEIMAGE)&&(wvec!=0)){
+5535,5551c4967
+< 	  if(!GAMMIEIMAGE){
+< 	    sprintf(temps,"%s%s",DATADIR,IMAGEDIR);	    
+< 	    
+< 	    strcpy(ifheader,"imx");
+< 
+< 	    if(!OLDIMAGEFORMAT){
+< 	      sprintf(temps,"%simx%01d-%01d-0-v%01d-%01d/",temps,outtype,iii,ll,q);
+< 	      sprintf(ifnam,"%s%s%01d-%01d-0-v%01d-%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,myidtxt);
+< 	    }
+< 	    else{
+< 	      sprintf(temps,"%simx%01d-%01d-v%01d-%01d/",temps,outtype,iii,ll,q);
+< 	      sprintf(ifnam,"%s%s%01d-%01d-v%01d-%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,myidtxt);
+< 	    }
+< 	  }
+< 	  else{
+< 	    sprintf(ifnam,"%s%sim%01dp%04d",DATADIR,IMAGEDIR,(ll-1)*3+(q-1)+2,im_cnts[outtype][ll]); // gets VX,VY,VZ,BX,BY,BZ
+< 	  }
+---
+> 	  sprintf(temps,"%s%s",DATADIR,"i/");	    
+5552a4969,4971
+> 	  strcpy(ifheader,"imx");
+> 	  sprintf(temps,"%simx%01d-%01d-v%01d-%01d/",temps,outtype,iii,ll,q);
+> 	  sprintf(ifnam,"%s%s%01d-%01d-v%01d-%01d-%04d%s%s",temps,ifheader,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,myidtxt);
+5569,5574c4988,4993
+< 	    if(OLDSCHOOL2==0){
+< 	      while(fgetc(im_file)!='\n'); // skip to next line
+< 	      while(fgetc(im_file)!='\n'); // skip to next line
+< 	      while(fgetc(im_file)!='\n'); // skip to next line
+< 	      while(fgetc(im_file)!='\n'); // skip to next line
+< 	    }
+---
+> #if(OLDSCHOOL2==0)
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> 	    while(fgetc(im_file)!='\n'); // skip to next line
+> #endif
+5657,5682d5075
+< #if(USEMPI)
+<   MPI_Request rrequest;
+<   MPI_Request srequest;
+< #endif
+< #if(USEMPI&&USEROMIO)
+<   MPI_Datatype newtype;
+<   MPI_File fh;
+<   MPI_Status status;
+<   MPI_Request request;
+< #endif
+<   FTYPE totalnorm,recvnorm,sendnorm;
+<   int ndims, array_of_gsizes[4], array_of_distribs[4];
+<   int order, len;
+<   int array_of_dargs[4], array_of_psizes[4];
+<   int bufcount, array_size;
+<   FTYPE *writebuf;
+<   int numcolumns;
+<   char truemyidtxt[100];
+<   int pdiddy,pdiddystart,pdiddyto;
+<   int nextbuf;
+<   int range;
+<   FILE * headerptr;
+<   int dumi;
+<   float dumf;
+<   double dumlf;
+< 
+5700c5093
+< 	fprintf(logfull_file,"outputting parameter file\n"); fflush(log_file);
+---
+> 	fprintf(log_file,"outputting parameter file\n"); fflush(log_file);
+5743,5747d5135
+<   if(mpicombine==0){
+<     strcpy(truemyidtxt,myidtxt);
+<   }
+<   else strcpy(truemyidtxt,"");
+<   
+5750d5137
+<     
+5754,5765c5141,5142
+< 
+<       numcolumns=21+NUMSCA*3+NUMVEC*3;
+<       if(mpicombine==1){
+< #if(USEMPI&&USEROMIO)
+< 	//create the distributed array filetype
+< 	ndims = 4;
+< 	order = MPI_ORDER_C;
+< 	
+< 	array_of_gsizes[3] = numcolumns;
+< 	array_of_gsizes[2] = totalsize[1];
+< 	array_of_gsizes[1] = totalsize[2];
+< 	array_of_gsizes[0] = totalsize[3];
+---
+>       for(l=1;l<=NUMGRID;l++){
+> 	sprintf(temps,"%s0_grid",DATADIR);
+5767,5775c5144
+< 	array_of_distribs[3] = MPI_DISTRIBUTE_BLOCK;
+< 	array_of_distribs[2] = MPI_DISTRIBUTE_BLOCK;
+< 	array_of_distribs[1] = MPI_DISTRIBUTE_BLOCK;
+< 	array_of_distribs[0] = MPI_DISTRIBUTE_BLOCK;
+< 	
+< 	array_of_dargs[3] = MPI_DISTRIBUTE_DFLT_DARG;
+< 	array_of_dargs[2] = MPI_DISTRIBUTE_DFLT_DARG;
+< 	array_of_dargs[1] = MPI_DISTRIBUTE_DFLT_DARG;
+< 	array_of_dargs[0] = MPI_DISTRIBUTE_DFLT_DARG;
+---
+> 	sprintf(filename,"%s%01d%s%s",temps,l,PAREXT,myidtxt);
+5777,5780d5145
+< 	array_of_psizes[3]=1;
+< 	array_of_psizes[2]=ncpux1;
+< 	array_of_psizes[1]=ncpux2;
+< 	array_of_psizes[0]=ncpux3;
+5782,5810c5147,5149
+< 	MPI_Type_create_darray(numprocs, myid, ndims, array_of_gsizes, 
+< 			       array_of_distribs, array_of_dargs,
+< 			       array_of_psizes, order, MPI_FTYPE, &newtype);
+< 	MPI_Type_commit(&newtype);
+< 	MPI_Type_size(newtype, &bufcount);
+< 	bufcount = bufcount/sizeof(FTYPE);
+< 	writebuf = (FTYPE *) malloc(bufcount * sizeof(FTYPE));
+< #endif
+<       }
+<       
+< 
+< 
+<       if(mpicombine==0){
+< 	if(FULLOUTPUT==0){ // only need if not doing fulloutput
+< 	  pdiddyto=2; // do LOOP output
+< 	}
+< 	else pdiddyto=1; // only do LOOPF output
+< 	pdiddystart=1;
+<       }
+<       else{
+< 	// only do LOOP output
+< 	pdiddystart=2;
+< 	pdiddyto=2;
+<       }
+< 
+<       for(pdiddy=pdiddystart;pdiddy<=pdiddyto;pdiddy++){
+< 	if(mpicombine==0){
+< 	  if(pdiddy==1) range=2;
+< 	  else range=0;
+---
+> 	if((out=fopen(filename,"wt"))==NULL){
+> 	  fprintf(fail_file,"Can't open %s for writting\n",filename);
+> 	  myexit(1);
+5812,5821c5151,5166
+< 	else if(mpicombine==1){ range=0;}
+< 
+< 
+< 	for(l=1;l<=NUMGRID;l++){
+< 	  fprintf(log_file,"outputting grid file: act/full: %d grid a/b: %d\n",pdiddy,l); fflush(log_file);
+< 
+< 	  if(pdiddy==1) sprintf(temps,"%s0_grid",DATADIR);
+< 	  else sprintf(temps,"%s0_gridact",DATADIR);
+< 	  sprintf(filename,"%s%01d%s%s",temps,l,PAREXT,truemyidtxt);
+< 	  
+---
+> 	else{
+> 	  fprintf(log_file,"outputting grid file: %d\n",l); fflush(log_file);
+> 	  fprintf(out,"#%10s\n%10d %10d\n","GRIDVER",GRIDVER,GRIDTYPE);
+> 	  fprintf(out,"#%4s %4s %4s %4s "
+> 		  "%21s %21s %21s "
+> 		  "%21s %21s %21s "
+> 		  "%21s %21s %21s %21s %21s %21s %21s %21s "
+> 		  "%21s %21s %21s "
+> 		  ,"grid","k","j","i","dx1","dx2","dx3","x1","x2","x3","g1","dg1","g2","dg2","g3","dg3","g4","dg4","dvl1","dvl2","dvl3");
+> 	  for(m=1;m<=NUMSCA;m++){
+> 	    fprintf(out,"%6s%02d %6s%02d %6s%02d ","bsty",m,"bsdm",m,"bsdr",m);
+> 	  }
+> 	  for(m=1;m<=NUMVEC;m++){
+> 	    fprintf(out,"%6s%02d %6s%02d %6s%02d","bvty",m,"bvdm",m,"bvdr",m);
+> 	    if(m==NUMVEC) fprintf(out,"\n"); else fprintf(out," ");
+> 	  }
+5823,5827c5168,5180
+< 	  if(mpicombine==0){
+< 	    if(binaryoutput==0){
+< 	      if((out=fopen(filename,"wt"))==NULL){
+< 		fprintf(fail_file,"Can't open %s for writting\n",filename);
+< 		myexit(1);
+---
+> 	  LOOPF{
+> 	    fprintf(out,HEADER4_P,
+> 		    l,startpos[3]+k,startpos[2]+j,startpos[1]+i,
+> 		    dx[l][1][i],dx[l][2][j],dx[l][3][k],
+> 		    x[l][1][i],x[l][2][j],x[l][3][k],
+> 		    g[l][1][i],dg[l][1][i],g[l][2][i],dg[l][2][i],g[l][3][i],dg[l][3][i],g[l][4][j],dg[l][4][j],
+> 		    dvl[l][1][i],dvl[l][2][j],dvl[l][3][k]
+> 		    );
+> 	    if(BOUNDTYPE==1){
+> 	      for(m=1;m<=NUMSCA;m++){
+> 		fprintf(out,"%6d ",bcs[m][1][k][j][i]);
+> 		fprintf(out,"%6d ",bcs[m][2][k][j][i]);
+> 		fprintf(out,"%6d ",bcs[m][3][k][j][i]);
+5829,5834c5182,5185
+< 	      headerptr=out;
+< 	    }
+< 	    else{
+< 	      if((out=fopen(filename,"wb"))==NULL){
+< 		fprintf(fail_file,"Can't open %s for writting\n",filename);
+< 		myexit(1);
+---
+> 	      for(m=1;m<=NUMVEC;m++){
+> 		fprintf(out,"%6d ",bcv[m][1][k][j][i]);
+> 		fprintf(out,"%6d ",bcv[m][2][k][j][i]);
+> 		fprintf(out,"%6d",bcv[m][3][k][j][i]);
+5837,5851c5188,5198
+< 	  }
+< 	  else{
+< #if(USEMPI&&USEROMIO)
+< 	    MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_RDWR, 
+< 			  MPI_INFO_NULL, &fh);
+< 	    MPI_File_set_view(fh, 0, MPI_FTYPE, newtype, "native", MPI_INFO_NULL);
+< 	    // all that needs to be done now is fill writebuf with the data
+< #endif
+< 	  }
+< 	  if( ((myid==0)&&(mpicombine==1))||(binaryoutput==1)){
+< 	    // header
+< 	    strcat(filename,".head");
+< 	    if((headerptr=fopen(filename,"wt"))==NULL){
+< 	      fprintf(fail_file,"Can't open %s for writting\n",filename);
+< 	      myexit(1);
+---
+> 	    else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+> 	      fprintf(out,"%6d ",bzmask[k][j][i]);
+> 	      fprintf(out,"%6d ",bzmaskin[k][j][i]);
+> 	      //	      fprintf(out,"%6d ",maskv2[k][j][i]);
+> 	      //fprintf(out,"%6d ",maskv3[k][j][i]);
+> 	      //	      fprintf(out,"%6d ",bzs[1][k][j][i]);
+> 	      //fprintf(out,"%6d ",bzs[2][k][j][i]);
+> 	      //fprintf(out,"%6d ",bzs[3][k][j][i]);
+> 	      for(m=1;m<=14-1;m++){ // GODMARK for now
+> 		fprintf(out,"%6d ",0);
+> 	      }
+5852a5200
+> 	    fprintf(out,"\n");
+5853a5202,5205
+> 	}
+> 	fclose(out);
+>       }
+>     
+5855,5857c5207,5221
+< 	  if( ((myid==0)&&(mpicombine==1))||(mpicombine==0)){
+< 	    fprintf(headerptr,"#%10s\n%10d %10d\n","GRIDVER",GRIDVER,GRIDTYPE);
+< 	    fprintf(headerptr,"#%4s %4s %4s %4s "
+---
+>       if(FULLOUTPUT==0){ // only need if not doing fulloutput
+> 	//output dx x diffs to file--active zones only (only diff is LOOPF->LOOP from above)
+> 	for(l=1;l<=NUMGRID;l++){
+> 	  fprintf(log_file,"full outputting grid file: %d\n",l); fflush(log_file);
+> 	  sprintf(temps,"%s0_gridact",DATADIR);
+> 	  
+> 	  sprintf(filename,"%s%01d%s%s",temps,l,PAREXT,myidtxt);
+> 	  
+> 	  if((out=fopen(filename,"wt"))==NULL){
+> 	    fprintf(fail_file,"Can't open %s for writting\n",filename);
+> 	    myexit(1);
+> 	  }
+> 	  else{
+> 	    fprintf(out,"#%10s\n%10d %10d\n","GRIDVER",GRIDVER,GRIDTYPE);
+> 	    fprintf(out,"#%4s %4s %4s %4s "
+5864c5228
+< 	      fprintf(headerptr,"%6s%02d %6s%02d %6s%02d ","bsty",m,"bsdm",m,"bsdr",m);
+---
+> 	      fprintf(out,"%6s%02d %6s%02d %6s%02d ","bsty",m,"bsdm",m,"bsdr",m);
+5867,5868c5231,5232
+< 	      fprintf(headerptr,"%6s%02d %6s%02d %6s%02d","bvty",m,"bvdm",m,"bvdr",m);
+< 	      if(m==NUMVEC) fprintf(headerptr,"\n"); else fprintf(headerptr," ");
+---
+> 	      fprintf(out,"%6s%02d %6s%02d %6s%02d","bvty",m,"bvdm",m,"bvdr",m);
+> 	      if(m==NUMVEC) fprintf(out,"\n"); else fprintf(out," ");
+5870,6013c5234
+< 	  }
+< 	  if(mpicombine==0){
+< 	    LOOPDIAGOUTPUT(range,range,range){
+< 	      if(binaryoutput==0){
+< 		fprintf(out,HEADER4_P,
+< 			l,startpos[3]+k,startpos[2]+j,startpos[1]+i,
+< 			dx[l][1][i],dx[l][2][j],dx[l][3][k],
+< 			x[l][1][i],x[l][2][j],x[l][3][k],
+< #if(LOWMEMMODE==0)
+< 			g[l][1][i],dg[l][1][i],g[l][2][i],dg[l][2][i],g[l][3][i],dg[l][3][i],g[l][4][j],dg[l][4][j],
+< 			dvl[l][1][i],dvl[l][2][j],dvl[l][3][k]
+< #else
+< 			0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+< 			0.0,0.0,0.0
+< #endif
+< 			);
+< 		if((PUREBC==0)&&(BOUNDTYPE==1)){
+< 		  for(m=1;m<=NUMSCA;m++){
+< 		    fprintf(out,"%6d ",bcs[m][1][k][j][i]);
+< 		    fprintf(out,"%6d ",bcs[m][2][k][j][i]);
+< 		    fprintf(out,"%6d ",bcs[m][3][k][j][i]);
+< 		  }
+< 		  for(m=1;m<=NUMVEC;m++){
+< 		    fprintf(out,"%6d ",bcv[m][1][k][j][i]);
+< 		    fprintf(out,"%6d ",bcv[m][2][k][j][i]);
+< 		    fprintf(out,"%6d",bcv[m][3][k][j][i]);
+< 		  }
+< 		}
+< 		else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+< 		  fprintf(out,"%6d ",bzmask[k][j][i]);
+< 		  fprintf(out,"%6d ",bzmaskin[k][j][i]);
+< 		  //	      fprintf(out,"%6d ",maskv2[k][j][i]);
+< 		  //fprintf(out,"%6d ",maskv3[k][j][i]);
+< 		  //	      fprintf(out,"%6d ",bzs[1][k][j][i]);
+< 		  //fprintf(out,"%6d ",bzs[2][k][j][i]);
+< 		  //fprintf(out,"%6d ",bzs[3][k][j][i]);
+< 		  for(m=1;m<=14-1;m++){ // GODMARK for now
+< 		    fprintf(out,"%6d ",0);
+< 		  }
+< 		}
+< 		else{
+< 		  for(m=1;m<=14-1+2;m++){ // GODMARK for now
+< 		    fprintf(out,"%6d ",0);
+< 		  }
+< 		}
+< 		fprintf(out,"\n");
+< 	      }// end text output
+< 	      else{
+< #if(FLOATTYPE==0)
+< #define WHICHDUM (dumf)
+< #elif(FLOATTYPE==1)
+< #define WHICHDUM (dumlf)
+< #endif
+< 		dumi=l;
+< 		fwrite(&dumi,sizeof(int),1,out);
+< 		dumi=startpos[3]+k;
+< 		fwrite(&dumi,sizeof(int),1,out);
+< 		dumi=startpos[2]+j;
+< 		fwrite(&dumi,sizeof(int),1,out);
+< 		dumi=startpos[1]+i;
+< 		fwrite(&dumi,sizeof(int),1,out);
+< 		WHICHDUM=dx[l][1][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dx[l][2][j];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dx[l][3][k];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=x[l][1][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=x[l][2][j];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=x[l][3][k];
+< #if(LOWMEMMODE==0)
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=g[l][1][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dg[l][1][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=g[l][2][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dg[l][2][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=g[l][3][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dg[l][3][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=g[l][4][j];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dg[l][4][j];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dvl[l][1][i];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dvl[l][2][j];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		WHICHDUM=dvl[l][3][k];
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< #else
+< 		WHICHDUM=0;
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< 		fwrite(&WHICHDUM,sizeof(FTYPE),1,out);
+< #endif
+< 		if((PUREBC==0)&&(BOUNDTYPE==1)){
+< 		  for(m=1;m<=NUMSCA;m++){
+< 		    dumi=bcs[m][1][k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		    dumi=bcs[m][2][k][j][i];fwrite(&dumi,sizeof(int),1,out);
+< 		    dumi=bcs[m][3][k][j][i];fwrite(&dumi,sizeof(int),1,out);
+< 		  }
+< 		  for(m=1;m<=NUMVEC;m++){
+< 		    dumi=bcv[m][1][k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		    dumi=bcv[m][2][k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		    dumi=bcv[m][3][k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		  }
+< 		}
+< 		else if((BOUNDTYPE==2)||(BOUNDTYPE==3)){
+< 		  dumi=bzmask[k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		  dumi=bzmaskin[k][j][i]; fwrite(&dumi,sizeof(int),1,out);
+< 		  //	      fprintf(out,"%6d ",maskv2[k][j][i]);
+< 		  //fprintf(out,"%6d ",maskv3[k][j][i]);
+< 		  //	      fprintf(out,"%6d ",bzs[1][k][j][i]);
+< 		  //fprintf(out,"%6d ",bzs[2][k][j][i]);
+< 		  //fprintf(out,"%6d ",bzs[3][k][j][i]);
+< 		  for(m=1;m<=14-1;m++){ // GODMARK for now
+< 		    dumi=0; fwrite(&dumi,sizeof(int),1,out);
+< 		  }
+< 		}
+< 		else{
+< 		  for(m=1;m<=14-1+2;m++){ // GODMARK for now
+< 		    dumi=0; fwrite(&dumi,sizeof(int),1,out);
+< 		  }
+< 		}
+< 	      }// end binary output
+< 	    }	    
+< 	    fclose(out);
+< 	  }// end if mpicombine==0
+< 	  else{
+---
+> 	    
+6015,6052c5236,5243
+< 	      BUFFERINIT;
+< 	      writebuf[BUFFERMAP]=l;
+< 	      writebuf[BUFFERMAP]=startpos[3]+k;
+< 	      writebuf[BUFFERMAP]=startpos[2]+j;
+< 	      writebuf[BUFFERMAP]=startpos[1]+i;
+< 	      writebuf[BUFFERMAP]=dx[l][1][i];
+< 	      writebuf[BUFFERMAP]=dx[l][2][j];
+< 	      writebuf[BUFFERMAP]=dx[l][3][k];
+< 	      writebuf[BUFFERMAP]=x[l][1][i];
+< 	      writebuf[BUFFERMAP]=x[l][2][j];
+< 	      writebuf[BUFFERMAP]=x[l][3][k];
+< #if(LOWMEMMODE==0)
+< 	      writebuf[BUFFERMAP]=g[l][1][i];
+< 	      writebuf[BUFFERMAP]=dg[l][1][i];
+< 	      writebuf[BUFFERMAP]=g[l][2][i];
+< 	      writebuf[BUFFERMAP]=dg[l][2][i];
+< 	      writebuf[BUFFERMAP]=g[l][3][i];
+< 	      writebuf[BUFFERMAP]=dg[l][3][i];
+< 	      writebuf[BUFFERMAP]=g[l][4][j];
+< 	      writebuf[BUFFERMAP]=dg[l][4][j];
+< 	      writebuf[BUFFERMAP]=dvl[l][1][i];
+< 	      writebuf[BUFFERMAP]=dvl[l][2][j];
+< 	      writebuf[BUFFERMAP]=dvl[l][3][k];
+< #else
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< 	      writebuf[BUFFERMAP]=0;
+< #endif
+< 	      // 21
+< 	      if((PUREBC==0)&&(BOUNDTYPE==1)){
+---
+> 	      fprintf(out,HEADER4_P,
+> 		      l,startpos[3]+k,startpos[2]+j,startpos[1]+i,
+> 		      dx[l][1][i],dx[l][2][j],dx[l][3][k],
+> 		      x[l][1][i],x[l][2][j],x[l][3][k],
+> 		      g[l][1][i],dg[l][1][i],g[l][2][i],dg[l][2][i],g[l][3][i],dg[l][3][i],g[l][4][j],dg[l][4][j],
+> 		      dvl[l][1][i],dvl[l][2][j],dvl[l][3][k]
+> 		      );
+> 	      if(BOUNDTYPE==1){
+6054,6056c5245,5247
+< 		  writebuf[BUFFERMAP]=bcs[m][1][k][j][i];
+< 		  writebuf[BUFFERMAP]=bcs[m][2][k][j][i];
+< 		  writebuf[BUFFERMAP]=bcs[m][3][k][j][i];
+---
+> 		  fprintf(out,"%6d ",bcs[m][1][k][j][i]);
+> 		  fprintf(out,"%6d ",bcs[m][2][k][j][i]);
+> 		  fprintf(out,"%6d ",bcs[m][3][k][j][i]);
+6058d5248
+< 		// 30
+6060,6062c5250,5252
+< 		  writebuf[BUFFERMAP]=bcv[m][1][k][j][i];
+< 		  writebuf[BUFFERMAP]=bcv[m][2][k][j][i];
+< 		  writebuf[BUFFERMAP]=bcv[m][3][k][j][i];
+---
+> 		  fprintf(out,"%6d ",bcv[m][1][k][j][i]);
+> 		  fprintf(out,"%6d ",bcv[m][2][k][j][i]);
+> 		  fprintf(out,"%6d",bcv[m][3][k][j][i]);
+6064d5253
+< 		// 36
+6067,6068c5256,5262
+< 		writebuf[BUFFERMAP]=bzmask[k][j][i];
+< 		writebuf[BUFFERMAP]=bzmaskin[k][j][i];
+---
+> 		fprintf(out,"%6d ",bzmask[k][j][i]);
+> 		fprintf(out,"%6d ",bzmaskin[k][j][i]);
+> 		//fprintf(out,"%6d ",maskv2[k][j][i]);
+> 		//fprintf(out,"%6d ",maskv3[k][j][i]);
+> 		//		fprintf(out,"%6d ",bzs[1][k][j][i]);
+> 		//fprintf(out,"%6d ",bzs[2][k][j][i]);
+> 		//fprintf(out,"%6d ",bzs[3][k][j][i]);
+6070,6075c5264
+< 		  writebuf[BUFFERMAP]=0;
+< 		}
+< 	      }	      
+< 	      else{
+< 		for(m=1;m<=14-1+2;m++){ // GODMARK for now
+< 		  writebuf[BUFFERMAP]=0;
+---
+> 		  fprintf(out,"%6d ",0);
+6077c5266,5267
+< 	      }	      
+---
+> 	      }
+> 	      fprintf(out,"\n");
+6079,6088c5269,5271
+< #if(USEMPI&&USEROMIO)
+< 	    // now write the buffer:
+< 	    MPI_File_write_all(fh, writebuf, bufcount, MPI_FTYPE, &status);
+< 	    MPI_File_close(&fh);
+< #endif
+< 	  }// end if mpicombine==1
+< 	}// end over grids (l)
+<       }// end pdiddy
+<       if(mpicombine==1){
+< 	free(writebuf);
+---
+> 	  }
+> 	  fclose(out);
+> 	}
+6090d5272
+<       if( ((myid==0)&&(mpicombine==1))||(binaryoutput==1)) fclose(headerptr);
+6094,6096d5275
+< 
+< 
+< 
+6098d5276
+<     // no MPI with interp
+6256c5434
+< #if(DOAVGDIAGMEMORY)
+---
+> #if(DOAVGDIAG)
+6266c5444
+< #if(FLOORDUMPFLAGMEMORY)
+---
+> #if(FLOORDUMPFLAG)
+6276,6285c5454,5463
+< #if((LOWMEMMODE==0)&&(TVDLF==0))
+<   ds=(FTYPE (*) [3][N3M][N2M][N1M]) (&(dsa[-1][-1][N3BND][N2BND][N1BND])); 
+<   oarcl=(FTYPE (*) [3][N3M][N2M][N1M]) (&(oarcla[-1][-1][N3BND][N2BND][N1BND]));
+<   odx=(FTYPE (*) [3][NBIGM]) (&(odxa[-1][-1][NBIGBND]));
+<   ovol=(FTYPE (*) [N3M][N2M][N1M]) (&(ovola[-1][N3BND][N2BND][N1BND])); 
+< #else
+<   ds=(FTYPE (*) [3][N3M][N2M][N1M]) (0);
+<   oarcl=(FTYPE (*) [3][N3M][N2M][N1M]) (0);
+<   odx=(FTYPE (*) [3][NBIGM]) (0);
+<   ovol=(FTYPE (*) [N3M][N2M][N1M]) (0);
+---
+> #if(TVDLF==0)
+>   DS=(FTYPE (*) [3][N3M][N2M][N1M]) (&(DSa[-1][-1][N3BND][N2BND][N1BND])); 
+>   OARCL=(FTYPE (*) [3][N3M][N2M][N1M]) (&(OARCLa[-1][-1][N3BND][N2BND][N1BND]));
+>   ODX=(FTYPE (*) [3][NBIGM]) (&(ODXa[-1][-1][NBIGBND]));
+>   OVOL=(FTYPE (*) [N3M][N2M][N1M]) (&(OVOLa[-1][N3BND][N2BND][N1BND])); 
+> #else
+>   DS=(FTYPE (*) [3][N3M][N2M][N1M]) (0);
+>   OARCL=(FTYPE (*) [3][N3M][N2M][N1M]) (0);
+>   ODX=(FTYPE (*) [3][NBIGM]) (0);
+>   OVOL=(FTYPE (*) [N3M][N2M][N1M]) (0);
+6287,6288d5464
+< 
+< #if(LOWMEMMODE==0)
+6290c5466
+<   og=(FTYPE (*) [NUMMETRIC][NBIGM])(&(oga[-1][-1][NBIGBND]));
+---
+>   OG=(FTYPE (*) [NUMMETRIC][NBIGM])(&(OGa[-1][-1][NBIGBND]));
+6293,6301c5469
+<   odvl=(FTYPE (*) [3][NBIGM])(&(odvla[-1][-1][NBIGBND]));
+< #else
+<   g=(FTYPE (*) [NUMMETRIC][NBIGM])(0);
+<   og=(FTYPE (*) [NUMMETRIC][NBIGM])(0);
+<   dg=(FTYPE (*) [NUMMETRIC][NBIGM])(0);
+<   dvl=(FTYPE (*) [3][NBIGM])(0);
+<   odvl=(FTYPE (*) [3][NBIGM])(0);
+< #endif
+< 
+---
+>   ODVL=(FTYPE (*) [3][NBIGM])(&(ODVLa[-1][-1][NBIGBND]));
+6303c5471
+< #if((PUREBC==0)&&(BOUNDTYPE==1))
+---
+> #if(BOUNDTYPE==1)
+6319,6325d5486
+< #else
+<   // dummy
+<   bzmask=(short (*) [N2M][N1M])(0);
+<   bzmaskin=(short (*) [N2M][N1M])(0);
+<   // dummy
+<   bcs=(short (*) [3][N3M][N2M][N1M])(0);
+<   bcv=(short (*) [3][N3M][N2M][N1M])(0);
+6328,6329c5489
+< 
+< #if((BOUNDTYPE==3)&&(POSTPROC==0))
+---
+> #if(BOUNDTYPE==3)
+6331,6332d5490
+< #else
+<   iindx=(short (*) [2][N3M][N2M])(0);
+6335c5493
+< #if((LOOPTYPE==1)&&((DOLOSSDIAGMEMORY)&&(POSTPROC==0)) )
+---
+> #if((LOOPTYPE==1)&&((DOLOSSDIAG)&&(POSTPROC==0)) )
+6938c6096
+<       acoef=4; // Factor by which each larger decade dx is to last decade. 
+---
+>       acoef=20; // Factor by which each larger decade dx is to last decade. 
+7199d6356
+<   SFTYPE startdiff=0;
+7220,7226d6376
+<     startdiff=startbc[1]; // starting value
+< 
+< 
+<     //////
+<     //
+<     // see if need to correct starting position
+<     //
+7248a6399,6404
+> 	  // now get comp grid start value
+> 	  sx[1]=startbc[1];
+> 	  for(i=-1;i>=-NB[1];i--){
+> 	    if(which==0) sx[1]+=dx[1][1][i];
+> 	    else if(which==1) sx[1]+=idx[1][1][i];
+> 	  }
+7280,7292d6435
+< 
+<     // now transmit new startbc[1] to all cpus, assuming cpu=0 holds it if any do
+< #if(USEMPI)
+<     ftemp=startbc[1]-startdiff;
+<     MPI_Bcast(&ftemp,1,MPI_SFTYPE,0,MPI_COMM_WORLD);
+<     if(mycpupos[1]!=0) startbc[1]+=ftemp; // otherwise no need to correct under normal circumstances
+< #endif
+<     // now get comp grid start value
+<     sx[1]=startbc[1];
+<     for(i=-1;i>=-NB[1];i--){
+<       if(which==0) sx[1]+=dx[1][1][i];
+<       else if(which==1) sx[1]+=idx[1][1][i];
+<     }
+7294c6437
+<     //    L[1][1]=sx[1];
+---
+>     L[1][1]=sx[1];
+7305d6447
+<     startdiff=startbc[2]; // starting value
+7324,7335d6465
+< #if(USEMPI)
+<     ftemp=startbc[2]-startdiff;
+<     MPI_Bcast(&ftemp,1,MPI_SFTYPE,0,MPI_COMM_WORLD);
+<     if(mycpupos[2]!=0) startbc[2]+=ftemp; // otherwise no need to correct under normal circumstances
+< #endif
+<     // now get comp grid start value
+<     sx[2]=startbc[2];
+<     for(j=-1;j>=-NB[2];j--){
+<       if(which==0) sx[2]+=dx[1][2][j];
+<       else if(which==1) sx[2]+=idx[1][2][j];
+<     }
+< 
+7344d6473
+<     startdiff=startbc[3]; // starting value
+7355,7367d6483
+< 
+< #if(USEMPI)
+<     ftemp=startbc[3]-startdiff;
+<     MPI_Bcast(&ftemp,1,MPI_SFTYPE,0,MPI_COMM_WORLD);
+<     if(mycpupos[3]!=0) startbc[3]+=ftemp; // otherwise no need to correct under normal circumstances
+< #endif
+<     // now get comp grid start value
+<     sx[3]=startbc[3];
+<     for(k=-1;k>=-NB[3];k--){
+<       if(which==0) sx[3]+=dx[1][3][k];
+<       else if(which==1) sx[3]+=idx[1][3][k];
+<     }
+< 
+7492d6607
+< 
+7579c6694
+<       if(! ( (ncpux3==1)||(ncpux3%2==0) ) ){ // ncpux3 must be 1 or even
+---
+>       if(! ( (NCPUX3==1)||(NCPUX3%2==0) ) ){ // NCPUX3 must be 1 or even
+7581c6696
+< 	fprintf(fail_file,"No setup for non-1 and odd cpu number in X3 direction when periodicx2special=%d, ncpux3=%d\n",periodicx2special,ncpux3);
+---
+> 	fprintf(fail_file,"No setup for non-1 and odd cpu number in X3 direction when periodicx2special=%d, NCPUX3=%d\n",periodicx2special,NCPUX3);
+7621c6736
+< 	if(LOWMEMMODE==0) dvl[2][m][i]=dvl[1][m][i];
+---
+> 	dvl[2][m][i]=dvl[1][m][i];
+7626,7631c6741,6746
+< 	  if(LOWMEMMODE==0) g[1][1][i]=g[2][1][i];
+< 	  if(LOWMEMMODE==0) g[1][2][i]=g[2][2][i];
+< 	  if(LOWMEMMODE==0) g[1][3][i]=g[2][3][i];
+< 	  if(LOWMEMMODE==0) dg[1][1][i]=dg[2][1][i];
+< 	  if(LOWMEMMODE==0) dg[1][2][i]=dg[2][2][i];
+< 	  if(LOWMEMMODE==0) dg[1][3][i]=dg[2][3][i];
+---
+> 	  g[1][1][i]=g[2][1][i];
+> 	  g[1][2][i]=g[2][2][i];
+> 	  g[1][3][i]=g[2][3][i];
+> 	  dg[1][1][i]=dg[2][1][i];
+> 	  dg[1][2][i]=dg[2][2][i];
+> 	  dg[1][3][i]=dg[2][3][i];
+7634,7635c6749,6750
+< 	  if(LOWMEMMODE==0) g[1][4][i]=g[2][4][i];
+< 	  if(LOWMEMMODE==0) dg[1][4][i]=dg[2][4][i];
+---
+> 	  g[1][4][i]=g[2][4][i];
+> 	  dg[1][4][i]=dg[2][4][i];
+7660,7661c6775,6776
+<     if(LOWMEMMODE==0) g[2][4][0]=g[1][4][0]=1.0;
+<     if(LOWMEMMODE==0) dg[2][4][0]=dg[1][4][0]=0.0;
+---
+>     g[2][4][0]=g[1][4][0]=1.0;
+>     dg[2][4][0]=dg[1][4][0]=0.0;
+7676c6791
+<   // ds[type][direction]...
+---
+>   // DS[type][direction]...
+7683,7685c6798,6800
+<     ds[1][1][k][j][i]=g[1][2][i]*g[1][3][i]*dvl[1][2][j]; // *dx[2][3][k];
+<     ds[1][2][k][j][i]=g[2][3][i]*dx[1][1][i]*g[1][4][j]; // *dx[2][3][k];
+<     ds[1][3][k][j][i]=g[2][2][i]*dx[1][1][i]*dx[1][2][j];
+---
+>     DS[1][1][k][j][i]=g[1][2][i]*g[1][3][i]*dvl[1][2][j]; // *dx[2][3][k];
+>     DS[1][2][k][j][i]=g[2][3][i]*dx[1][1][i]*g[1][4][j]; // *dx[2][3][k];
+>     DS[1][3][k][j][i]=g[2][2][i]*dx[1][1][i]*dx[1][2][j];
+7688,7690c6803,6805
+<     ds[2][1][k][j][i]=g[2][2][i]*g[2][3][i]*dvl[1][2][j]; // *dx[2][3][k];
+<     ds[2][2][k][j][i]=g[1][3][i]*dx[2][1][i]*g[1][4][j]; // *dx[2][3][k];
+<     ds[2][3][k][j][i]=g[1][2][i]*dx[2][1][i]*dx[1][2][j];
+---
+>     DS[2][1][k][j][i]=g[2][2][i]*g[2][3][i]*dvl[1][2][j]; // *dx[2][3][k];
+>     DS[2][2][k][j][i]=g[1][3][i]*dx[2][1][i]*g[1][4][j]; // *dx[2][3][k];
+>     DS[2][3][k][j][i]=g[1][2][i]*dx[2][1][i]*dx[1][2][j];
+7693,7695c6808,6810
+<     ds[3][1][k][j][i]=g[1][2][i]*g[1][3][i]*dvl[2][2][j]; // *dx[2][3][k];
+<     ds[3][2][k][j][i]=g[2][3][i]*dx[1][1][i]*g[2][4][j]; // *dx[2][3][k];
+<     ds[3][3][k][j][i]=g[2][2][i]*dx[1][1][i]*dx[2][2][j];
+---
+>     DS[3][1][k][j][i]=g[1][2][i]*g[1][3][i]*dvl[2][2][j]; // *dx[2][3][k];
+>     DS[3][2][k][j][i]=g[2][3][i]*dx[1][1][i]*g[2][4][j]; // *dx[2][3][k];
+>     DS[3][3][k][j][i]=g[2][2][i]*dx[1][1][i]*dx[2][2][j];
+7698,7700c6813,6815
+<     ds[4][1][k][j][i]=g[2][2][i]*g[2][3][i]*dvl[2][2][j]; // *dx[2][3][k];
+<     ds[4][2][k][j][i]=g[1][3][i]*dx[2][1][i]*g[2][4][j]; // *dx[2][3][k];
+<     ds[4][3][k][j][i]=g[1][2][i]*dx[2][1][i]*dx[2][2][j];
+---
+>     DS[4][1][k][j][i]=g[2][2][i]*g[2][3][i]*dvl[2][2][j]; // *dx[2][3][k];
+>     DS[4][2][k][j][i]=g[1][3][i]*dx[2][1][i]*g[2][4][j]; // *dx[2][3][k];
+>     DS[4][3][k][j][i]=g[1][2][i]*dx[2][1][i]*dx[2][2][j];
+7702c6817
+<     //oarcl[type][dir]...
+---
+>     //OARCL[type][dir]...
+7708,7710c6823,6825
+<     oarcl[1][1][k][j][i]=1.0/dx[2][1][i] ;
+<     oarcl[1][2][k][j][i]=1.0/(g[2][2][i]*dx[2][2][j]) ;
+<     oarcl[1][3][k][j][i]=1.0/(g[2][3][i]*g[2][4][j]) ;// 1/dx[2][3][k]
+---
+>     OARCL[1][1][k][j][i]=1.0/dx[2][1][i] ;
+>     OARCL[1][2][k][j][i]=1.0/(g[2][2][i]*dx[2][2][j]) ;
+>     OARCL[1][3][k][j][i]=1.0/(g[2][3][i]*g[2][4][j]) ;// 1/dx[2][3][k]
+7713c6828
+<     oarcl[2][1][k][j][i]=1.0/dx[1][1][i] ;
+---
+>     OARCL[2][1][k][j][i]=1.0/dx[1][1][i] ;
+7715c6830
+<       oarcl[2][2][k][j][i]=1.0; // set to this to avoid singularity ( this one is no big deal if COMPDIM<=2)
+---
+>       OARCL[2][2][k][j][i]=1.0; // set to this to avoid singularity ( this one is no big deal if COMPDIM<=2)
+7718c6833
+<       oarcl[2][2][k][j][i]=1.0/(g[1][2][i]*dx[2][2][j]) ; // real coord sing if COMPDIM==3 and r=0
+---
+>       OARCL[2][2][k][j][i]=1.0/(g[1][2][i]*dx[2][2][j]) ; // real coord sing if COMPDIM==3 and r=0
+7720c6835
+<     oarcl[2][3][k][j][i]=1.0/(g[1][3][i]*g[2][4][j]) ; // 1/dx[2][3][k]
+---
+>     OARCL[2][3][k][j][i]=1.0/(g[1][3][i]*g[2][4][j]) ; // 1/dx[2][3][k]
+7723,7724c6838,6839
+<     oarcl[3][1][k][j][i]=1.0/dx[2][1][i] ;
+<     oarcl[3][2][k][j][i]=1.0/(g[2][2][i]*dx[1][2][j]) ;
+---
+>     OARCL[3][1][k][j][i]=1.0/dx[2][1][i] ;
+>     OARCL[3][2][k][j][i]=1.0/(g[2][2][i]*dx[1][2][j]) ;
+7727c6842
+<       oarcl[3][3][k][j][i]=0.0;
+---
+>       OARCL[3][3][k][j][i]=0.0;
+7730c6845
+<       oarcl[3][3][k][j][i]=1.0/(g[2][3][i]*g[1][4][j]) ; // /dx[2][3][k] // real coord sing if COMPDIM==3  singularity if theta=0,Pi
+---
+>       OARCL[3][3][k][j][i]=1.0/(g[2][3][i]*g[1][4][j]) ; // /dx[2][3][k] // real coord sing if COMPDIM==3  singularity if theta=0,Pi
+7733c6848
+<     oarcl[4][1][k][j][i]=1.0/dx[1][1][i] ;
+---
+>     OARCL[4][1][k][j][i]=1.0/dx[1][1][i] ;
+7735c6850
+<       oarcl[4][2][k][j][i]=1.0 ; // to avoid sing
+---
+>       OARCL[4][2][k][j][i]=1.0 ; // to avoid sing
+7738c6853
+<       oarcl[4][2][k][j][i]=1.0/(g[1][2][i]*dx[1][2][j]) ;  // real coord sing if COMPDIM==3 and r=0
+---
+>       OARCL[4][2][k][j][i]=1.0/(g[1][2][i]*dx[1][2][j]) ;  // real coord sing if COMPDIM==3 and r=0
+7742c6857
+<       oarcl[4][3][k][j][i]=0.0;
+---
+>       OARCL[4][3][k][j][i]=0.0;
+7745c6860
+<       oarcl[4][3][k][j][i]=1.0/(g[1][3][i]*g[1][4][j]) ;// /dx[1][3][k] // real coord sing if COMPDIM==3  singularity if theta=0,Pi
+---
+>       OARCL[4][3][k][j][i]=1.0/(g[1][3][i]*g[1][4][j]) ;// /dx[1][3][k] // real coord sing if COMPDIM==3  singularity if theta=0,Pi
+7748c6863
+<     //ovol[type]...
+---
+>     //OVOL[type]...
+7753c6868
+<     ovol[1][k][j][i]=1.0/(dvl[1][1][i]*dvl[1][2][j]); // /dvl[1][3][k]
+---
+>     OVOL[1][k][j][i]=1.0/(dvl[1][1][i]*dvl[1][2][j]); // /dvl[1][3][k]
+7755c6870
+<     ovol[3][k][j][i]=1.0/(dvl[1][1][i]*dvl[2][2][j]) ; // /dvl[1][3][k]
+---
+>     OVOL[3][k][j][i]=1.0/(dvl[1][1][i]*dvl[2][2][j]) ; // /dvl[1][3][k]
+7757c6872
+<     ovol[2][k][j][i]=1.0/(dvl[2][1][i]*dvl[1][2][j]); // /dvl[1][3][k]
+---
+>     OVOL[2][k][j][i]=1.0/(dvl[2][1][i]*dvl[1][2][j]); // /dvl[1][3][k]
+7760c6875
+<     ovol[4][k][j][i]=1.0/(dvl[2][1][i]*dvl[2][2][j]) ; // /dvl[1][3][k]
+---
+>     OVOL[4][k][j][i]=1.0/(dvl[2][1][i]*dvl[2][2][j]) ; // /dvl[1][3][k]
+7763,7764c6878,6879
+<     odx[1][1][i]=1.0/dx[1][1][i];
+<     odx[2][1][i]=1.0/dx[2][1][i];
+---
+>     ODX[1][1][i]=1.0/dx[1][1][i];
+>     ODX[2][1][i]=1.0/dx[2][1][i];
+7766,7767c6881,6882
+<     odx[1][2][j]=1.0/dx[1][2][j];
+<     odx[2][2][j]=1.0/dx[2][2][j];
+---
+>     ODX[1][2][j]=1.0/dx[1][2][j];
+>     ODX[2][2][j]=1.0/dx[2][2][j];
+7769,7771c6884,6886
+<     // below needed for DS and oarcl and OVOL in 3D
+<     odx[1][3][k]=1.0/dx[1][3][k];
+<     odx[2][3][k]=1.0/dx[2][3][k];
+---
+>     // below needed for DS and OARCL and OVOL in 3D
+>     ODX[1][3][k]=1.0/dx[1][3][k];
+>     ODX[2][3][k]=1.0/dx[2][3][k];
+7773,7774c6888,6889
+<     odvl[1][1][i]=1.0/dvl[1][1][i];
+<     odvl[2][1][i]=1.0/dvl[2][1][i];
+---
+>     ODVL[1][1][i]=1.0/dvl[1][1][i];
+>     ODVL[2][1][i]=1.0/dvl[2][1][i];
+7776,7777c6891,6892
+<     odvl[1][2][j]=1.0/dvl[1][2][j];
+<     odvl[2][2][j]=1.0/dvl[2][2][j];
+---
+>     ODVL[1][2][j]=1.0/dvl[1][2][j];
+>     ODVL[2][2][j]=1.0/dvl[2][2][j];
+7779,7780c6894,6895
+<     odvl[1][3][k]=1.0/dvl[1][3][k];
+<     odvl[2][3][k]=1.0/dvl[2][3][k];
+---
+>     ODVL[1][3][k]=1.0/dvl[1][3][k];
+>     ODVL[2][3][k]=1.0/dvl[2][3][k];
+7782,7783c6897,6898
+<     og[1][1][i]=1.0/g[1][1][i];
+<     og[2][1][i]=1.0/g[2][1][i];
+---
+>     OG[1][1][i]=1.0/g[1][1][i];
+>     OG[2][1][i]=1.0/g[2][1][i];
+7785,7786c6900,6901
+<     og[1][2][i]=1.0/g[1][2][i];
+<     og[2][2][i]=1.0/g[2][2][i];
+---
+>     OG[1][2][i]=1.0/g[1][2][i];
+>     OG[2][2][i]=1.0/g[2][2][i];
+7788,7789c6903,6904
+<     og[1][3][i]=1.0/g[1][3][i];
+<     og[2][3][i]=1.0/g[2][3][i];
+---
+>     OG[1][3][i]=1.0/g[1][3][i];
+>     OG[2][3][i]=1.0/g[2][3][i];
+7792c6907
+<       og[1][4][j]=0.0; // forced since when used it corrects singularity in correct way(since other terms should give 0)
+---
+>       OG[1][4][j]=0.0; // forced since when used it corrects singularity in correct way(since other terms should give 0)
+7794c6909
+<     else og[1][4][j]=1.0/g[1][4][j];
+---
+>     else OG[1][4][j]=1.0/g[1][4][j];
+7796c6911
+<     og[2][4][j]=1.0/g[2][4][j];
+---
+>     OG[2][4][j]=1.0/g[2][4][j];
+7825d6939
+<     // this is normal call to analsolve
+7897c7011
+<   // now force all positions to be on b-grid for TVD....don't worry about rest since not used(metric, oarcl,OVOL, etc.)
+---
+>   // now force all positions to be on b-grid for TVD....don't worry about rest since not used(metric, OARCL,OVOL, etc.)
+7912,7914c7026,7028
+<     if(LOWMEMMODE==0) dvl[2][1][i]=dvl[1][1][i];
+<     if(LOWMEMMODE==0) dvl[2][2][j]=dvl[1][2][j];
+<     if(LOWMEMMODE==0) dvl[2][3][k]=dvl[1][3][k];
+---
+>     dvl[2][1][i]=dvl[1][1][i];
+>     dvl[2][2][j]=dvl[1][2][j];
+>     dvl[2][3][k]=dvl[1][3][k];
+7961,7962c7075,7076
+<   if( (cpugeompick>1)||(cpugeompick<0)){
+<     fprintf(fail_file,"invalid cpugeompick: %d\n",cpugeompick);
+---
+>   if( (CPUGEOMPICK>1)||(CPUGEOMPICK<0)){
+>     fprintf(fail_file,"invalid CPUGEOMPICK: %d\n",CPUGEOMPICK);
+7976,7985d7089
+<   if((DOLOSSDIAGMEMORY==0)&&(DOLOSSDIAG==1)&&(LOOPTYPE==1)){
+<     fprintf(fail_file,"You must turn on memory for old loss diagnostics\n");
+<     myexit(1);
+<   }
+< 
+<   if((FLOORDUMPFLAGMEMORY==0)&&(FLOORDUMPFLAG==1)){
+<     fprintf(fail_file,"You must turn on memory for floor dump diagnostic\n");
+<     myexit(1);
+<   }
+< 
+8002,8057d7105
+< 
+< 
+< // tests bound call
+< void boundtest(int which)
+< {
+< 
+<   int i,j,k;
+< 
+<   if(which==0){
+<     // setup variables for testing
+<     LOOPF{
+<       s[1][k][j][i]=-1-1*100;
+<       s[2][k][j][i]=-1-2*100;
+<       s[3][k][j][i]=-1-3*100;
+< 
+<       v[1][1][k][j][i]=-1-(3+0*3+1)*100;
+<       v[1][2][k][j][i]=-1-(3+0*3+2)*100;
+<       v[1][3][k][j][i]=-1-(3+0*3+3)*100;
+< 
+<       v[2][1][k][j][i]=-1-(3+1*3+1)*100;
+<       v[2][2][k][j][i]=-1-(3+1*3+2)*100;
+<       v[2][3][k][j][i]=-1-(3+1*3+3)*100;
+<     }
+<     LOOP{
+<       s[1][k][j][i]=myid-1*100;
+<       s[2][k][j][i]=myid-2*100;
+<       s[3][k][j][i]=myid-3*100;
+< 
+<       v[1][1][k][j][i]=myid-(3+0*3+1)*100;
+<       v[1][2][k][j][i]=myid-(3+0*3+2)*100;
+<       v[1][3][k][j][i]=myid-(3+0*3+3)*100;
+< 
+<       v[2][1][k][j][i]=myid-(3+1*3+1)*100;
+<       v[2][2][k][j][i]=myid-(3+1*3+2)*100;
+<       v[2][3][k][j][i]=myid-(3+1*3+3)*100;
+< 
+<     }
+< 
+<     dump(NULL,666,DTYPE,0);
+<     
+<   }
+<   if(which==1){
+<     //    bound(NULL,NULL,-1,-1,123);
+< #if(USEMPI)
+<   bound_mpi(NULL,NULL,-1,-1,123);
+< #endif  
+<   }
+< 
+<   if(which==2){
+<     dump(NULL,667,DTYPE,0);
+<   }
+< 
+< }
+< 
+< 
+< 
+8085a7134
+> 
+8119,8121c7168
+<       // Rinner is innermost edge, NOT including bounary zones
+<       //Rinner=1.686836; / 256^2 a=0.5 Rout=20
+<       Rinner=1.741087; // 512^2 a=0.5 Rout=20
+---
+>       Rinner=1.7;
+8225,8226d7271
+< 
+< 

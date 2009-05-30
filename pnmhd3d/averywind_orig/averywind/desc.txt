@@ -1,0 +1,14 @@
+test6:
+
+did:  added coord-free desc with code bugs fixed
+
+what's still wrong?:
+
+Physics:
+1) coordinate sing problem near r=0
+
+Comp:
+1) inefficient memory use
+
+
+

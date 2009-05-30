@@ -1,0 +1,711 @@
+11,14c11,13
+<   if(ALFVENLIMIT==0){
+<     LOOPHC{ // osqrtrho needed on -1..N, see below
+<       osqrtrho[k][j][i] = 1.0/sqrt(s[1][k][j][i]) ;
+<     }
+---
+> #if(ALFVENLIMIT==0)
+>   LOOPHC{ // osqrtrho needed on -1..N, see below
+>     osqrtrho[k][j][i] = 1.0/sqrt(s[1][k][j][i]) ;
+16,24c15,22
+<   else{
+<     LOOPHC{ // for D1a's need osqrtrho at (-1,-1)...(N,N) (other dir(say 3 of 1,2) not checked yet)
+<       bxa = e2z_1(v[2][1],k,j,i);
+<       bya = e2z_2(v[2][2],k,j,i);
+<       bza = e2z_3(v[2][3],k,j,i);
+<       ftemp=bxa*bxa + bya*bya + bza*bza; // b^2
+<       rholimited[k][j][i] = s[1][k][j][i]+ftemp*invsol2; // rho+b^2/c^2
+<       osqrtrho[k][j][i] = 1.0/sqrt(rholimited[k][j][i]) ; // 1/sqrt(rho+b^2/c^2)
+<     }
+---
+> #else
+>   LOOPHC{ // for D1a's need osqrtrho at (-1,-1)...(N,N) (other dir(say 3 of 1,2) not checked yet)
+>     bxa = e2z_1(v[2][1],k,j,i);
+>     bya = e2z_2(v[2][2],k,j,i);
+>     bza = e2z_3(v[2][3],k,j,i);
+>     ftemp=bxa*bxa + bya*bya + bza*bza; // b^2
+>     rholimited[k][j][i] = s[1][k][j][i]+ftemp*invsol2; // rho+b^2/c^2
+>     osqrtrho[k][j][i] = 1.0/sqrt(rholimited[k][j][i]) ; // 1/sqrt(rho+b^2/c^2)
+25a24
+> #endif
+71,73c70,72
+<   if(ALFVENLIMIT==1){
+<     magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+<   }
+---
+> #if(ALFVENLIMIT==1)
+>   magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+> #endif
+84,89c83,88
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // since srhoa needed (0..N), needs osqrtrho at -1..N
+< 	srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // since srhoa needed (0..N), needs osqrtrho at -1..N
+>     srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+103c102
+<     ftemp=fabs(ftemp)*dt*OARC31(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][1][k][j][i];
+113c112
+<     D2 = dt*z2e_2(v[1][1],k,j,i)*OARC31(k,j,i); // fraction of grid
+---
+>     D2 = dt*z2e_2(v[1][1],k,j,i)*OARCL[3][1][k][j][i]; // fraction of grid
+400c399
+<     ftemp=fabs(ftemp)*dt*OARC22(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][2][k][j][i];
+410,411c409,410
+<     D2 = dt*z2e_1(v[1][2],k,j,i)*OARC22(k,j,i) ;
+<     dist=dx[2][2][j]*G2(1,i);
+---
+>     D2 = dt*z2e_1(v[1][2],k,j,i)*OARCL[2][2][k][j][i] ;
+>     dist=dx[2][2][j]*g[1][2][i];
+711c710
+<     ftemp=fabs(ftemp)*dt*OARC11(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][1][k][j][i];
+721c720
+<     D2 = dt*z2e_3(v[1][1],k,j,i)*OARC11(k,j,i); // fraction of grid
+---
+>     D2 = dt*z2e_3(v[1][1],k,j,i)*OARCL[1][1][k][j][i]; // fraction of grid
+1010c1009
+<     ftemp=fabs(ftemp)*dt*OARC23(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][3][k][j][i]*ODX[2][3][k];
+1020,1021c1019,1020
+<     D2 = dt*z2e_1(v[1][3],k,j,i)*OARC23(k,j,i)*ODX(2,3,k) ;
+<     dist=dx[2][3][k]*G3(1,i)*G4(2,j);
+---
+>     D2 = dt*z2e_1(v[1][3],k,j,i)*OARCL[2][3][k][j][i]*ODX[2][3][k] ;
+>     dist=dx[2][3][k]*g[1][3][i]*g[2][4][j];
+1303,1309c1302,1308
+<     if(RHOINTERP==0){
+<       // used twice
+<       //  LOOPHC{ // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+<       LOOPHPC{ // need srhoa: 0..N  need osqrtrho: -1..N
+< 	srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>     //  LOOPHC{ // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>   LOOPHPC{ // need srhoa: 0..N  need osqrtrho: -1..N
+>     srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+1323c1322
+<     ftemp=fabs(ftemp)*dt*OARC12(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][2][k][j][i];
+1333,1334c1332,1333
+<     D2 = dt*z2e_3(v[1][2],k,j,i)*OARC12(k,j,i);
+<     dist=dx[2][2][j]*G2(2,i);
+---
+>     D2 = dt*z2e_3(v[1][2],k,j,i)*OARCL[1][2][k][j][i] ;
+>     dist=dx[2][2][j]*g[2][2][i];
+1599c1598
+<     ftemp=fabs(ftemp)*dt*OARC33(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][3][k][j][i]*ODX[2][3][k];
+1609,1610c1608,1609
+<     D2 = dt*z2e_2(v[1][3],k,j,i)*OARC33(k,j,i)*ODX(2,3,k) ;
+<     dist=dx[2][3][k]*G3(2,i)*G4(1,j);
+---
+>     D2 = dt*z2e_2(v[1][3],k,j,i)*OARCL[3][3][k][j][i]*ODX[2][3][k] ;
+>     dist=dx[2][3][k]*g[2][3][i]*g[1][4][j];
+1903c1902
+< 				      (bya*OARC42(k,j,i)*(b1prim[1][k][jp1][i] - b1prim[1][k][j][i]))
+---
+> 				      (bya*OARCL[4][2][k][j][i]*(b1prim[1][k][jp1][i] - b1prim[1][k][j][i]))
+1908c1907
+< 				      + (bza*OARC23(k,j,i)*ODX(1,3,k)*(b2prim[1][kp1][j][i]-b2prim[1][k][j][i]))
+---
+> 				      + (bza*OARCL[2][3][k][j][i]*ODX[1][3][k]*(b2prim[1][kp1][j][i]-b2prim[1][k][j][i]))
+1930c1929
+< 				      (bxa*OARC41(k,j,i)/(G2(2,i))*(G2(1,ip1)*b1prim[2][k][j][ip1] - G2(1,i)*b1prim[2][k][j][i]))
+---
+> 				      (bxa*OARCL[4][1][k][j][i]/(g[2][2][i])*(g[1][2][ip1]*b1prim[2][k][j][ip1] - g[1][2][i]*b1prim[2][k][j][i]))
+1935c1934
+< 				      +(bza*OARC33(k,j,i)*ODX(1,3,k)*(b2prim[2][kp1][j][i]-b2prim[2][k][j][i]))
+---
+> 				      +(bza*OARCL[3][3][k][j][i]*ODX[1][3][k]*(b2prim[2][kp1][j][i]-b2prim[2][k][j][i]))
+1957c1956
+< 				      (bxa*OARC41(k,j,i)/(G3(2,i))*(G3(1,ip1)*b1prim[3][k][j][ip1] - G3(1,i)*b1prim[3][k][j][i]))
+---
+> 				      (bxa*OARCL[4][1][k][j][i]/(g[2][3][i])*(g[1][3][ip1]*b1prim[3][k][j][ip1] - g[1][3][i]*b1prim[3][k][j][i]))
+1962c1961
+< 				      +(bya*OARC32(k,j,i)/(G4(2,j))*(G4(1,jp1)*b2prim[3][k][jp1][i]-G4(1,j)*b2prim[3][k][j][i]))
+---
+> 				      +(bya*OARCL[3][2][k][j][i]/(g[2][4][j])*(g[1][4][jp1]*b2prim[3][k][jp1][i]-g[1][4][j]*b2prim[3][k][j][i]))
+1969,1972c1968,1971
+<   if(BOUNDFIELD==2){
+<     // BOUND EMFS SO DIVB=0 CONSERVED EXACTLY
+<     bound(NULL,magemf,0,-5,123);
+<   }
+---
+> #if(BOUNDFIELD==2)
+>   // BOUND EMFS SO DIVB=0 CONSERVED EXACTLY
+>   bound(NULL,magemf,0,-5,123);
+> #endif
+1990c1989
+< 				OARC42(k,j,i)/G4(2,j)*(G4(1,jp1)*magemf[3][k][jp1][i] - G4(1,j)*magemf[3][k][j][i])
+---
+> 				OARCL[4][2][k][j][i]/g[2][4][j]*(g[1][4][jp1]*magemf[3][k][jp1][i] - g[1][4][j]*magemf[3][k][j][i])
+1995c1994
+< 				+OARC23(k,j,i)*ODX(1,3,k)*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+---
+> 				+OARCL[2][3][k][j][i]*ODX[1][3][k]*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+2006c2005
+< 				OARC41(k,j,i)/G3(2,i)*(G3(1,i)*magemf[3][k][j][i] - G3(1,ip1)*magemf[3][k][j][ip1])
+---
+> 				OARCL[4][1][k][j][i]/g[2][3][i]*(g[1][3][i]*magemf[3][k][j][i] - g[1][3][ip1]*magemf[3][k][j][ip1])
+2011c2010
+< 				+OARC33(k,j,i)*ODX(1,3,k)*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+---
+> 				+OARCL[3][3][k][j][i]*ODX[1][3][k]*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+2023c2022
+< 				OARC41(k,j,i)/G2(2,i)*(G2(1,ip1)*magemf[2][k][j][ip1] - G2(1,i)*magemf[2][k][j][i])
+---
+> 				OARCL[4][1][k][j][i]/g[2][2][i]*(g[1][2][ip1]*magemf[2][k][j][ip1] - g[1][2][i]*magemf[2][k][j][i])
+2028c2027
+< 				+OARC32(k,j,i)*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+---
+> 				+OARCL[3][2][k][j][i]*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+2044c2043
+< 				ODVL(1,2,j)/G2(1,i)*(G4(1,jp1)*magemf[3][k][jp1][i] - G4(1,j)*magemf[3][k][j][i])
+---
+> 				ODVL[1][2][j]/g[1][2][i]*(g[1][4][jp1]*magemf[3][k][jp1][i] - g[1][4][j]*magemf[3][k][j][i])
+2049c2048
+< 				+OARC23(k,j,i)*ODX(1,3,k)*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+---
+> 				+OARCL[2][3][k][j][i]*ODX[1][3][k]*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+2060c2059
+< 				G2(2,i)*ODVL(1,1,i)*(G3(1,i)*magemf[3][k][j][i] - G3(1,ip1)*magemf[3][k][j][ip1])
+---
+> 				g[2][2][i]*ODVL[1][1][i]*(g[1][3][i]*magemf[3][k][j][i] - g[1][3][ip1]*magemf[3][k][j][ip1])
+2065c2064
+< 				+OARC33(k,j,i)*ODX(1,3,k)*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+---
+> 				+OARCL[3][3][k][j][i]*ODX[1][3][k]*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+2077c2076
+< 				G3(2,i)*ODVL(1,1,i)*(G2(1,ip1)*magemf[2][k][j][ip1] - G2(1,i)*magemf[2][k][j][i])
+---
+> 				g[2][3][i]*ODVL[1][1][i]*(g[1][2][ip1]*magemf[2][k][j][ip1] - g[1][2][i]*magemf[2][k][j][i])
+2082c2081
+< 				+G4(2,j)*ODVL(1,2,j)/G2(2,i)*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+---
+> 				+g[2][4][j]*ODVL[1][2][j]/g[2][2][i]*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+2093c2092
+<   if((BOUNDTYPE>1)&&(BOUNDFIELD==1)){
+---
+> #if(BOUNDFIELD==1)
+2132,2212c2131
+<   }
+<   else if((BOUNDTYPE>1)&&(BOUNDFIELD==2)){ // must still bound velocities
+<   // limit what's bounded to only necessary changing items for faster reduced dimensional speeds(only relevant in 1D)
+<   // note that divB=0 correction in bound() is fine since other components don't change anyways(so didn't need to be updated, so are ready for divB=0 correction already)
+<   if(!( (N2==1)&&(N3==1) ) ){ // then do 1-comp
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,1,123);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,1,12); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,1,13);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,1,1); // no 3
+<       }
+<     }
+<   }
+<   else{// no 1
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,1,23);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,1,2); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,1,3);
+<       }
+<       else{
+< 	// never get here // no 3
+<       }
+<     }
+<   }
+<   }
+<   else{// then just normal
+<   // limit what's bounded to only necessary changing items for faster reduced dimensional speeds(only relevant in 1D)
+<   // note that divB=0 correction in bound() is fine since other components don't change anyways(so didn't need to be updated, so are ready for divB=0 correction already)
+<   if(!( (N2==1)&&(N3==1) ) ){ // then do 1-comp
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,-1,123);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,12); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,-1,13);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,1); // no 3
+<       }
+<     }
+<   }
+<   else{// no 1
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,-1,23);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,2); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,-1,3);
+<       }
+<       else{
+< 	// never get here // no 3
+<       }
+<     }
+<   }
+<   }
+---
+> #endif
+2246,2249c2165,2168
+<   if((FLOATTYPE==0)&&(SYMFORCEMAG==1)){
+<     fprintf(fail_file,"moc_ct: floats and symmetry are known to fail--no idea why yet\n");
+<     myexit(1);
+<   }
+---
+> #if((FLOATTYPE==0)&&(SYMFORCEMAG==1))
+>   fprintf(fail_file,"moc_ct: floats and symmetry are known to fail--no idea why yet\n");
+>   myexit(1);
+> #endif
+2261,2263c2180,2182
+<   if(ALFVENLIMIT==1){
+<     magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+<   }
+---
+> #if(ALFVENLIMIT==1)
+>   magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+> #endif
+2274,2280c2193,2199
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif    
+2293c2212
+<     ftemp=fabs(ftemp)*dt*OARC31(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][1][k][j][i];
+2303c2222
+<     D2 = dt*z2e_2(v[1][1],k,j,i)*OARC31(k,j,i); // fraction of grid
+---
+>     D2 = dt*z2e_2(v[1][1],k,j,i)*OARCL[3][1][k][j][i]; // fraction of grid
+2493c2412
+<     ftemp=fabs(ftemp)*dt*OARC22(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][2][k][j][i];
+2503,2504c2422,2423
+<     D2 = dt*z2e_1(v[1][2],k,j,i)*OARC22(k,j,i);
+<     dist=dx[2][2][j]*G2(1,i);
+---
+>     D2 = dt*z2e_1(v[1][2],k,j,i)*OARCL[2][2][k][j][i] ;
+>     dist=dx[2][2][j]*g[1][2][i];
+2698,2705c2617,2623
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_2(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+< 
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_2(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+2720c2638
+<     ftemp=fabs(ftemp)*dt*OARC11(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][1][k][j][i];
+2730c2648
+<     D2 = dt*z2e_3(v[1][1],k,j,i)*OARC11(k,j,i); // fraction of grid
+---
+>     D2 = dt*z2e_3(v[1][1],k,j,i)*OARCL[1][1][k][j][i]; // fraction of grid
+2920c2838
+<     ftemp=fabs(ftemp)*dt*OARC23(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][3][k][j][i]*ODX[2][3][k];
+2930,2931c2848,2849
+<     D2 = dt*z2e_1(v[1][3],k,j,i)*OARC23(k,j,i)*ODX(2,3,k) ;
+<     dist=dx[2][3][k]*G3(1,i)*G4(2,j);
+---
+>     D2 = dt*z2e_1(v[1][3],k,j,i)*OARCL[2][3][k][j][i]*ODX[2][3][k] ;
+>     dist=dx[2][3][k]*g[1][3][i]*g[2][4][j];
+3126,3132c3044,3050
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+3147c3065
+<     ftemp=fabs(ftemp)*dt*OARC12(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][2][k][j][i];
+3157,3158c3075,3076
+<     D2 = dt*z2e_3(v[1][2],k,j,i)*OARC12(k,j,i) ;
+<     dist=dx[2][2][j]*G2(2,i);
+---
+>     D2 = dt*z2e_3(v[1][2],k,j,i)*OARCL[1][2][k][j][i] ;
+>     dist=dx[2][2][j]*g[2][2][i];
+3336c3254
+<     ftemp=fabs(ftemp)*dt*OARC33(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][3][k][j][i]*ODX[2][3][k];
+3346,3347c3264,3265
+<     D2 = dt*z2e_2(v[1][3],k,j,i)*OARC33(k,j,i)*ODX(2,3,k) ;
+<     dist=dx[2][3][k]*G3(2,i)*G4(1,j);
+---
+>     D2 = dt*z2e_2(v[1][3],k,j,i)*OARCL[3][3][k][j][i]*ODX[2][3][k] ;
+>     dist=dx[2][3][k]*g[2][3][i]*g[1][4][j];
+3530,3533c3448,3451
+<   if(BOUNDFIELD==2){
+<     // BOUND EMFS SO DIVB=0 CONSERVED EXACTLY
+<     bound(NULL,magemf,0,-5,123);
+<   }
+---
+> #if(BOUNDFIELD==2)
+>   // BOUND EMFS SO DIVB=0 CONSERVED EXACTLY
+>   bound(NULL,magemf,0,-5,123);
+> #endif
+3552c3470
+< 				OARC42(k,j,i)/G4(2,j)*(G4(1,jp1)*magemf[3][k][jp1][i] - G4(1,j)*magemf[3][k][j][i])
+---
+> 				OARCL[4][2][k][j][i]/g[2][4][j]*(g[1][4][jp1]*magemf[3][k][jp1][i] - g[1][4][j]*magemf[3][k][j][i])
+3557c3475
+< 				+OARC23(k,j,i)*ODX(1,3,k)*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+---
+> 				+OARCL[2][3][k][j][i]*ODX[1][3][k]*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+3569c3487
+< 				OARC41(k,j,i)/G3(2,i)*(G3(1,i)*magemf[3][k][j][i] - G3(1,ip1)*magemf[3][k][j][ip1])
+---
+> 				OARCL[4][1][k][j][i]/g[2][3][i]*(g[1][3][i]*magemf[3][k][j][i] - g[1][3][ip1]*magemf[3][k][j][ip1])
+3574c3492
+< 				+OARC33(k,j,i)*ODX(1,3,k)*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+---
+> 				+OARCL[3][3][k][j][i]*ODX[1][3][k]*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+3586c3504
+< 				OARC41(k,j,i)/G2(2,i)*(G2(1,ip1)*magemf[2][k][j][ip1] - G2(1,i)*magemf[2][k][j][i])
+---
+> 				OARCL[4][1][k][j][i]/g[2][2][i]*(g[1][2][ip1]*magemf[2][k][j][ip1] - g[1][2][i]*magemf[2][k][j][i])
+3591c3509
+< 				+OARC32(k,j,i)*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+---
+> 				+OARCL[3][2][k][j][i]*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+3607c3525
+< 				ODVL(1,2,j)/G2(1,i)*(G4(1,jp1)*magemf[3][k][jp1][i] - G4(1,j)*magemf[3][k][j][i])
+---
+> 				ODVL[1][2][j]/g[1][2][i]*(g[1][4][jp1]*magemf[3][k][jp1][i] - g[1][4][j]*magemf[3][k][j][i])
+3612c3530
+< 				+OARC23(k,j,i)*ODX(1,3,k)*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+---
+> 				+OARCL[2][3][k][j][i]*ODX[1][3][k]*(magemf[2][k][j][i]-magemf[2][kp1][j][i])
+3623c3541
+< 				G2(2,i)*ODVL(1,1,i)*(G3(1,i)*magemf[3][k][j][i] - G3(1,ip1)*magemf[3][k][j][ip1])
+---
+> 				g[2][2][i]*ODVL[1][1][i]*(g[1][3][i]*magemf[3][k][j][i] - g[1][3][ip1]*magemf[3][k][j][ip1])
+3628c3546
+< 				+OARC33(k,j,i)*ODX(1,3,k)*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+---
+> 				+OARCL[3][3][k][j][i]*ODX[1][3][k]*(magemf[1][kp1][j][i]-magemf[1][k][j][i])
+3640c3558
+< 				G3(2,i)*ODVL(1,1,i)*(G2(1,ip1)*magemf[2][k][j][ip1] - G2(1,i)*magemf[2][k][j][i])
+---
+> 				g[2][3][i]*ODVL[1][1][i]*(g[1][2][ip1]*magemf[2][k][j][ip1] - g[1][2][i]*magemf[2][k][j][i])
+3645c3563
+< 				+G4(2,j)*ODVL(1,2,j)/G2(2,i)*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+---
+> 				+g[2][4][j]*ODVL[1][2][j]/g[2][2][i]*(magemf[1][k][j][i]-magemf[1][k][jp1][i])
+3657,3699c3575,3576
+<   if((BOUNDTYPE>1)&&(BOUNDFIELD==1)){
+<   // limit what's bounded to only necessary changing items for faster reduced dimensional speeds(only relevant in 1D)
+<   // note that divB=0 correction in bound() is fine since other components don't change anyways(so didn't need to be updated, so are ready for divB=0 correction already)
+<   if(!( (N2==1)&&(N3==1) ) ){ // then do 1-comp
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,-1,123);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,12); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,-1,13);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,1); // no 3
+<       }
+<     }
+<   }
+<   else{// no 1
+<     if(!( (N1==1)&&(N3==1) ) ){ // then do 2-comp
+<       if(!( (N1==1)&&(N2==1) )){ // then do 3-comp
+< 	bound(NULL,NULL,0,-1,23);
+<       }
+<       else{
+< 	bound(NULL,NULL,0,-1,2); // no 3
+<       }
+<     }
+<     else{ // no 2
+<       if(!( (N1==1)&&(N2==1) )){
+< 	bound(NULL,NULL,0,-1,3);
+<       }
+<       else{
+< 	// never get here // no 3
+<       }
+<     }
+<   }
+<   }
+<   else{ // then just normal
+<   // limit what's bounded to only necessary changing items for faster reduced dimensional speeds(only relevant in 1D)
+<   // note that divB=0 correction in bound() is fine since other components don't change anyways(so didn't need to be updated, so are ready for divB=0 correction already)
+---
+> #if(BOUNDFIELD==1)
+>   // limit what's bounded to only necessary changing items for faster reduced dimensional speeds
+3703c3580
+< 	bound(NULL,NULL,0,-1,123);
+---
+> 	bound(NULL,NULL,0,2,123);
+3706c3583
+< 	bound(NULL,NULL,0,-1,12); // no 3
+---
+> 	bound(NULL,NULL,0,2,12); // no 3
+3711c3588
+< 	bound(NULL,NULL,0,-1,13);
+---
+> 	bound(NULL,NULL,0,2,13);
+3714c3591
+< 	bound(NULL,NULL,0,-1,1); // no 3
+---
+> 	bound(NULL,NULL,0,2,1); // no 3
+3721c3598
+< 	bound(NULL,NULL,0,-1,23);
+---
+> 	bound(NULL,NULL,0,2,23);
+3724c3601
+< 	bound(NULL,NULL,0,-1,2); // no 3
+---
+> 	bound(NULL,NULL,0,2,2); // no 3
+3729c3606
+< 	bound(NULL,NULL,0,-1,3);
+---
+> 	bound(NULL,NULL,0,2,3);
+3736c3613
+<   }
+---
+> #endif
+3766,3769c3643,3646
+<   if((FLOATTYPE==0)&&(SYMFORCEMAG==1)){
+<     fprintf(fail_file,"moc_ct: floats and symmetry are known to fail--no idea why yet\n");
+<     myexit(1);
+<   }
+---
+> #if((FLOATTYPE==0)&&(SYMFORCEMAG==1))
+>   fprintf(fail_file,"moc_ct: floats and symmetry are known to fail--no idea why yet\n");
+>   myexit(1);
+> #endif
+3781,3783c3658,3660
+<   if(ALFVENLIMIT==1){
+<     magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+<   }
+---
+> #if(ALFVENLIMIT==1)
+>   magprepare(); // since B changes after each of: bzsweepx, bzsweepy, and moc_ct, need to modify before each
+> #endif
+3794,3800c3671,3677
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_3(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+3812c3689
+<     ftemp=fabs(ftemp)*dt*OARC31(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][1][k][j][i];
+3935c3812
+<     ftemp=fabs(ftemp)*dt*OARC22(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][2][k][j][i];
+3945c3822
+<     dist=dx[2][2][j]*G2(1,i);
+---
+>     dist=dx[2][2][j]*g[1][2][i];
+4051,4057c3928,3934
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_2(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_2(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+4070c3947
+<     ftemp=fabs(ftemp)*dt*OARC11(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][1][k][j][i];
+4194c4071
+<     ftemp=fabs(ftemp)*dt*OARC23(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][3][k][j][i]*ODX[2][3][k];
+4204c4081
+<     dist=dx[2][3][k]*G3(1,i)*G4(2,j);
+---
+>     dist=dx[2][3][k]*g[1][3][i]*g[2][4][j];
+4307,4313c4184,4190
+<     if(RHOINTERP==0){
+<       // used twice
+<       LOOPHPC{ // see above
+< 	// needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+< 	srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+<       }
+<     }
+---
+> #if(RHOINTERP==0)
+>   // used twice
+>   LOOPHPC{ // see above
+>     // needed since for rhointerp==1, need rho at i=-1..N1, j=-1..N2, so find osqrtrho on LOOPFMHPC!
+>     srhoa[k][j][i] = z2c_1(osqrtrho,k,j,i) ; //1/sqrt(rho)
+>   }
+> #endif
+4328c4205
+<     ftemp=fabs(ftemp)*dt*OARC12(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[1][2][k][j][i];
+4338c4215
+<     dist=dx[2][2][j]*G2(2,i);
+---
+>     dist=dx[2][2][j]*g[2][2][i];
+4444c4321
+<     ftemp=fabs(ftemp)*dt*OARC33(k,j,i)*ODX(2,3,k);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][3][k][j][i]*ODX[2][3][k];
+4454c4331
+<     dist=dx[2][3][k]*G3(2,i)*G4(1,j);
+---
+>     dist=dx[2][3][k]*g[2][3][i]*g[1][4][j];
+4570c4447
+< 				      (bya*OARC42(k,j,i)*(b1prim[1][k][jp1][i] - b1prim[1][k][j][i]))
+---
+> 				      (bya*OARCL[4][2][k][j][i]*(b1prim[1][k][jp1][i] - b1prim[1][k][j][i]))
+4575c4452
+< 				      + (bza*OARC23(k,j,i)*ODX(1,3,k)*(b2prim[1][kp1][j][i]-b2prim[1][k][j][i]))
+---
+> 				      + (bza*OARCL[2][3][k][j][i]*ODX[1][3][k]*(b2prim[1][kp1][j][i]-b2prim[1][k][j][i]))
+4597c4474
+< 				      (bxa*OARC41(k,j,i)/(G2(2,i))*(G2(1,ip1)*b1prim[2][k][j][ip1] - G2(1,i)*b1prim[2][k][j][i]))
+---
+> 				      (bxa*OARCL[4][1][k][j][i]/(g[2][2][i])*(g[1][2][ip1]*b1prim[2][k][j][ip1] - g[1][2][i]*b1prim[2][k][j][i]))
+4602c4479
+< 				      +(bza*OARC33(k,j,i)*ODX(1,3,k)*(b2prim[2][kp1][j][i]-b2prim[2][k][j][i]))
+---
+> 				      +(bza*OARCL[3][3][k][j][i]*ODX[1][3][k]*(b2prim[2][kp1][j][i]-b2prim[2][k][j][i]))
+4624c4501
+< 				      (bxa*OARC41(k,j,i)/(G3(2,i))*(G3(1,ip1)*b1prim[3][k][j][ip1] - G3(1,i)*b1prim[3][k][j][i]))
+---
+> 				      (bxa*OARCL[4][1][k][j][i]/(g[2][3][i])*(g[1][3][ip1]*b1prim[3][k][j][ip1] - g[1][3][i]*b1prim[3][k][j][i]))
+4629c4506
+< 				      +(bya*OARC32(k,j,i)/(G4(2,j))*(G4(1,jp1)*b2prim[3][k][jp1][i]-G4(1,j)*b2prim[3][k][j][i]))
+---
+> 				      +(bya*OARCL[3][2][k][j][i]/(g[2][4][j])*(g[1][4][jp1]*b2prim[3][k][jp1][i]-g[1][4][j]*b2prim[3][k][j][i]))
+4774,4777c4651,4671
+<     }
+< 
+<     if(FORCEIEINTERNAL){
+<       floor_correct(1,0);
+---
+>       
+> #if(FORCEIE)
+>       if(s[2][k][j][i]<IEFLOOR){	
+> 	ftemp=(IEFLOOR-s[2][k][j][i]);
+> 	if(accountstore[k][j][i]) floors[2]+=ftemp*dvl[1][1][i]*dvl[1][2][j]*dvl[1][3][k] ;
+> #if(FLOORDUMPFLAG==1)
+> 	floorvars[2][k][j][i]+=ftemp;
+> #endif
+> #if(DOFLOORDIAG==1)
+> 	floorcnt[2][2]++;
+> 	if(s[2][k][j][i]<floorlowest[2]){
+> 	  floorlowest[2]=s[2][k][j][i];
+> 	  wherelowest[2]=2;
+> 	}
+> #endif
+> #if(DOFLOORD2==1)
+> 	fprintf(logfl_file,"corrected en in step_ie: t: %15.10g %d %d %d %15.10g\n",t,k,j,i,(IEFLOOR-s[2][k][j][i]));
+> #endif
+> 	s[2][k][j][i]=IEFLOOR;
+>       }
+> #endif

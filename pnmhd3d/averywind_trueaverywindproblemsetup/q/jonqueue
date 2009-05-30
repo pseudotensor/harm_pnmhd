@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+#  Sample Batch Script for a Platinum cluster job
+#
+#  Submit this script using the command: qsub batch.sample
+#
+#  Use the "qstat" command to check the status of a job.
+#
+# The following are embedded QSUB options. The syntax is #PBS (the # does
+# _not_  denote that the lines are commented out so do not remove).
+#
+# resource limits  walltime: maximum wall clock time (hh:mm:ss)
+#                  nodes: number of 2-processor nodes
+#                  ppn: how many processors per node to use (1 or 2)
+#                      (you are always charged for the entire node)
+#                  pt: production Platinum cluster nodes
+#!PBS -l walltime=00:05:00,nodes=1
+#PBS -l walltime=00:05:00
+#
+# queue name
+#PBS -q dque
+#
+# export all my environment variables to the job
+#PBS -V
+#
+# Charge job to project abc (recommended for users with multiple projects)
+# [If project is invalid, a valid project will be automatically selected]
+#PBS -A orp
+# 
+# job name (default = name of script file)
+#PBS -N jcm
+#
+# filename for standard output (default = <job_name>.o<job_id>)
+#PBS -o jcm.o
+# 
+# combine standard output and standard error (optional)
+#PBS -j oe
+#
+# send mail when the job begins and ends (optional)
+#PBS -m be
+#
+#!PBS -W stagein=pbsrun@metric:research/pnmhd/
+#!PBS -W stageout=pbsrun@metric:pbsrun
+#
+# End of embedded QSUB options
+# scp -r jon@metric:research/pnmhd pbsrun
+cd pbsrun/bin/
+# date
+./mhd3d

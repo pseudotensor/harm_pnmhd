@@ -1,0 +1,116 @@
+// run in images dir
+// combines image data
+
+// to compile:
+// gcc -Wall -O2 -lm -o sumcpu sumcpu.c
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>    
+
+#define ITYPES 2
+#define NUMSCA 3
+#define NUMVEC 2
+#define MAXFILENAME 1000
+#define DATEXT ".dat"
+
+#define NUMCPUS 4
+
+#define NUMOUTTYPE 1
+
+int main(
+         int argc,
+         char *argv[],
+         char *envp[]
+         )
+{
+  int numimages;
+  FILE* numin;
+  // determine number of dumps
+  int im_cnts[ITYPES][NUMSCA+1];
+  int im_cntv[ITYPES][NUMVEC+1];
+  int iii;
+  int qtip;
+  int myid,numprocs;
+  int i,j,l,m,ll,mm ;
+  int q;
+  int outtype;
+  char temps[MAXFILENAME];
+  char outname[MAXFILENAME];
+  char fullname[MAXFILENAME];
+  char command[MAXFILENAME];
+
+
+  numprocs=NUMCPUS;
+
+  if( (numin=fopen("0_numimages.dat","rt"))==NULL){
+    printf("cannot open 0_numimages.dat file\n");
+    exit(1);
+  }
+  // skip comment line
+  while(fgetc(numin)!='\n');
+  fscanf(numin,"%d",&numimages);
+  fclose(numin);
+  
+  printf("%d\n",numimages);
+  
+  sprintf(temps,"");
+  
+  for(qtip=0;qtip<=numimages;qtip++){
+
+  for(outtype=0;outtype<NUMOUTTYPE;outtype++){
+    for(ll=1;ll<=NUMSCA;ll++){
+      im_cnts[outtype][ll]=qtip;
+      for(iii=0;iii<=1;iii++){
+	sprintf(temps,"%simx%01d-%01d-s%01d/","",outtype,iii,ll);
+	sprintf(outname,"%simx%01d-%01d-s%01d-%04d%s",temps,outtype,iii,ll,im_cnts[outtype][ll],DATEXT);
+	strcat(outname,".ppm.gz");
+	sprintf(fullname,"%simx%01d-%01d-s%01d-%04d%s.%02d",temps,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,0);
+	strcat(fullname,".ppm.gz");
+	sprintf(command,"cp %s %s\n",fullname,outname);
+	printf("%s\n",command);
+	system(command);
+
+	for(myid=1;myid<numprocs;myid++){
+	  
+	  sprintf(fullname,"%simx%01d-%01d-s%01d-%04d%s.%02d",temps,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,myid);
+	  strcat(fullname,".ppm.gz");
+	  sprintf(command,"combine -compose Add %s %s %s\n",fullname,outname,outname);
+	  printf("%s\n",command);
+	  system(command);
+	}
+      }
+    }
+  }
+  for(outtype=0;outtype<NUMOUTTYPE;outtype++){
+    for(ll=1;ll<=NUMVEC-1;ll++){
+      im_cntv[outtype][ll]=qtip;
+      for(iii=0;iii<=1;iii++){
+	for(q=0;q<=3;q++){
+	  sprintf(temps,"%simx%01d-%01d-v%01d-%01d/","",outtype,iii,ll,q);
+	  sprintf(outname,"%simx%01d-%01d-v%01d-%01d-%04d%s",temps,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT);
+	  strcat(outname,".ppm.gz");
+	  
+	  sprintf(fullname,"%simx%01d-%01d-v%01d-%01d-%04d%s.%02d",temps,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,0); 
+	  strcat(fullname,".ppm.gz");
+	  sprintf(command,"cp %s %s\n",fullname,outname);
+	  printf("%s\n",command);
+	  system(command);
+
+	  for(myid=0;myid<numprocs;myid++){ 
+	    sprintf(fullname,"%simx%01d-%01d-v%01d-%01d-%04d%s.%02d",temps,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,myid); 
+	    strcat(fullname,".ppm.gz");
+	    
+	    sprintf(command,"combine -compose Add %s %s %s\n",fullname,outname,outname);
+	    printf("%s\n",command);
+	    system(command);
+	  }
+	}
+      }
+    }
+  }
+  }  
+
+  return(0);
+}

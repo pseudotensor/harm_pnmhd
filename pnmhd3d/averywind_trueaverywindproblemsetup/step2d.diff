@@ -1,0 +1,154 @@
+10,20d9
+<   if(MOC2DVER==0){
+<     transmagx1=1;
+<     transmagx2=1;
+<     transx1=transx2=1; // must do for alfven wave advection
+<   }
+<   else{
+<     transmagx1=0;
+<     transmagx2=0;
+<   }
+< 
+< 
+86c75
+<       if((MOC2DVER==1)&&(SPLITMETHOD==1)){
+---
+>       if(MOC2DVER==2){
+96,97c85,86
+< 	else if((MOC2DVER==1)&&(SPLITMETHOD==0)) moc_ct_3d_v1(); // (works perfectly as moc_ct_2d substitute)
+< 	else if((MOC2DVER==1)&&(SPLITMETHOD==1)) moc_ct_3d_v2();
+---
+> 	else if(MOC2DVER==1) moc_ct_3d_v1(); // (works perfectly as moc_ct_2d substitute)
+> 	else if(MOC2DVER==2) moc_ct_3d_v2();
+147c136
+<     volume=DVL(1,1,i)*DVL(1,2,j)*DVL(1,3,k);
+---
+>     volume=dvl[1][1][i]*dvl[1][2][j]*dvl[1][3][k];
+169c158
+<     //iei=s[2][k][j][i]*DVL(1,1,i)*DVL(1,2,j)*DVL(1,3,k);
+---
+>     //iei=s[2][k][j][i]*dvl[1][1][i]*dvl[1][2][j]*dvl[1][3][k];
+195,197c184,186
+<     dxdyc=DVL(1,1,i)*DVL(1,2,j) ;
+<     dxdy1=DVL(2,1,i)*DVL(1,2,j) ;
+<     dxdy2=DVL(1,1,i)*DVL(2,2,j) ;
+---
+>     dxdyc=dvl[1][1][i]*dvl[1][2][j] ;
+>     dxdy1=dvl[2][1][i]*dvl[1][2][j] ;
+>     dxdy2=dvl[1][1][i]*dvl[2][2][j] ;
+228,229c217,218
+<     dpd[3]=VZFRACT*drhov[3]*pow(G3(2,i),-0.5);// s3=r*v
+<     if(storeit) inflows[7]+=G3(2,i)*G4(2,j)*dpd[3]*dxdyc; // r*sin(theta)*m*v(angmom3)
+---
+>     dpd[3]=VZFRACT*drhov[3]*pow(g[2][3][i],-0.5);// s3=r*v
+>     if(storeit) inflows[7]+=g[2][3][i]*g[2][4][j]*dpd[3]*dxdyc; // r*sin(theta)*m*v(angmom3)
+234c223
+<     if(storeit) inflows[8]+=G3(2,i)*dpd[2]*dxdy2; // r*m*v (angmom2)
+---
+>     if(storeit) inflows[8]+=g[2][3][i]*dpd[2]*dxdy2; // r*m*v (angmom2)
+312c301
+<     ftemp1=1.0/(G3(2,i)*G4(2,j));
+---
+>     ftemp1=1.0/(g[2][3][i]*g[2][4][j]);
+339c328
+<     D1a = ftemp*srhoa*OARC11(k,j,i) ; // fraction of zone off center
+---
+>     D1a = ftemp*srhoa*OARCL[1][1][k][j][i] ; // fraction of zone off center
+341,342c330,331
+<     D1p= ftemp*osqrtrho[k][j][im1]*OARC11(k,j,i);
+<     D1m= ftemp*osqrtrho[k][j][i]*OARC11(k,j,i);
+---
+>     D1p= ftemp*osqrtrho[k][j][im1]*OARCL[1][1][k][j][i];
+>     D1m= ftemp*osqrtrho[k][j][i]*OARCL[1][1][k][j][i];
+437c426
+<     ftemp1=ftemp0*OARC11(k,j,i); // S&N's bx/dista(i) in code
+---
+>     ftemp1=ftemp0*OARCL[1][1][k][j][i]; // S&N's bx/dista(i) in code
+447c436
+<     v[1][3][k][j][i] += ftemp1/(ftemp*G3(2,i))*(G3(1,ip1)*bstar[k][j][ip1] - G3(1,i)*bstar[k][j][i]) ;
+---
+>     v[1][3][k][j][i] += ftemp1/(ftemp*g[2][3][i])*(g[1][3][ip1]*bstar[k][j][ip1] - g[1][3][i]*bstar[k][j][i]) ;
+451c440
+<     v[1][3][k][j][i] += ftemp1/(ftemp*G3(2,i))*(bstar[k][j][ip1] - bstar[k][j][i]) ;
+---
+>     v[1][3][k][j][i] += ftemp1/(ftemp*g[2][3][i])*(bstar[k][j][ip1] - bstar[k][j][i]) ;
+457c446
+<     v[2][3][k][j][i] += ftemp1*(vstar[k][j][ip1] - vstar[k][j][i])-ftemp0*e2z_1(vstar,k,j,i)*DG3(2,i)/G3(2,i) ;
+---
+>     v[2][3][k][j][i] += ftemp1*(vstar[k][j][ip1] - vstar[k][j][i])-ftemp0*e2z_1(vstar,k,j,i)*dg[2][3][i]/g[2][3][i] ;
+460c449
+<     v[2][3][k][j][i] += ftemp1*G3(2,i)*(vstar[k][j][ip1] - vstar[k][j][i]) ;
+---
+>     v[2][3][k][j][i] += ftemp1*g[2][3][i]*(vstar[k][j][ip1] - vstar[k][j][i]) ;
+509c498
+<     ftemp1=1.0/(G3(2,i)*G4(2,j));
+---
+>     ftemp1=1.0/(g[2][3][i]*g[2][4][j]);
+539c528
+<     D1a = ftemp*srhoa*OARC12(k,j,i) ;
+---
+>     D1a = ftemp*srhoa*OARCL[1][2][k][j][i] ;
+541,542c530,531
+<     D1p= ftemp*osqrtrho[k][jm1][i]*OARC12(k,j,i);
+<     D1m= ftemp*osqrtrho[k][j][i]*OARC12(k,j,i);
+---
+>     D1p= ftemp*osqrtrho[k][jm1][i]*OARCL[1][2][k][j][i];
+>     D1m= ftemp*osqrtrho[k][j][i]*OARCL[1][2][k][j][i];
+545c534
+<     dist=G2(2,i)*dx[2][2][j];    
+---
+>     dist=g[2][2][i]*dx[2][2][j];    
+640c629
+<     ftemp1=ftemp0*OARC32(k,j,i);
+---
+>     ftemp1=ftemp0*OARCL[3][2][k][j][i];
+650c639
+<     v[1][3][k][j][i] += ftemp0/(ftemp*G2(2,i)*DVL(1,2,j))*(G4(1,jp1)*bstar[k][jp1][i] - G4(1,j)*bstar[k][j][i]);
+---
+>     v[1][3][k][j][i] += ftemp0/(ftemp*g[2][2][i]*dvl[1][2][j])*(g[1][4][jp1]*bstar[k][jp1][i] - g[1][4][j]*bstar[k][j][i]);
+653c642
+<     v[1][3][k][j][i] += ftemp1/(ftemp*G4(2,j))*(bstar[k][jp1][i] - bstar[k][j][i]);
+---
+>     v[1][3][k][j][i] += ftemp1/(ftemp*g[2][4][j])*(bstar[k][jp1][i] - bstar[k][j][i]);
+660c649
+<     v[2][3][k][j][i] += ftemp1*(vstar[k][jp1][i] - vstar[k][j][i])-ftemp0*e2z_2(vstar,k,j,i)*DG4(2,j)/(G2(2,i)*G4(2,j)) ;
+---
+>     v[2][3][k][j][i] += ftemp1*(vstar[k][jp1][i] - vstar[k][j][i])-ftemp0*e2z_2(vstar,k,j,i)*dg[2][4][j]/(g[2][2][i]*g[2][4][j]) ;
+663c652
+<     v[2][3][k][j][i] += ftemp1*G4(2,j)*(vstar[k][jp1][i] - vstar[k][j][i]) ;
+---
+>     v[2][3][k][j][i] += ftemp1*g[2][4][j]*(vstar[k][jp1][i] - vstar[k][j][i]) ;
+764c753
+<     ftemp=fabs(ftemp)*dt*OARC31(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[3][1][k][j][i];
+774c763
+<     D2 = dt*z2e_2(v[1][1],k,j,i)*OARC31(k,j,i); // fraction of grid
+---
+>     D2 = dt*z2e_2(v[1][1],k,j,i)*OARCL[3][1][k][j][i]; // fraction of grid
+1052c1041
+<     ftemp=fabs(ftemp)*dt*OARC22(k,j,i);
+---
+>     ftemp=fabs(ftemp)*dt*OARCL[2][2][k][j][i];
+1062,1063c1051,1052
+<     D2 = dt*z2e_1(v[1][2],k,j,i)*OARC22(k,j,i) ;
+<     dist=dx[2][2][j]*G2(1,i);
+---
+>     D2 = dt*z2e_1(v[1][2],k,j,i)*OARCL[2][2][k][j][i] ;
+>     dist=dx[2][2][j]*g[1][2][i];
+1333c1322
+<       v[1][1][k][j][i] += dt*bya*OARC42(k,j,i)/rhoa2*(bxprim[k][jp1][i] - bxprim[k][j][i]);
+---
+>       v[1][1][k][j][i] += dt*bya*OARCL[4][2][k][j][i]/rhoa2*(bxprim[k][jp1][i] - bxprim[k][j][i]);
+1345c1334
+<       v[1][2][k][j][i] += dt*bxa*OARC41(k,j,i)/(rhoa2*G2(2,i))*(G2(1,ip1)*byprim[k][j][ip1] - G2(1,i)*byprim[k][j][i]) ;
+---
+>       v[1][2][k][j][i] += dt*bxa*OARCL[4][1][k][j][i]/(rhoa2*g[2][2][i])*(g[1][2][ip1]*byprim[k][j][ip1] - g[1][2][i]*byprim[k][j][i]) ;
+1351c1340
+<       v[2][1][k][j][i] += dt*OARC42(k,j,i)/G4(2,j)*(G4(1,jp1)*magemf[k][jp1][i] - G4(1,j)*magemf[k][j][i]) ;
+---
+>       v[2][1][k][j][i] += dt*OARCL[4][2][k][j][i]/g[2][4][j]*(g[1][4][jp1]*magemf[k][jp1][i] - g[1][4][j]*magemf[k][j][i]) ;
+1356c1345
+<       v[2][2][k][j][i] += dt*OARC41(k,j,i)/G3(2,i)*(G3(1,i)*magemf[k][j][i] - G3(1,ip1)*magemf[k][j][ip1]) ;
+---
+>       v[2][2][k][j][i] += dt*OARCL[4][1][k][j][i]/g[2][3][i]*(g[1][3][i]*magemf[k][j][i] - g[1][3][ip1]*magemf[k][j][ip1]) ;

@@ -1,0 +1,317 @@
+Parameters playing with:
+0) DATADIR
+1) grid size
+5) VREAL
+9) VISCEs
+2) gam
+3) alpha_real0
+4) coolfact
+7) r=?rg..?rg
+8) tf , DTl
+6) cool
+
+RESULTS:
+-----------
+r=2rg..20rg 60x40
+alpha=.1 coolfact=1.0E-7
+Results: dt=20k to steady, 20k after cooling on to steady
+No convection, no outflow
+slight shrink at inner edge when cooling is turned on
+t=50-60,000 good steady state on 64x40 grid, cooling included, turned on at t=30,000 at .1 of fraction of en over 4 viscous times
+
+Takes 20,000 to steady from cooling turned on, takes t=20,000 to steady initially
+--------
+
+-------------------------------------------------
+64x40 single cpus
+1) ndata15: gam=3/2 alpha_real0=.01 coolfact=1.0E-7 VREAL==2 all visc components (1/4) tf=60,000 DTl=1
+R1)
+a) Steady accretion for L,E,M, all same structure. Outer fraction of inner except L which is equal
+b) symmetric instability about theta=Pi/2
+b2) cooling induces thin disk, cooling region doesn't reach steady state
+c) no outflow
+d) sonic point well inside grid, symmetric polar inflow
+
+2) ndata16: (1) gam=5/3 (3/4)
+R2)
+a) Accumulates less, steady sooner after cooling, rate of L,E,M is about 2/3 of (1) for inner.  Outer much more like inner for M, L much higher rate for outer, E much lower for outer
+b) Convectively unstable compared unlike (1)
+b2) cooling rides to steady state
+c) Major convective outflow at poles, pulsed quasiperiodic
+d) sonic point outside grid, antisymmetric polar activity
+
+3) ndata17: (2) coolfact=4.0E-7 (1/3) (Periodic pulsed outflows)
+a) like (2), but once cooling, rate of accretion(L,M,E) is lower than (2).  Once cooling on, outer rate goes negative
+b) convectively unstable
+b2) cooling doesn't reach steady state, much different accretion than (2), cooling quenches outflow and convection.  Once cooling sets in for a while, v_theta instability develops in the thin disk, and stays there.
+c) Major convective outflow apart from (b2)
+d) sonic point outside grid until cooling sets in, then sonic point moves inside grid
+
+4) ndata18: (2) VREAL==1             BOOM! (1/4)
+a) Higher accretion rate than (2), outer is lower
+b) convectively unstable even after cooling is on!  Doesn't really get mx2 development till after explosion!
+b2) cooling does reach steady state
+c) major outflow after explosion sets in
+d) sonic point outside grid
+
+
+5) ndata19: (1) alpha_real0=.03 cool=0 r=2rg..300rg tf=90000 (0)
+a) not in steady state yet, perhaps unstable(displays outflow oscillations)...shows inflow is supersonic at inner edge until initial material falls in from outer edge
+d) sonic point outside grid
+
+6) ndata20: (2) only VISCE13=VISCE23=1 tf=90000 (3/4)
+a) essentially steady state, much more dynamic in etot, rates very like (2)
+b) convectively unstable, even after cooling
+b2) cooling basically reaches steady state
+c) less intense, rarer pulsed outflow.  Once cooling on, very less intense, very rare if at all outflow
+d) sonic point outside grid
+
+X7) ndata21: (5) tf=900000 DTl=10 (0)
+a) not at steady state by 30,000 (fail at 32,000)
+
+X8) ndata22: (4) 90x64 (1/4) (DEATH at t=7k)
+a) essentially in steady state at death, early death
+
+9) ndata23: (2) r=1.4rg..20rg (0)
+a) kinda in steady state before cooling, then cooling not in steady state, accretion variables quickly in steady state, about 1.5X faster rates than (2)
+b) not convectively unstable, just a bit in late time before 30k maybe.  After cooling stongly goes to thin disk.
+b2) cooling not in steady state
+c) no outflow, except 1 little ball pulse at t=13.2k.  Ball does have Be>0
+d) interestingly, sonic point is always on grid!, even during the ball outflow
+
+
+10) ndata24: (2) t=900000 DTl=10 cool starts at 100000 (1!) (DEATH at t=70k near theta=0 at r=10)
+a) in steady state for sure, but still dynamic, same as (2)
+b) ...same as 2
+
+General results:
+1) inner radius greatly affects whether convection/outflow exists, determined by whether sonic point is in grid or not, affects reates
+2) general everything else is complex
+------------------------------------------------------------
+
+-----------------------------------------
+Moved injection in a bit, have outer accounting at N1, not N1-2 as above
+1) ndata15: N1=128,N2=64, MDOTIX2=7/16,OX2=9/16 (to compare with (2) above) (TODO#2)
+a) Crash.  Difference seems pretty negligible upto crash.
+
+2) ndata16: MDOTIX2/OX2 normal gam=5/3 alpha_real0=.01 cool=0 VREAL=2 all VISCE tf=100000 DTl=1 64x40 r=1.4rg..20rg (TODO#3)
+a) typical stable situation when sonic point on grid
+b) very stable at t=40,000 even in derivative.  More outflow than inflow
+c) no outflow, very steady inflow
+d) sonic point on grid
+
+3) ndata17: (2) r=2rg..20rg (TODO#3)
+a) typical boundary indiced oscillations
+b) compared, see comparison.txt
+
+4) ndata18: (2) N1=100, N2=64, alpha_real0=.01 r=1.4rg..300rg DTl=10 tf = 1500000 (TODO#4,1)
+a) interesting mx2 oscillation starting, seems to simply be caused by interaction with falling material from inj. onto already falling material near the radial inner edge
+b) perhaps convective, but run not long enough so far(t=1.8E5) for steady-state to appear.  Be shows characteristic oscillation near +/- boundary at inner radial edge
+c) none or minimal outflow so far, shows theta inflow oscillations
+d) sonic point on grid so far
+
+5) ndata19: (2) alpha_real0=.001 tf=1E6 DTl=10
+a) still no convection, outflow, early steady state....Later, mx2 oscillation forms.  Oscillation shows up in everything.  Little chunking, no convection.
+b) stable but with mx2 oscillations, no convection, little chunking.
+c) no outflow at all
+d) sonic point on grid
+
+
+6) ndata20: IGU compare: with alpha=1, r=1.4rg..75rg gam=3/2 cool=0 tf=100000 DTl=1 64x40
+a) not in steady state by 1.5E4, builds up mx2 oscillations.  Affects integrated variables more than fluxes.
+b) stable convectively, but mx2 oscillations form
+c) large radii weak polar outflow, but maybe just due to outer BC and no SP on grid.
+d) sonic point NOT on grid
+
+
+7) ndata21: (6) alpha=0.3
+a) not steady by t=5E4, no convection
+b) not convective, steady with a burp of a mx2 oscillation
+c) no outflow
+d) sonic point barely NOT on grid, -.8 Machx
+
+
+8) ndata22: (6) r=3rg..75rg (IGU exactly)
+a) mx2 oscillations, but gradually fades, in both ints and fluxes
+b) steady, like IGU, little bit of breathing so far
+c) polar outflow extends down to inner radial edge, as with IGU, out power ~ in power.
+d) sonic point not on grid
+
+
+X9) ndata23: SPB torus, 64x40, r=3rg..75rg,tf=1E6,gam=5/3,alpha=.01,cool=0,DTl=1
+a) nearly steady state in m,e, totals.  little oscillation in movie, but not much.  Nearly steady-state for fluxes, but not quite still.  More outflow than inflow by about 4-10X.  Oscillations in flux dies down, and min1 drops a bit too while this happens.
+b) apparently not convectively unstable that much, maybe low resolution killing the mode?  Central region does clump a bit.
+c) animplc vx shows weak sporatic outflows along "torus" edges. animpl x2 vx shows pole reversal a bit.
+d) sonic point not on grid.
+e) DID INCORRECTLY, wrong visc parameter and time, redone below
+
+X10) ndata24: (9) r=2rg..800rg, tf=1.6E7 DTl=10 STOPPED
+a) DID INCORRECTLY, wrong visc parameter and time 
+
+9) ndata23: redo of (9) with correct visc/time: tf=8E5 DTl=10 but r=1.4rg..800rg and VISCE13,23 only, turn on visc at t=20,000
+a) steady-state inflow essentially(no real steady-state with tori runs if no injection)
+b) convectively unstable due to high Be near inner edge, acting as threshold for outflow
+c) weak sporadic outflows along torus edge, pole reversal alot, high inflow mach
+d) sonic point on grid! 
+
+-----------------------------------------
+#4(ndata18), #9(ndata23) still going above!  KEEP ndata16/ndata17!!!
+1) ndata15: redo of (6) above, to make sure sonic point is on grid: r=1.2rg..75rg with alpha=1, gam=3/2 cool=0 tf=100000 DTl=1 64x40 IGU type
+a) taking forever, currently at 75tu/hour on 1 photon cpu!  dominant is viscosity by 100X over anything else.  Perhaps inflow in steady state
+b) mx2 oscillation starting at t=1500, growing through 3500.
+c) broad outflow bit outside the inner radial edge
+d) sonic point still not on grid!  at least not by 3500
+
+(below: should have been using r=1.4rg..20rg! redo them all, and resolve theta better!)
+
+X2) ndata19: IGU visc, cool=1.E-7, r=2rg..20rg, tf=2E5, gam=5/3,alpha=.01,DTl=1 64x40 nonunigrid=5,3,0 coolbottom=.1 coolstart=30k viscstart=1k
+a) DIED at t=18k, must be due to unresolved polar regions...since that's all that's different upto that point
+
+X3) ndata20: (2) cool=3.E-7 
+X4) ndata21: (2) cool=4.E-7
+X5) ndata22: (2) cool=2.E-7
+X6) ndata24: (5) coolbottom=1.0
+7) ndata25: (2) r=1.05rg..20rg gam=5/3 cool=0 nonunigrid=5,0,0
+a) very much like r=2rg..20rg gam=5/3, except small glitch in mx2 at early times added.  Everything else changes very little in functional form.
+8) ndata26: (7) gam=3/2
+a) same, no change really
+-------------------------------------------
+
+-----------------------------------------------
+Still going: 7(AD)) ndata25 8(WG)) ndata26 (note the avg is wrong, divide ?1d2 by x1(r)
+Keep: ndata16, ndata17, ndata25, ndata26
+
+(stopped) ndata27: (9 above) but with IGU visc prescription
+a) steady state reached about 1E6 or maybe a bit further
+b) very large mx2 oscillation starts around 7E5.
+c) (see email to gammie on laptop for 2:20pm Sept 3, 2000): yes outflow, very very weak
+d) sonic point on grid
+
+(stopped) ndata28: 128x80 r=1.4rg..20rg alpha=.01 injection IGU VISC, initdata using 64x40 end data
+a) steady oscillatory state reached after about t=5500tu
+b) oscillations all over the place, fragmented outflows and mx2 oscillations.  KH induced outflows?
+c) outflow, yes!
+d) sonic point on grid
+
+(stopped) ndata30: (as ndata28 above but 256x160)
+a) steady oscillatory state reached after about t=5500tu
+b) oscillations all over the place, fragmented outflows and mx2 oscillations.  KH induced outflows?
+c) outflow, yes!
+d) sonic point on grid
+
+------------
+
+(stopped)photon: ndata31: 128x100 alpha=0.05 r=1.4rg..20rg injection IGU visc, initdata from 128x80 end data
+a) mostly steady by t=5000, strong steady by 10^4.
+b) no oscillations so far, no oscillations by 23000.
+c) no outflow so far, or by 23000.
+d) sonic point on grid in steady state, definitely(Machr~-1.9)
+
+(stopped)rainman: ndata32: (ndata31) but r=1.4rg..80rg and injection is based off 20rg, and not reentrant, visctstart=1000, and tf=5*visctime
+a) not really steady-state, but steady by t=5000, strong by 3.3E4
+b) no oscillations so far, none by 3.3E4
+c) no outflow so far, none by 3.3E4
+d) sonic point on grid so far once steady(Machr~-1.73)
+
+Xrainman: ndata33: (ndata32) but 64x40 and tf=50*visctime (DIED!)
+a) numerical instability at poles near that little vx>0 region just next to injection
+
+Xphoton: ndata34: (ndata32) torus, no injection, all else same, R0=.85*(L1+L2/4) Rin=0.775*(L1+L2/4) (KILL since mass goes away too fast)
+a) steady, but not enough mass to tell steady-state
+b) no oscillations
+c) no outflow
+d) sonic point on grid once steady
+
+Xalphadog: ndata35: (ndata34) 64x40 and tf=50*visctime (KILL->alpha=.01 and make like ndata36)
+a) "steady flow", "steady" almost by t=27k, torus doesn't last long enough
+b) no oscillations
+c) no outflow
+d) sonic point on grid
+
+(stopped-wiseguy crashed)wiseguy: ndata36: (ndata35) torus R0=1.2*(L1+L2/4) (KEEP GOING, determine issue on sonic point)
+a) as with ndata35, but lasts longer with bigger torus, and looks alot like injection with double lobed density around equator in early time.  Torus disappears so hard to say what eigenvalues are. t=1E5
+b) no oscillations
+c) no outflow
+d) sonic point on grid most of the time, extended time?  Moves off grid once torus begins to dissolve.
+
+alphadog: ndata37: (ndata36) alpha=.01
+a) torus doesn't disappear as fast as ndata36.
+b) convection
+c) no to little
+d) on grid
+
+rainman: ndata38: (ndata37) 128x100
+a) bit different than ndata37 in exact eigenvalues, esp. for mdot, evolves to peak faster, otherwise same
+
+photon: ndata39: (ndata38) L2=400rg 128x100
+a) not at peak by t=7.0E4
+b) possibly convection
+c) possibly outflow
+d) perhaps later, but some early points not
+
+photon: ndata40: (ndata39) L2=200rg
+a) seems steady by t=6E4, but not long enough to tell
+b) convection
+c) no to extremely little outflow
+d) Yes.
+
+rainman: ndata41: (ndata40) L2=800rg
+a) obviously not done yet
+
+ndata42,43,44,45 ATM stuff
+
+
+FLIed D f10: 128x64 cont of f8 using IGUR
+FLIed D f11: 128x64 3rg..103rg,gam=5/3,alpha=0.1 IGUR,PW
+FLIed D f12: 128x64 NewT. Pot of f11
+FLIed D f13: 128x64 3rg..103rg,gam=3/2,alpha=0.1 IGUR,Newt. (like n7PW with larger Rout)
+FLIed D f14: 128x64 3rg..103rg,gam=4/3,alpha=0.1 IGUR,Newt.
+FLIed D f15: 128x64 3rg..103rg,gam=4/3,alpha=0.3 IGUR,Newt.
+FLIed D f16: 128x80 redo of n28 using IGUR
+FLIed D f17: 128x64 redo of real n7(am i crazy?) no, you aren't crazy
+f18: 128x80 redo of f5 with IGUR
+
+
+-------COMP RESULTS-------
+torus: (498kzcycles/sec on 4 cpus)
+64x40
+rin=1.4rg -> 22500tu/hour doubles 4 cpus alpha=.01 IGU visc, no injection
+
+injection:
+64x40
+rin=2rg -> 15000tu/hour 4 cpus
+rin=1.4rg -> 13000tu/hour 4cpus 420kzones/sec
+rin=1.05rg -> 900tu/hour 4 cpus
+
+80x80 : 4cpus 533kzones/sec
+64x160: 4cpus 620kzones/sec
+
+100x64
+rin=1.4rg -> 5800tu/hour 4 cpus
+
+128x64
+rin=2rg -> 3000tu/hour 4 cpus
+rin=2.75rg ->6000tu/hour 4 cpus
+
+128x80: 592,454 zcycles/sec on 4 cpus, doubles, with alpha=.01 IGU visc and injection on.  393,846zcycles/sec on 2 photon cpus
+rin=1.4rg -> 1540tu/hour 4cpus
+
+256x160: 645,634 zcycles/sec on 4 cpus, doubles, with alpha=.01 IGU visc and injection on.
+rin=1.4rg -> 190tu/hour 4cpus
+--------------------------
+
+512x320: 1 cpu, doubles, alpha=0.01 IGU visc, inj on.
+rin=1.4rg -> 2.7tu/hour 1 cpus
+
+new code
+(128x80 per cpu):
+1photon: 293kzones/sec floats (visc) 242k rainman
+1photon: 391kzones/sec floats (no visc) 323k rainman
+1photon: 240kzones/sec doubles (visc) 198k rainman
+1photon: 320kzones/sec doubles (no visc) 264k rainman
+(128x40 per cpu):
+2photons: 528kzones/sec floats 90% (530kzones/sec for 108x25 per cpu)
+2rainman: 431kzones/sec floats 89% (381kzones/sec for 80x25 per cpu)
+2rainman: 373kzones/sec doubles 94%
+(128x32 per cpu)
+2ph/2ra:   833kzones/sec floats 86% ~2158tu/hour

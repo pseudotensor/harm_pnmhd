@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cat /u/jon/research/current/bin/0_gparam.par.0 /u/jon/research/current/bin/0_final.dat.0 > /u/jon/research/current/bin/sjmmail.txt
+mail -s $1 jcmcknny@uiuc.edu < /u/jon/research/current/bin/sjmmail.txt
+rm /u/jon/research/current/bin/sjmmail.txt

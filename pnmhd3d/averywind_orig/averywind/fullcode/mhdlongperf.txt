@@ -1,0 +1,473 @@
+Flat profile:
+
+Each sample counts as 0.000976562 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 20.86  19038.05 19038.05   163113   116.72   145.18  moc_ct_3d_v2
+ 14.99  32716.00 13677.95   163113    83.86   112.32  lorentz_3d
+ 10.98  42736.54 10020.54   163113    61.43    81.34  sweepz
+ 10.13  51980.37  9243.83   163113    56.67    75.94  sweepx
+ 10.07  61165.58  9185.21   163113    56.31    74.58  sweepy
+  4.79  65537.32  4371.74  1794243     2.44     2.44  dqvz_calc
+  4.43  69580.59  4043.26  1794243     2.25     2.25  dqvx_calc
+  4.34  73544.67  3964.09   163113    24.30    25.42  step_visc
+  4.22  77394.94  3850.27  1794243     2.15     2.15  dqvy_calc
+  3.39  80492.12  3097.19  2772922     1.12     1.12  bound_gensimple1
+  2.92  83152.10  2659.98   163113    16.31    16.31  timestep
+  2.73  85642.10  2489.99   163113    15.27    16.38  step_pgc
+  1.45  86968.04  1325.94   326226     4.06     4.06  dqz_calc
+  1.44  88280.12  1312.08   326226     4.02     4.02  dqx_calc
+  1.32  89480.58  1200.46   326226     3.68     3.68  dqy_calc
+  0.57  90000.88   520.29   163113     3.19     4.31  step_ie
+  0.40  90367.10   366.23      752   487.00   487.00  diag_mode
+  0.39  90721.71   354.60    15002    23.64    23.64  diag_ener
+  0.31  91006.16   284.46   163113     1.74     1.74  magprepare
+  0.25  91235.51   229.35      502   456.87   456.87  image
+  0.00  91239.00     3.48   163115     0.02     0.02  divb0check
+  0.00  91241.24     2.25        1  2246.09  2246.09  init_bc_gen1
+  0.00  91242.27     1.02   163113     0.01   537.22  stepvar_3d
+  0.00  91243.28     1.02   163113     0.01   231.87  step_trans_3d
+  0.00  91244.25     0.97                             main
+  0.00  91244.81     0.56        2   278.81   278.81  tori1sol
+  0.00  91245.28     0.48   163115     0.00     0.01  analsolve
+  0.00  91245.69     0.41   163115     0.00     5.83  diag
+  0.00  91246.01     0.31        1   313.48   313.48  init_compsave
+  0.00  91246.25     0.24   163115     0.00     1.41  diag_dumps
+  0.00  91246.35     0.10   163114     0.00     0.00  tdep_compute
+  0.00  91246.40     0.05        1    54.69    54.69  init_data
+  0.00  91246.41     0.00        1     4.88     4.88  accountstoreset
+  0.00  91246.41     0.00        1     4.88     4.88  myexit
+  0.00  91246.42     0.00        1     0.98     0.98  init_diffs
+  0.00  91246.42     0.00        1     0.00  2621.25  init
+  0.00  91246.42     0.00        1     0.00     0.00  init_checks
+  0.00  91246.42     0.00        1     0.00     0.00  init_dx
+  0.00  91246.42     0.00        1     0.00     0.00  init_floor
+  0.00  91246.42     0.00        1     0.00     0.00  init_general
+  0.00  91246.42     0.00        1     0.00     0.00  init_genfiles
+  0.00  91246.42     0.00        1     0.00     0.00  init_inflows
+  0.00  91246.42     0.00        1     0.00     0.00  init_loss
+  0.00  91246.42     0.00        1     0.00     0.00  init_mainbc
+  0.00  91246.42     0.00        1     0.00     0.00  init_mem
+  0.00  91246.42     0.00        1     0.00     0.00  init_otherparams
+  0.00  91246.42     0.00        1     0.00     0.00  init_outgparm
+  0.00  91246.42     0.00        1     0.00     0.00  init_paramsgeom
+  0.00  91246.42     0.00        1     0.00     0.00  init_paramsnumerical
+  0.00  91246.42     0.00        1     0.00     0.00  init_paramsphysics
+  0.00  91246.42     0.00        1     0.00     0.00  init_paramspresets
+  0.00  91246.42     0.00        1     0.00     0.00  init_paramstime
+  0.00  91246.42     0.00        1     0.00     0.01  init_paramstot
+  0.00  91246.42     0.00        1     0.00     0.00  init_placeongrid
+  0.00  91246.42     0.00        1     0.00     0.00  init_pointers
+  0.00  91246.42     0.00        1     0.00     0.00  init_radiations
+  0.00  91246.42     0.00        1     0.00     0.00  init_reduceddimension
+  0.00  91246.42     0.00        1     0.00     0.00  init_x
+  0.00  91246.42     0.00        1     0.00     0.00  ranc
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.00% of 91246.42 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.97 91245.45                 main [1]
+                1.02 87626.37  163113/163113      stepvar_3d [2]
+             2659.98    0.00  163113/163113      timestep [15]
+                0.41  950.42  163115/163115      diag [19]
+                3.48    0.00  163115/163115      divb0check [26]
+                0.00    2.62       1/1           init [27]
+                0.48    0.56  163113/163115      analsolve [29]
+                0.10    0.00  163113/163114      tdep_compute [32]
+                0.00    0.00       1/1           myexit [35]
+                0.00    0.00       1/1           init_genfiles [42]
+-----------------------------------------------
+                1.02 87626.37  163113/163113      main [1]
+[2]     96.0    1.02 87626.37  163113         stepvar_3d [2]
+                1.02 37819.39  163113/163113      step_trans_3d [3]
+             19038.05 4642.29  163113/163113      moc_ct_3d_v2 [4]
+             13677.95 4642.29  163113/163113      lorentz_3d [5]
+             3964.09  182.19  163113/163113      step_visc [10]
+             2489.99  182.19  163113/163113      step_pgc [14]
+              520.29  182.19  163113/163113      step_ie [20]
+              284.46    0.00  163113/163113      magprepare [23]
+-----------------------------------------------
+                1.02 37819.39  163113/163113      stepvar_3d [2]
+[3]     41.4    1.02 37819.39  163113         step_trans_3d [3]
+             10020.54 3246.98  163113/163113      sweepz [6]
+             9243.83 3143.54  163113/163113      sweepx [7]
+             9185.21 2979.29  163113/163113      sweepy [8]
+-----------------------------------------------
+             19038.05 4642.29  163113/163113      stepvar_3d [2]
+[4]     26.0 19038.05 4642.29  163113         moc_ct_3d_v2 [4]
+             1589.72    0.00  652452/1794243     dqvz_calc [9]
+             1470.28    0.00  652452/1794243     dqvx_calc [11]
+             1400.10    0.00  652452/1794243     dqvy_calc [12]
+              182.19    0.00  163113/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             13677.95 4642.29  163113/163113      stepvar_3d [2]
+[5]     20.1 13677.95 4642.29  163113         lorentz_3d [5]
+             1589.72    0.00  652452/1794243     dqvz_calc [9]
+             1470.28    0.00  652452/1794243     dqvx_calc [11]
+             1400.10    0.00  652452/1794243     dqvy_calc [12]
+              182.19    0.00  163113/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             10020.54 3246.98  163113/163113      step_trans_3d [3]
+[6]     14.5 10020.54 3246.98  163113         sweepz [6]
+             1325.94    0.00  326226/326226      dqz_calc [16]
+             1192.29    0.00  489339/1794243     dqvz_calc [9]
+              728.75    0.00  652452/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             9243.83 3143.54  163113/163113      step_trans_3d [3]
+[7]     13.6 9243.83 3143.54  163113         sweepx [7]
+             1312.08    0.00  326226/326226      dqx_calc [17]
+             1102.71    0.00  489339/1794243     dqvx_calc [11]
+              728.75    0.00  652452/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             9185.21 2979.29  163113/163113      step_trans_3d [3]
+[8]     13.3 9185.21 2979.29  163113         sweepy [8]
+             1200.46    0.00  326226/326226      dqy_calc [18]
+             1050.07    0.00  489339/1794243     dqvy_calc [12]
+              728.75    0.00  652452/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             1192.29    0.00  489339/1794243     sweepz [6]
+             1589.72    0.00  652452/1794243     moc_ct_3d_v2 [4]
+             1589.72    0.00  652452/1794243     lorentz_3d [5]
+[9]      4.8 4371.74    0.00 1794243         dqvz_calc [9]
+-----------------------------------------------
+             3964.09  182.19  163113/163113      stepvar_3d [2]
+[10]     4.5 3964.09  182.19  163113         step_visc [10]
+              182.19    0.00  163113/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             1102.71    0.00  489339/1794243     sweepx [7]
+             1470.28    0.00  652452/1794243     moc_ct_3d_v2 [4]
+             1470.28    0.00  652452/1794243     lorentz_3d [5]
+[11]     4.4 4043.26    0.00 1794243         dqvx_calc [11]
+-----------------------------------------------
+             1050.07    0.00  489339/1794243     sweepy [8]
+             1400.10    0.00  652452/1794243     moc_ct_3d_v2 [4]
+             1400.10    0.00  652452/1794243     lorentz_3d [5]
+[12]     4.2 3850.27    0.00 1794243         dqvy_calc [12]
+-----------------------------------------------
+                0.00    0.00       1/2772922     init [27]
+              182.19    0.00  163113/2772922     step_pgc [14]
+              182.19    0.00  163113/2772922     step_visc [10]
+              182.19    0.00  163113/2772922     step_ie [20]
+              182.19    0.00  163113/2772922     moc_ct_3d_v2 [4]
+              182.19    0.00  163113/2772922     lorentz_3d [5]
+              728.75    0.00  652452/2772922     sweepx [7]
+              728.75    0.00  652452/2772922     sweepy [8]
+              728.75    0.00  652452/2772922     sweepz [6]
+[13]     3.4 3097.19    0.00 2772922         bound_gensimple1 [13]
+-----------------------------------------------
+             2489.99  182.19  163113/163113      stepvar_3d [2]
+[14]     2.9 2489.99  182.19  163113         step_pgc [14]
+              182.19    0.00  163113/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+             2659.98    0.00  163113/163113      main [1]
+[15]     2.9 2659.98    0.00  163113         timestep [15]
+-----------------------------------------------
+             1325.94    0.00  326226/326226      sweepz [6]
+[16]     1.5 1325.94    0.00  326226         dqz_calc [16]
+-----------------------------------------------
+             1312.08    0.00  326226/326226      sweepx [7]
+[17]     1.4 1312.08    0.00  326226         dqx_calc [17]
+-----------------------------------------------
+             1200.46    0.00  326226/326226      sweepy [8]
+[18]     1.3 1200.46    0.00  326226         dqy_calc [18]
+-----------------------------------------------
+                0.41  950.42  163115/163115      main [1]
+[19]     1.0    0.41  950.42  163115         diag [19]
+              366.23    0.00     752/752         diag_mode [21]
+              354.60    0.00   15002/15002       diag_ener [22]
+                0.24  229.35  163115/163115      diag_dumps [24]
+-----------------------------------------------
+              520.29  182.19  163113/163113      stepvar_3d [2]
+[20]     0.8  520.29  182.19  163113         step_ie [20]
+              182.19    0.00  163113/2772922     bound_gensimple1 [13]
+-----------------------------------------------
+              366.23    0.00     752/752         diag [19]
+[21]     0.4  366.23    0.00     752         diag_mode [21]
+-----------------------------------------------
+              354.60    0.00   15002/15002       diag [19]
+[22]     0.4  354.60    0.00   15002         diag_ener [22]
+-----------------------------------------------
+              284.46    0.00  163113/163113      stepvar_3d [2]
+[23]     0.3  284.46    0.00  163113         magprepare [23]
+-----------------------------------------------
+                0.24  229.35  163115/163115      diag [19]
+[24]     0.3    0.24  229.35  163115         diag_dumps [24]
+              229.35    0.00     502/502         image [25]
+-----------------------------------------------
+              229.35    0.00     502/502         diag_dumps [24]
+[25]     0.3  229.35    0.00     502         image [25]
+-----------------------------------------------
+                3.48    0.00  163115/163115      main [1]
+[26]     0.0    3.48    0.00  163115         divb0check [26]
+-----------------------------------------------
+                0.00    2.62       1/1           main [1]
+[27]     0.0    0.00    2.62       1         init [27]
+                2.25    0.00       1/1           init_bc_gen1 [28]
+                0.31    0.00       1/1           init_compsave [31]
+                0.05    0.00       1/1           init_data [33]
+                0.00    0.00       1/1           accountstoreset [34]
+                0.00    0.00       1/2772922     bound_gensimple1 [13]
+                0.00    0.00       1/1           init_diffs [36]
+                0.00    0.00       1/1           init_paramstot [37]
+                0.00    0.00       1/1           ranc [59]
+                0.00    0.00       1/1           init_checks [38]
+                0.00    0.00       1/1           init_mem [46]
+                0.00    0.00       1/1           init_pointers [55]
+                0.00    0.00       1/1           init_general [41]
+                0.00    0.00       1/1           init_placeongrid [54]
+                0.00    0.00       1/1           init_paramspresets [52]
+                0.00    0.00       1/1           init_otherparams [47]
+                0.00    0.00       1/1           init_mainbc [45]
+                0.00    0.00       1/1           init_dx [39]
+                0.00    0.00       1/1           init_x [58]
+                0.00    0.00       1/1           init_reduceddimension [57]
+                0.00    0.00       1/1           init_inflows [43]
+                0.00    0.00       1/1           init_radiations [56]
+                0.00    0.00       1/1           init_outgparm [48]
+                0.00    0.00       1/1           init_floor [40]
+                0.00    0.00       1/1           init_loss [44]
+-----------------------------------------------
+                2.25    0.00       1/1           init [27]
+[28]     0.0    2.25    0.00       1         init_bc_gen1 [28]
+-----------------------------------------------
+                0.00    0.00       1/163115      init_paramstot [37]
+                0.00    0.00       1/163115      init_data [33]
+                0.48    0.56  163113/163115      main [1]
+[29]     0.0    0.48    0.56  163115         analsolve [29]
+                0.56    0.00       2/2           tori1sol [30]
+-----------------------------------------------
+                0.56    0.00       2/2           analsolve [29]
+[30]     0.0    0.56    0.00       2         tori1sol [30]
+-----------------------------------------------
+                0.31    0.00       1/1           init [27]
+[31]     0.0    0.31    0.00       1         init_compsave [31]
+-----------------------------------------------
+                0.00    0.00       1/163114      init_data [33]
+                0.10    0.00  163113/163114      main [1]
+[32]     0.0    0.10    0.00  163114         tdep_compute [32]
+-----------------------------------------------
+                0.05    0.00       1/1           init [27]
+[33]     0.0    0.05    0.00       1         init_data [33]
+                0.00    0.00       1/163115      analsolve [29]
+                0.00    0.00       1/163114      tdep_compute [32]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[34]     0.0    0.00    0.00       1         accountstoreset [34]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[35]     0.0    0.00    0.00       1         myexit [35]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[36]     0.0    0.00    0.00       1         init_diffs [36]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[37]     0.0    0.00    0.00       1         init_paramstot [37]
+                0.00    0.00       1/163115      analsolve [29]
+                0.00    0.00       1/1           init_paramsphysics [51]
+                0.00    0.00       1/1           init_paramsnumerical [50]
+                0.00    0.00       1/1           init_paramstime [53]
+                0.00    0.00       1/1           init_paramsgeom [49]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[38]     0.0    0.00    0.00       1         init_checks [38]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[39]     0.0    0.00    0.00       1         init_dx [39]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[40]     0.0    0.00    0.00       1         init_floor [40]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[41]     0.0    0.00    0.00       1         init_general [41]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[42]     0.0    0.00    0.00       1         init_genfiles [42]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[43]     0.0    0.00    0.00       1         init_inflows [43]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[44]     0.0    0.00    0.00       1         init_loss [44]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[45]     0.0    0.00    0.00       1         init_mainbc [45]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[46]     0.0    0.00    0.00       1         init_mem [46]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[47]     0.0    0.00    0.00       1         init_otherparams [47]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[48]     0.0    0.00    0.00       1         init_outgparm [48]
+-----------------------------------------------
+                0.00    0.00       1/1           init_paramstot [37]
+[49]     0.0    0.00    0.00       1         init_paramsgeom [49]
+-----------------------------------------------
+                0.00    0.00       1/1           init_paramstot [37]
+[50]     0.0    0.00    0.00       1         init_paramsnumerical [50]
+-----------------------------------------------
+                0.00    0.00       1/1           init_paramstot [37]
+[51]     0.0    0.00    0.00       1         init_paramsphysics [51]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[52]     0.0    0.00    0.00       1         init_paramspresets [52]
+-----------------------------------------------
+                0.00    0.00       1/1           init_paramstot [37]
+[53]     0.0    0.00    0.00       1         init_paramstime [53]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[54]     0.0    0.00    0.00       1         init_placeongrid [54]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[55]     0.0    0.00    0.00       1         init_pointers [55]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[56]     0.0    0.00    0.00       1         init_radiations [56]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[57]     0.0    0.00    0.00       1         init_reduceddimension [57]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[58]     0.0    0.00    0.00       1         init_x [58]
+-----------------------------------------------
+                0.00    0.00       1/1           init [27]
+[59]     0.0    0.00    0.00       1         ranc [59]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+
+Index by function name
+
+  [34] accountstoreset        [36] init_diffs             [57] init_reduceddimension
+  [29] analsolve              [39] init_dx                [58] init_x
+  [13] bound_gensimple1       [40] init_floor              [5] lorentz_3d
+  [19] diag                   [41] init_general           [23] magprepare
+  [24] diag_dumps             [42] init_genfiles           [1] main
+  [22] diag_ener              [43] init_inflows            [4] moc_ct_3d_v2
+  [21] diag_mode              [44] init_loss              [35] myexit
+  [26] divb0check             [45] init_mainbc            [59] ranc
+  [11] dqvx_calc              [46] init_mem               [20] step_ie
+  [12] dqvy_calc              [47] init_otherparams       [14] step_pgc
+   [9] dqvz_calc              [48] init_outgparm           [3] step_trans_3d
+  [17] dqx_calc               [49] init_paramsgeom        [10] step_visc
+  [18] dqy_calc               [50] init_paramsnumerical    [2] stepvar_3d
+  [16] dqz_calc               [51] init_paramsphysics      [7] sweepx
+  [25] image                  [52] init_paramspresets      [8] sweepy
+  [27] init                   [53] init_paramstime         [6] sweepz
+  [28] init_bc_gen1           [37] init_paramstot         [32] tdep_compute
+  [38] init_checks            [54] init_placeongrid       [15] timestep
+  [31] init_compsave          [55] init_pointers          [30] tori1sol
+  [33] init_data              [56] init_radiations

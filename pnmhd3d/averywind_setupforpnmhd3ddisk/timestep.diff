@@ -1,0 +1,92 @@
+22c22
+<   static FTYPE ttimestep=0,ttimescale=0;
+---
+>   static FTYPE ttimestep=0;
+62d61
+<     ttimescale=t-1.E-12;
+105,110c104,108
+<       if(CHECKDTLOW==1){
+< 	if(ftemp>SQIDTLOWEST){
+< 	  timecheck(-l,idt2,k,j,i,0);
+< 	  didfail=1;
+< 	  fflush(fail_file);
+< 	}
+---
+> #if(CHECKDTLOW==1)
+>       if(ftemp>SQIDTLOWEST){
+> 	timecheck(-l,idt2,k,j,i,0);
+> 	didfail=1;
+> 	fflush(fail_file);
+111a110
+> #endif
+156,164c155,159
+<   if(DODTDIAG){
+<     // do check up on dominates of timestep for each type
+<     if(t>ttimestep){ // per cpu pure dt data
+<       for(l=2;l<=NUMDTCHECKS;l++){
+< 	timecheck(l,idt2,ks[l],js[l],is[l],reall);
+<       }
+<       fflush(logdt_file);
+<       
+<       ttimestep=t+DTtimestep;
+---
+> #if(DODTDIAG)
+>   // do check up on dominates of timestep for each type
+>   if(t>ttimestep){ // per cpu pure dt data
+>     for(l=2;l<=NUMDTCHECKS;l++){
+>       timecheck(l,idt2,ks[l],js[l],is[l],reall);
+165a161
+>     fflush(logdt_file);
+168,175c164,176
+<   if(DOTSTEPDIAG){
+<     if(t>ttimescale){
+<       if(numprocs==1){
+< 	timescale();
+< 	// SUPERMARK -- need to fix timescale to be correct in new cpu setup
+< 	ttimescale=t+DTtimescale;
+<       }
+<     }    
+---
+> #endif
+> 
+>   if(t>ttimestep){
+> #if(DOTSTEPDIAG)
+>     // output timescales (create own DTtimescale later)
+>     if(numprocs==1){
+>       timescale();
+>     }
+>     // SUPERMARK -- need to fix timescale to be correct in new cpu setup
+> #endif
+> #if((DODTDIAG)||(DOTSTEPDIAG))
+>     ttimestep=t+DTtimestep;
+> #endif
+623,629c624,629
+<     if( (COORD==3)&&(SAMPLED>0) ){
+<       fprintf(out,"Velocities at k=%d j=%d i=%d x=%15.10g z=%15.10g\n",k,j,i,x[1][1][i]*sin(x[1][2][j]),x[1][1][i]*cos(x[1][2][j]));
+<     }
+<     else{
+<       fprintf(out,"Velocities at  k=%d j=%d i=%d x1=%15.10g x2=%15.10g\n",k,j,i,x[1][1][i],x[1][2][j]);
+<     }
+<     
+---
+> #if( (COORD==3)&&(SAMPLED>0) )
+>     fprintf(out,"Velocities at k=%d j=%d i=%d x=%15.10g z=%15.10g\n",k,j,i,x[1][1][i]*sin(x[1][2][j]),x[1][1][i]*cos(x[1][2][j]));
+> #else
+>     fprintf(out,"Velocities at  k=%d j=%d i=%d x1=%15.10g x2=%15.10g\n",k,j,i,x[1][1][i],x[1][2][j]);
+> #endif
+> 
+653,659c653,658
+<     if( (COORD==3)&&(SAMPLED>0) ){
+<       fprintf(out," %5d %5d %5d %15.10g %15.10g",k,j,i,x[1][1][i]*sin(x[1][2][j]),x[1][1][i]*cos(x[1][2][j]));
+<     }
+<     else{
+<       fprintf(out," %5d %5d %5d %15.10g %15.10g",k,j,i,x[1][1][i],x[1][2][j]);
+<     }
+<     fprintf(out," %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g\n"
+---
+> #if( (COORD==3)&&(SAMPLED>0) )
+>   fprintf(out," %5d %5d %5d %15.10g %15.10g",k,j,i,x[1][1][i]*sin(x[1][2][j]),x[1][1][i]*cos(x[1][2][j]));
+> #else
+>   fprintf(out," %5d %5d %5d %15.10g %15.10g",k,j,i,x[1][1][i],x[1][2][j]);
+> #endif
+>   fprintf(out," %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g %15.10g\n"
