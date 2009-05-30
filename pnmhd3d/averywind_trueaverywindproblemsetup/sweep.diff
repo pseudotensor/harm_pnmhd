@@ -1,0 +1,688 @@
+161,162c161,162
+<     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*G2(2,i) ;
+<     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*G3(2,i)*G4(2,j) ;
+---
+>     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*g[2][2][i] ;
+>     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*g[2][3][i]*g[2][4][j] ;
+184c184
+<     Dtot=vp[1][k][j][i]*OARC11(k,j,i);
+---
+>     Dtot=vp[1][k][j][i]*OARCL[1][1][k][j][i];
+218c218
+< 	  fl[1][k][j][i] = (u[k][j][im1] + (dx[2][1][i] - vp[1][k][j][i])*dq[k][j][im1])*mdot[1][k][j][i]*DS11(k,j,i); // dx[1][3][k] cancels with below volume
+---
+> 	  fl[1][k][j][i] = (u[k][j][im1] + (dx[2][1][i] - vp[1][k][j][i])*dq[k][j][im1])*mdot[1][k][j][i]*DS[1][1][k][j][i]; // dx[1][3][k] cancels with below volume
+220c220
+< 	  fl[1][k][j][i] = (u[k][j][i] + (-dx[2][1][i] - vp[1][k][j][i])*dq[k][j][i])*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	  fl[1][k][j][i] = (u[k][j][i] + (-dx[2][1][i] - vp[1][k][j][i])*dq[k][j][i])*mdot[1][k][j][i]*DS[1][1][k][j][i];
+222c222
+< 	Dtot=vp[1][k][j][i]*OARC11(k,j,i);
+---
+> 	Dtot=vp[1][k][j][i]*OARCL[1][1][k][j][i];
+224c224
+< 	  fl[1][k][j][i] = (u[k][j][im1] + (1.0 - Dtot)*dq[k][j][im1]*dx[2][1][i])*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	  fl[1][k][j][i] = (u[k][j][im1] + (1.0 - Dtot)*dq[k][j][im1]*dx[2][1][i])*mdot[1][k][j][i]*DS[1][1][k][j][i];
+226c226
+< 	  fl[1][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][1][i])*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	  fl[1][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][1][i])*mdot[1][k][j][i]*DS[1][1][k][j][i];
+229c229
+< 	  ftemp = mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	  ftemp = mdot[1][k][j][i]*DS[1][1][k][j][i];
+238c238
+< 	s[2][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL1(k,j,i); // *odx[1][3][k]
+---
+> 	s[2][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL[1][k][j][i]; // *odx[1][3][k]
+249c249
+< 	fl[1][k][j][i]=z2e_1(s[2],k,j,i)/z2e_1(s[1],k,j,i)*mdot[1][k][j][i]*DS11(k,j,i); // division by interp may be problem
+---
+> 	fl[1][k][j][i]=z2e_1(s[2],k,j,i)/z2e_1(s[1],k,j,i)*mdot[1][k][j][i]*DS[1][1][k][j][i]; // division by interp may be problem
+254,255c254,255
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(1,2,fl); // account for "missing" dx[?][3][k] here
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(1,2,fl); // account for "missing" dx[?][3][k] here
+278c278
+< 	  fl[1][k][j][i] = (Bzr[k][j][im1] + (dx[2][1][i] - vp[1][k][j][i])*dq[k][j][im1])*mdot[1][k][j][i]*G2(1,i);
+---
+> 	  fl[1][k][j][i] = (Bzr[k][j][im1] + (dx[2][1][i] - vp[1][k][j][i])*dq[k][j][im1])*mdot[1][k][j][i]*g[1][2][i];
+280c280
+< 	  fl[1][k][j][i] = (Bzr[k][j][i] + (-dx[2][1][i] - vp[1][k][j][i])*dq[k][j][i])*mdot[1][k][j][i]*G2(1,i);
+---
+> 	  fl[1][k][j][i] = (Bzr[k][j][i] + (-dx[2][1][i] - vp[1][k][j][i])*dq[k][j][i])*mdot[1][k][j][i]*g[1][2][i];
+282c282
+< 	Dtot=vp[1][k][j][i]*OARC11(k,j,i);
+---
+> 	Dtot=vp[1][k][j][i]*OARCL[1][1][k][j][i];
+284c284
+< 	  fl[1][k][j][i] = (Bzr[k][j][im1] + (1.0 - Dtot)*dq[k][j][im1]*dx[2][1][i])*mdot[1][k][j][i]*G2(1,i);
+---
+> 	  fl[1][k][j][i] = (Bzr[k][j][im1] + (1.0 - Dtot)*dq[k][j][im1]*dx[2][1][i])*mdot[1][k][j][i]*g[1][2][i];
+286c286
+< 	  fl[1][k][j][i] = (Bzr[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][1][i])*mdot[1][k][j][i]*G2(1,i);
+---
+> 	  fl[1][k][j][i] = (Bzr[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][1][i])*mdot[1][k][j][i]*g[1][2][i];
+289c289
+< 	  ftemp = mdot[1][k][j][i]*G2(1,i);
+---
+> 	  ftemp = mdot[1][k][j][i]*g[1][2][i];
+298c298
+< 	v[2][3][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OARC21(k,j,i)/G2(2,i);
+---
+> 	v[2][3][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OARCL[2][1][k][j][i]/g[2][2][i];
+304,305c304,305
+<       if(transmagx1&&mag&&DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+< 	hydro_flux_adv(1,3,fl);
+---
+>       if(transmagx1&&mag&&DOLOSSDIAG){
+> 	hydro_flux(1,3,fl);
+322c322
+< 	fl[1][k][j][i] = (v[1][1][k][j][i]   + (dx[1][1][i] - vpp)*dqv[1][k][j][i])  *mdotp*DS21(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][1][k][j][i]   + (dx[1][1][i] - vpp)*dqv[1][k][j][i])  *mdotp*DS[2][1][k][j][i];
+324c324
+< 	fl[1][k][j][i] = (v[1][1][k][j][ip1] + (-dx[1][1][i] - vpp)*dqv[1][k][j][ip1])*mdotp*DS21(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][1][k][j][ip1] + (-dx[1][1][i] - vpp)*dqv[1][k][j][ip1])*mdotp*DS[2][1][k][j][i];
+326c326
+<       Dtot=vpp*OARC21(k,j,i);
+---
+>       Dtot=vpp*OARCL[2][1][k][j][i];
+328c328
+< 	fl[1][k][j][i] = (v[1][1][k][j][i]   + (1.0 - Dtot)*dqv[1][k][j][i]*dx[1][1][i])*mdotp*DS21(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][1][k][j][i]   + (1.0 - Dtot)*dqv[1][k][j][i]*dx[1][1][i])*mdotp*DS[2][1][k][j][i];
+330c330
+< 	fl[1][k][j][i] = (v[1][1][k][j][ip1] + (-1.0 - Dtot)*dqv[1][k][j][ip1]*dx[1][1][i])*mdotp*DS21(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][1][k][j][ip1] + (-1.0 - Dtot)*dqv[1][k][j][ip1]*dx[1][1][i])*mdotp*DS[2][1][k][j][i];
+333c333
+< 	  ftemp = mdotp*DS21(k,j,i);
+---
+> 	  ftemp = mdotp*DS[2][1][k][j][i];
+342c342
+<       p[1][k][j][i] += (fl[1][k][j][im1]-fl[1][k][j][i])*OVOL2(k,j,i);
+---
+>       p[1][k][j][i] += (fl[1][k][j][im1]-fl[1][k][j][i])*OVOL[2][k][j][i];
+348c348
+< 	fl[1][k][j][i] = v[1][1][k][j][i]*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = v[1][1][k][j][i]*mdot[1][k][j][i]*DS[1][1][k][j][i];
+353,354c353,354
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(1,5,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(1,5,fl);
+367c367
+< 	fl[1][k][j][i] = (v[1][2][k][j][im1] + (dx[2][1][i] - vpp)*dqv[2][k][j][im1])*G2(1,i)*mdotp*DS31(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][2][k][j][im1] + (dx[2][1][i] - vpp)*dqv[2][k][j][im1])*g[1][2][i]*mdotp*DS[3][1][k][j][i];
+369c369
+< 	fl[1][k][j][i] = (v[1][2][k][j][i]   + (-dx[2][1][i] - vpp)*dqv[2][k][j][i])  *G2(1,i)*mdotp*DS31(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][2][k][j][i]   + (-dx[2][1][i] - vpp)*dqv[2][k][j][i])  *g[1][2][i]*mdotp*DS[3][1][k][j][i];
+371c371
+<       Dtot=vpp*OARC11(k,j,i);
+---
+>       Dtot=vpp*OARCL[1][1][k][j][i];
+373c373
+< 	fl[1][k][j][i] = (v[1][2][k][j][im1] + (1.0 - Dtot)*dqv[2][k][j][im1]*dx[2][1][i])*G2(1,i)*mdotp*DS31(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][2][k][j][im1] + (1.0 - Dtot)*dqv[2][k][j][im1]*dx[2][1][i])*g[1][2][i]*mdotp*DS[3][1][k][j][i];
+375c375
+< 	fl[1][k][j][i] = (v[1][2][k][j][i]   + (-1.0 - Dtot)*dqv[2][k][j][i]*dx[2][1][i])*G2(1,i)*mdotp*DS31(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][2][k][j][i]   + (-1.0 - Dtot)*dqv[2][k][j][i]*dx[2][1][i])*g[1][2][i]*mdotp*DS[3][1][k][j][i];
+378c378
+< 	ftemp = G2(1,i)*mdotp*DS31(k,j,i);
+---
+> 	ftemp = g[1][2][i]*mdotp*DS[3][1][k][j][i];
+387c387
+<       p[2][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL3(k,j,i);
+---
+>       p[2][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL[3][k][j][i];
+393c393
+< 	fl[1][k][j][i] = v2tov1(v[1][2],k,j,i)*G2(1,i)*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = v2tov1(v[1][2],k,j,i)*g[1][2][i]*mdot[1][k][j][i]*DS[1][1][k][j][i];
+399,400c399,400
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(1,6,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(1,6,fl);
+413c413
+< 	fl[1][k][j][i] = (v[1][3][k][j][im1] + (dx[2][1][i] - vpp)*dqv[3][k][j][im1])*G3(1,i)*G4(2,j)*mdotp*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][3][k][j][im1] + (dx[2][1][i] - vpp)*dqv[3][k][j][im1])*g[1][3][i]*g[2][4][j]*mdotp*DS[1][1][k][j][i];
+415c415
+< 	fl[1][k][j][i] = (v[1][3][k][j][i] + (-dx[2][1][i] - vpp)*dqv[3][k][j][i])*G3(1,i)*G4(2,j)*mdotp*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][3][k][j][i] + (-dx[2][1][i] - vpp)*dqv[3][k][j][i])*g[1][3][i]*g[2][4][j]*mdotp*DS[1][1][k][j][i];
+417c417
+<       Dtot = vpp*OARC11(k,j,i);
+---
+>       Dtot = vpp*OARCL[1][1][k][j][i];
+419c419
+< 	fl[1][k][j][i] = (v[1][3][k][j][im1] + (1.0 - Dtot)*dqv[3][k][j][im1]*dx[2][1][i])*G3(1,i)*G4(2,j)*mdotp*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][3][k][j][im1] + (1.0 - Dtot)*dqv[3][k][j][im1]*dx[2][1][i])*g[1][3][i]*g[2][4][j]*mdotp*DS[1][1][k][j][i];
+421c421
+< 	fl[1][k][j][i] = (v[1][3][k][j][i] + (-1.0 - Dtot)*dqv[3][k][j][i]*dx[2][1][i])*G3(1,i)*G4(2,j)*mdotp*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] = (v[1][3][k][j][i] + (-1.0 - Dtot)*dqv[3][k][j][i]*dx[2][1][i])*g[1][3][i]*g[2][4][j]*mdotp*DS[1][1][k][j][i];
+424c424
+< 	ftemp =G3(1,i)*G4(2,j)*mdotp*DS11(k,j,i);
+---
+> 	ftemp =g[1][3][i]*g[2][4][j]*mdotp*DS[1][1][k][j][i];
+434c434
+<       p[3][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL1(k,j,i);
+---
+>       p[3][k][j][i] += (fl[1][k][j][i]-fl[1][k][j][ip1])*OVOL[1][k][j][i];
+440c440
+< 	fl[1][k][j][i] =v3tov1(v[1][3],k,j,i)*G3(1,i)*G4(2,j)*mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] =v3tov1(v[1][3],k,j,i)*g[1][3][i]*g[2][4][j]*mdot[1][k][j][i]*DS[1][1][k][j][i];
+446,447c446,447
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(1,7,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(1,7,fl);
+454c454
+<       fl[1][k][j][i] =  mdot[1][k][j][i]*DS11(k,j,i);
+---
+>       fl[1][k][j][i] =  mdot[1][k][j][i]*DS[1][1][k][j][i];
+461c461
+<       s[1][k][j][i] += (fl[1][k][j][i] - fl[1][k][j][ip1])*OVOL1(k,j,i);
+---
+>       s[1][k][j][i] += (fl[1][k][j][i] - fl[1][k][j][ip1])*OVOL[1][k][j][i];
+471c471
+< 	fl[1][k][j][i] =  mdot[1][k][j][i]*DS11(k,j,i);
+---
+> 	fl[1][k][j][i] =  mdot[1][k][j][i]*DS[1][1][k][j][i];
+477,478c477,478
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(1,1,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(1,1,fl);
+492c492
+<       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*G2(2,i)) ; // division by interp may be a problem
+---
+>       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*g[2][2][i]) ; // division by interp may be a problem
+497c497
+<       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*G3(2,i)*G4(2,j));
+---
+>       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*g[2][3][i]*g[2][4][j]);
+538,539c538,539
+<     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*G2(2,i) ;
+<     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*G3(2,i)*G4(2,j) ;
+---
+>     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*g[2][2][i] ;
+>     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*g[2][3][i]*g[2][4][j] ;
+558c558
+<       mdot[2][k][j][i] = (s[1][k][jm1][i] + (dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][jm1][i])*vp[2][k][j][i]; // if periodic, uses rho(-3), hence bound below
+---
+>       mdot[2][k][j][i] = (s[1][k][jm1][i] + (dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][jm1][i])*vp[2][k][j][i]; // if periodic, uses rho(-3), hence bound below
+561c561
+<       mdot[2][k][j][i] = (s[1][k][j][i] + (-dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][j][i])*vp[2][k][j][i]; // dq here needs s[1][k][j=N2+2][i] if periodicx2special, but bound takes care of that since was needed anyways for inner edge if periodic (see global.h on LOOPT0j for more notes)
+---
+>       mdot[2][k][j][i] = (s[1][k][j][i] + (-dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][j][i])*vp[2][k][j][i]; // dq here needs s[1][k][j=N2+2][i] if periodicx2special, but bound takes care of that since was needed anyways for inner edge if periodic (see global.h on LOOPT0j for more notes)
+564c564
+<     Dtot=vp[2][k][j][i]*OARC12(k,j,i);
+---
+>     Dtot=vp[2][k][j][i]*OARCL[1][2][k][j][i];
+566c566
+<       mdot[2][k][j][i] = (s[1][k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*G2(2,i))*vp[2][k][j][i];
+---
+>       mdot[2][k][j][i] = (s[1][k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*g[2][2][i])*vp[2][k][j][i];
+569c569
+<       mdot[2][k][j][i] = (s[1][k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*G2(2,i))*vp[2][k][j][i];
+---
+>       mdot[2][k][j][i] = (s[1][k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*g[2][2][i])*vp[2][k][j][i];
+574c574
+<       ftemp2=dx[2][2][j]*G2(2,i);
+---
+>       ftemp2=dx[2][2][j]*g[2][2][i];
+602c602
+< 	  fl[2][k][j][i] = (u[k][jm1][i] + (dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][jm1][i])*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	  fl[2][k][j][i] = (u[k][jm1][i] + (dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][jm1][i])*mdot[2][k][j][i]*DS[1][2][k][j][i];
+604c604
+< 	  fl[2][k][j][i] = (u[k][j][i] + (-dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][j][i])*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	  fl[2][k][j][i] = (u[k][j][i] + (-dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][j][i])*mdot[2][k][j][i]*DS[1][2][k][j][i];
+606c606
+< 	Dtot=vp[2][k][j][i]*OARC12(k,j,i);
+---
+> 	Dtot=vp[2][k][j][i]*OARCL[1][2][k][j][i];
+608c608
+< 	  fl[2][k][j][i] = (u[k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*G2(2,i))*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	  fl[2][k][j][i] = (u[k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*g[2][2][i])*mdot[2][k][j][i]*DS[1][2][k][j][i];
+610c610
+< 	  fl[2][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*G2(2,i))*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	  fl[2][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*g[2][2][i])*mdot[2][k][j][i]*DS[1][2][k][j][i];
+613,614c613,614
+< 	  ftemp=mdot[2][k][j][i]*DS12(k,j,i);
+< 	  ftemp2=dx[2][2][j]*G2(2,i);
+---
+> 	  ftemp=mdot[2][k][j][i]*DS[1][2][k][j][i];
+> 	  ftemp2=dx[2][2][j]*g[2][2][i];
+623c623
+< 	s[2][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL1(k,j,i);
+---
+> 	s[2][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL[1][k][j][i];
+634c634
+< 	fl[2][k][j][i] = z2e_2(s[2],k,j,i)/z2e_2(s[1],k,j,i)*mdot[2][k][j][i]*DS12(k,j,i); // division by interp may be a problem
+---
+> 	fl[2][k][j][i] = z2e_2(s[2],k,j,i)/z2e_2(s[1],k,j,i)*mdot[2][k][j][i]*DS[1][2][k][j][i]; // division by interp may be a problem
+641,642c641,642
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(2,2,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(2,2,fl);
+658c658
+< 	  fl[2][k][j][i] = (Bzr[k][jm1][i] + (dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][jm1][i])*mdot[2][k][j][i];
+---
+> 	  fl[2][k][j][i] = (Bzr[k][jm1][i] + (dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][jm1][i])*mdot[2][k][j][i];
+660c660
+< 	  fl[2][k][j][i] = (Bzr[k][j][i] + (-dx[2][2][j]*G2(2,i) - vp[2][k][j][i])*dq[k][j][i])*mdot[2][k][j][i];
+---
+> 	  fl[2][k][j][i] = (Bzr[k][j][i] + (-dx[2][2][j]*g[2][2][i] - vp[2][k][j][i])*dq[k][j][i])*mdot[2][k][j][i];
+662c662
+< 	Dtot=vp[2][k][j][i]*OARC12(k,j,i);
+---
+> 	Dtot=vp[2][k][j][i]*OARCL[1][2][k][j][i];
+664c664
+< 	  fl[2][k][j][i] = (Bzr[k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*G2(2,i))*mdot[2][k][j][i];
+---
+> 	  fl[2][k][j][i] = (Bzr[k][jm1][i] + (1.0 - Dtot)*dq[k][jm1][i]*dx[2][2][j]*g[2][2][i])*mdot[2][k][j][i];
+666c666
+< 	  fl[2][k][j][i] = (Bzr[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*G2(2,i))*mdot[2][k][j][i];
+---
+> 	  fl[2][k][j][i] = (Bzr[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][2][j]*g[2][2][i])*mdot[2][k][j][i];
+670c670
+< 	  ftemp2=dx[2][2][j]*G2(2,i);
+---
+> 	  ftemp2=dx[2][2][j]*g[2][2][i];
+678c678
+< 	v[2][3][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OARC32(k,j,i);
+---
+> 	v[2][3][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OARCL[3][2][k][j][i];
+683,684c683,684
+<       if(transmagx2&&mag&&DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+< 	hydro_flux_adv(2,3,fl);
+---
+>       if(transmagx2&&mag&&DOLOSSDIAG){
+> 	hydro_flux(2,3,fl);
+702c702
+< 	fl[2][k][j][i] = (v[1][2][k][j][i] + (dx[1][2][j]*G2(2,i) - vpp)*dqv[2][k][j][i])*G2(2,i)*mdotp*DS32(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][2][k][j][i] + (dx[1][2][j]*g[2][2][i] - vpp)*dqv[2][k][j][i])*g[2][2][i]*mdotp*DS[3][2][k][j][i];
+704c704
+< 	fl[2][k][j][i] = (v[1][2][k][jp1][i] + (-dx[1][2][j]*G2(2,i) - vpp)*dqv[2][k][jp1][i])*G2(2,i)*mdotp*DS32(k,j,i); // dqv[2][jp1] here needs v[1][2][k][j=N2+2][i] if periodicx2special.
+---
+> 	fl[2][k][j][i] = (v[1][2][k][jp1][i] + (-dx[1][2][j]*g[2][2][i] - vpp)*dqv[2][k][jp1][i])*g[2][2][i]*mdotp*DS[3][2][k][j][i]; // dqv[2][jp1] here needs v[1][2][k][j=N2+2][i] if periodicx2special.
+706c706
+<       Dtot=vpp*OARC32(k,j,i);
+---
+>       Dtot=vpp*OARCL[3][2][k][j][i];
+708c708
+< 	fl[2][k][j][i] = (v[1][2][k][j][i] + (1.0 - Dtot)*dqv[2][k][j][i]*dx[1][2][j]*G2(2,i))*G2(2,i)*mdotp*DS32(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][2][k][j][i] + (1.0 - Dtot)*dqv[2][k][j][i]*dx[1][2][j]*g[2][2][i])*g[2][2][i]*mdotp*DS[3][2][k][j][i];
+710c710
+< 	fl[2][k][j][i] = (v[1][2][k][jp1][i] + (-1.0 - Dtot)*dqv[2][k][jp1][i]*dx[1][2][j]*G2(2,i))*G2(2,i)*mdotp*DS32(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][2][k][jp1][i] + (-1.0 - Dtot)*dqv[2][k][jp1][i]*dx[1][2][j]*g[2][2][i])*g[2][2][i]*mdotp*DS[3][2][k][j][i];
+713,714c713,714
+< 	ftemp=G2(2,i)*mdotp*DS32(k,j,i);
+< 	ftemp2=dx[1][2][j]*G2(2,i);
+---
+> 	ftemp=g[2][2][i]*mdotp*DS[3][2][k][j][i];
+> 	ftemp2=dx[1][2][j]*g[2][2][i];
+727c727
+<       p[2][k][j][i] += (fl[2][k][jm1][i]-fl[2][k][j][i])*OVOL3(k,j,i);
+---
+>       p[2][k][j][i] += (fl[2][k][jm1][i]-fl[2][k][j][i])*OVOL[3][k][j][i];
+733c733
+< 	fl[2][k][j][i] =v[1][2][k][j][i]*G2(2,i)*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] =v[1][2][k][j][i]*g[2][2][i]*mdot[2][k][j][i]*DS[1][2][k][j][i];
+739,740c739,740
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(2,6,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(2,6,fl);
+755c755
+< 	fl[2][k][j][i] = (v[1][1][k][jm1][i] + (dx[2][2][j]*G2(1,i) - vpp)*dqv[1][k][jm1][i])*mdotp*DS22(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][1][k][jm1][i] + (dx[2][2][j]*g[1][2][i] - vpp)*dqv[1][k][jm1][i])*mdotp*DS[2][2][k][j][i];
+757c757
+< 	fl[2][k][j][i] = (v[1][1][k][j][i] + (-dx[2][2][j]*G2(1,i) - vpp)*dqv[1][k][j][i])*mdotp*DS22(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][1][k][j][i] + (-dx[2][2][j]*g[1][2][i] - vpp)*dqv[1][k][j][i])*mdotp*DS[2][2][k][j][i];
+759c759
+<       Dtot=vpp*OARC12(k,j,i);
+---
+>       Dtot=vpp*OARCL[1][2][k][j][i];
+761c761
+< 	fl[2][k][j][i] = (v[1][1][k][jm1][i] + (1.0 - Dtot)*dqv[1][k][jm1][i]*dx[2][2][j]*G2(1,i))*mdotp*DS22(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][1][k][jm1][i] + (1.0 - Dtot)*dqv[1][k][jm1][i]*dx[2][2][j]*g[1][2][i])*mdotp*DS[2][2][k][j][i];
+763c763
+< 	fl[2][k][j][i] = (v[1][1][k][j][i] + (-1.0 - Dtot)*dqv[1][k][j][i]*dx[2][2][j]*G2(1,i))*mdotp*DS22(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][1][k][j][i] + (-1.0 - Dtot)*dqv[1][k][j][i]*dx[2][2][j]*g[1][2][i])*mdotp*DS[2][2][k][j][i];
+766,767c766,767
+< 	ftemp=mdotp*DS22(k,j,i);
+< 	ftemp2=dx[2][2][j]*G2(1,i);
+---
+> 	ftemp=mdotp*DS[2][2][k][j][i];
+> 	ftemp2=dx[2][2][j]*g[1][2][i];
+776c776
+<       p[1][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL2(k,j,i);
+---
+>       p[1][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL[2][k][j][i];
+782c782
+< 	fl[2][k][j][i] =v1tov2(v[1][1],k,j,i)*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] =v1tov2(v[1][1],k,j,i)*mdot[2][k][j][i]*DS[1][2][k][j][i];
+787,788c787,788
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(2,5,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(2,5,fl);
+802c802
+< 	fl[2][k][j][i] = (v[1][3][k][jm1][i] + (dx[2][2][j]*G2(2,i) - vpp)*dqv[3][k][jm1][i])*G3(2,i)*G4(1,j)*mdotp*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][3][k][jm1][i] + (dx[2][2][j]*g[2][2][i] - vpp)*dqv[3][k][jm1][i])*g[2][3][i]*g[1][4][j]*mdotp*DS[1][2][k][j][i];
+804c804
+< 	fl[2][k][j][i] = (v[1][3][k][j][i] + (-dx[2][2][j]*G2(2,i) - vpp)*dqv[3][k][j][i])*G3(2,i)*G4(1,j)*mdotp*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][3][k][j][i] + (-dx[2][2][j]*g[2][2][i] - vpp)*dqv[3][k][j][i])*g[2][3][i]*g[1][4][j]*mdotp*DS[1][2][k][j][i];
+806c806
+<       Dtot = vpp*OARC12(k,j,i);
+---
+>       Dtot = vpp*OARCL[1][2][k][j][i];
+808c808
+< 	fl[2][k][j][i] = (v[1][3][k][jm1][i] + (1.0 - Dtot)*dqv[3][k][jm1][i]*dx[2][2][j]*G2(2,i))*G3(2,i)*G4(1,j)*mdotp*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][3][k][jm1][i] + (1.0 - Dtot)*dqv[3][k][jm1][i]*dx[2][2][j]*g[2][2][i])*g[2][3][i]*g[1][4][j]*mdotp*DS[1][2][k][j][i];
+810c810
+< 	fl[2][k][j][i] = (v[1][3][k][j][i] + (-1.0 - Dtot)*dqv[3][k][j][i]*dx[2][2][j]*G2(2,i))*G3(2,i)*G4(1,j)*mdotp*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] = (v[1][3][k][j][i] + (-1.0 - Dtot)*dqv[3][k][j][i]*dx[2][2][j]*g[2][2][i])*g[2][3][i]*g[1][4][j]*mdotp*DS[1][2][k][j][i];
+813,814c813,814
+< 	ftemp=G3(2,i)*G4(1,j)*mdotp*DS12(k,j,i);
+< 	ftemp2=dx[2][2][j]*G2(2,i);
+---
+> 	ftemp=g[2][3][i]*g[1][4][j]*mdotp*DS[1][2][k][j][i];
+> 	ftemp2=dx[2][2][j]*g[2][2][i];
+823c823
+<       p[3][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL1(k,j,i);
+---
+>       p[3][k][j][i] += (fl[2][k][j][i]-fl[2][k][jp1][i])*OVOL[1][k][j][i];
+829c829
+< 	fl[2][k][j][i] = v3tov2(v[1][3],k,j,i)*G3(2,i)*G4(1,j)*mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] = v3tov2(v[1][3],k,j,i)*g[2][3][i]*g[1][4][j]*mdot[2][k][j][i]*DS[1][2][k][j][i];
+835,836c835,836
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(2,7,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(2,7,fl);
+844c844
+<       fl[2][k][j][i] =  mdot[2][k][j][i]*DS12(k,j,i);
+---
+>       fl[2][k][j][i] =  mdot[2][k][j][i]*DS[1][2][k][j][i];
+849c849
+<       s[1][k][j][i] += (fl[2][k][j][i] - fl[2][k][jp1][i])*OVOL1(k,j,i);
+---
+>       s[1][k][j][i] += (fl[2][k][j][i] - fl[2][k][jp1][i])*OVOL[1][k][j][i];
+859c859
+< 	fl[2][k][j][i] =  mdot[2][k][j][i]*DS12(k,j,i);
+---
+> 	fl[2][k][j][i] =  mdot[2][k][j][i]*DS[1][2][k][j][i];
+864,865c864,865
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(2,1,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(2,1,fl);
+879c879
+<       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*G2(2,i)) ; // division by interp may be a problem
+---
+>       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*g[2][2][i]) ; // division by interp may be a problem
+886c886
+<       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*G3(2,i)*G4(2,j));
+---
+>       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*g[2][3][i]*g[2][4][j]);
+933,934c933,934
+<     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*G2(2,i) ;
+<     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*G3(2,i)*G4(2,j) ;
+---
+>     p[2][k][j][i] = z2e_2(s[1],k,j,i)*v[1][2][k][j][i]*g[2][2][i] ;
+>     p[3][k][j][i] = z2e_3(s[1],k,j,i)*v[1][3][k][j][i]*g[2][3][i]*g[2][4][j] ;
+953c953
+<       mdot[3][k][j][i] = (s[1][km1][j][i] + (dx[2][3][k]*G3(2,i)*G4(2,j) - vp[3][k][j][i])*dq[km1][j][i])*vp[3][k][j][i];
+---
+>       mdot[3][k][j][i] = (s[1][km1][j][i] + (dx[2][3][k]*g[2][3][i]*g[2][4][j] - vp[3][k][j][i])*dq[km1][j][i])*vp[3][k][j][i];
+956c956
+<       mdot[3][k][j][i] = (s[1][k][j][i] + (-dx[2][3][k]*G3(2,i)*G4(2,j) - vp[3][k][j][i])*dq[k][j][i])*vp[3][k][j][i];
+---
+>       mdot[3][k][j][i] = (s[1][k][j][i] + (-dx[2][3][k]*g[2][3][i]*g[2][4][j] - vp[3][k][j][i])*dq[k][j][i])*vp[3][k][j][i];
+959c959
+<     Dtot=vp[3][k][j][i]*OARC13(k,j,i)*ODX(2,3,k);
+---
+>     Dtot=vp[3][k][j][i]*OARCL[1][3][k][j][i]*ODX[2][3][k];
+961c961
+<       mdot[3][k][j][i] = (s[1][km1][j][i] + (1.0 - Dtot)*dq[km1][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*vp[3][k][j][i];
+---
+>       mdot[3][k][j][i] = (s[1][km1][j][i] + (1.0 - Dtot)*dq[km1][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*vp[3][k][j][i];
+964c964
+<       mdot[3][k][j][i] = (s[1][k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*vp[3][k][j][i];
+---
+>       mdot[3][k][j][i] = (s[1][k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*vp[3][k][j][i];
+969c969
+<       ftemp2=dx[2][3][k]*G3(2,i)*G4(2,j);
+---
+>       ftemp2=dx[2][3][k]*g[2][3][i]*g[2][4][j];
+998c998
+< 	  fl[3][k][j][i] = (u[km1][j][i] + (dx[2][3][k]*G3(2,i)*G4(2,j) - vp[3][k][j][i])*dq[km1][j][i])*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	  fl[3][k][j][i] = (u[km1][j][i] + (dx[2][3][k]*g[2][3][i]*g[2][4][j] - vp[3][k][j][i])*dq[km1][j][i])*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1000c1000
+< 	  fl[3][k][j][i] = (u[k][j][i] + (-dx[2][3][k]*G3(2,i)*G4(2,j) - vp[3][k][j][i])*dq[k][j][i])*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	  fl[3][k][j][i] = (u[k][j][i] + (-dx[2][3][k]*g[2][3][i]*g[2][4][j] - vp[3][k][j][i])*dq[k][j][i])*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1002c1002
+< 	Dtot=vp[3][k][j][i]*OARC13(k,j,i)*ODX(2,3,k);
+---
+> 	Dtot=vp[3][k][j][i]*OARCL[1][3][k][j][i]*ODX[2][3][k];
+1004c1004
+< 	  fl[3][k][j][i] = (u[km1][j][i] + (1.0 - Dtot)*dq[km1][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	  fl[3][k][j][i] = (u[km1][j][i] + (1.0 - Dtot)*dq[km1][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1006c1006
+< 	  fl[3][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	  fl[3][k][j][i] = (u[k][j][i] + (-1.0 - Dtot)*dq[k][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1009,1010c1009,1010
+< 	  ftemp=mdot[3][k][j][i]*DS13(k,j,i);
+< 	  ftemp2=dx[2][3][k]*G3(2,i)*G4(2,j);
+---
+> 	  ftemp=mdot[3][k][j][i]*DS[1][3][k][j][i];
+> 	  ftemp2=dx[2][3][k]*g[2][3][i]*g[2][4][j];
+1019c1019
+< 	s[2][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL1(k,j,i)*ODX(1,3,k); // no cancelling here unlike in sweepx and sweepy	
+---
+> 	s[2][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL[1][k][j][i]*ODX[1][3][k]; // no cancelling here unlike in sweepx and sweepy	
+1030c1030
+< 	fl[3][k][j][i] = z2e_3(s[2],k,j,i)/z2e_3(s[1],k,j,i)*mdot[3][k][j][i]*DS13(k,j,i); // division by interp may be a problem
+---
+> 	fl[3][k][j][i] = z2e_3(s[2],k,j,i)/z2e_3(s[1],k,j,i)*mdot[3][k][j][i]*DS[1][3][k][j][i]; // division by interp may be a problem
+1036,1037c1036,1037
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(3,2,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(3,2,fl);
+1053c1053
+< 	fl[3][k][j][i] = (v[1][3][k][j][i] + (dx[1][3][k]*G3(2,i)*G4(2,j) - vpp)*dqv[3][k][j][i])*G3(2,i)*G4(2,j)*mdotp*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][3][k][j][i] + (dx[1][3][k]*g[2][3][i]*g[2][4][j] - vpp)*dqv[3][k][j][i])*g[2][3][i]*g[2][4][j]*mdotp*DS[1][3][k][j][i];
+1055c1055
+< 	fl[3][k][j][i] = (v[1][3][kp1][j][i] + (-dx[1][3][k]*G3(2,i)*G4(2,j) - vpp)*dqv[3][kp1][j][i])*G3(2,i)*G4(2,j)*mdotp*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][3][kp1][j][i] + (-dx[1][3][k]*g[2][3][i]*g[2][4][j] - vpp)*dqv[3][kp1][j][i])*g[2][3][i]*g[2][4][j]*mdotp*DS[1][3][k][j][i];
+1057c1057
+<       Dtot = vpp*OARC13(k,j,i)*ODX(1,3,k);
+---
+>       Dtot = vpp*OARCL[1][3][k][j][i]*ODX[1][3][k];
+1059c1059
+< 	fl[3][k][j][i] = (v[1][3][k][j][i] + (1.0 - Dtot)*dqv[3][k][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*G3(2,i)*G4(2,j)*mdotp*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][3][k][j][i] + (1.0 - Dtot)*dqv[3][k][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*g[2][3][i]*g[2][4][j]*mdotp*DS[1][3][k][j][i];
+1061c1061
+< 	fl[3][k][j][i] = (v[1][3][kp1][j][i] + (-1.0 - Dtot)*dqv[3][kp1][j][i]*dx[2][3][k]*G3(2,i)*G4(2,j))*G3(2,i)*G4(2,j)*mdotp*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][3][kp1][j][i] + (-1.0 - Dtot)*dqv[3][kp1][j][i]*dx[2][3][k]*g[2][3][i]*g[2][4][j])*g[2][3][i]*g[2][4][j]*mdotp*DS[1][3][k][j][i];
+1064,1065c1064,1065
+< 	ftemp=G3(2,i)*G4(2,j)*mdotp*DS13(k,j,i);
+< 	ftemp2=dx[1][3][k]*G3(2,i)*G4(2,j);
+---
+> 	ftemp=g[2][3][i]*g[2][4][j]*mdotp*DS[1][3][k][j][i];
+> 	ftemp2=dx[1][3][k]*g[2][3][i]*g[2][4][j];
+1074c1074
+<       p[3][k][j][i] += (fl[3][km1][j][i]-fl[3][k][j][i])*OVOL1(k,j,i)*ODX(2,3,k);
+---
+>       p[3][k][j][i] += (fl[3][km1][j][i]-fl[3][k][j][i])*OVOL[1][k][j][i]*ODX[2][3][k];
+1080c1080
+< 	fl[3][k][j][i] = v[1][3][k][j][i]*G3(2,i)*G4(2,j)*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] = v[1][3][k][j][i]*g[2][3][i]*g[2][4][j]*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1086,1087c1086,1087
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(3,7,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(3,7,fl);
+1105c1105
+< 	fl[3][k][j][i] = (v[1][1][km1][j][i] + (dx[2][3][k]*G3(1,i)*G4(2,j) - vpp)*dqv[1][km1][j][i])*mdotp*DS23(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][1][km1][j][i] + (dx[2][3][k]*g[1][3][i]*g[2][4][j] - vpp)*dqv[1][km1][j][i])*mdotp*DS[2][3][k][j][i];
+1107c1107
+< 	fl[3][k][j][i] = (v[1][1][k][j][i] + (-dx[2][3][k]*G3(1,i)*G4(2,j) - vpp)*dqv[1][k][j][i])*mdotp*DS23(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][1][k][j][i] + (-dx[2][3][k]*g[1][3][i]*g[2][4][j] - vpp)*dqv[1][k][j][i])*mdotp*DS[2][3][k][j][i];
+1109c1109
+<       Dtot=vpp*OARC13(k,j,i)*ODX(2,3,k);
+---
+>       Dtot=vpp*OARCL[1][3][k][j][i]*ODX[2][3][k];
+1111c1111
+< 	fl[3][k][j][i] = (v[1][1][km1][j][i] + (1.0 - Dtot)*dqv[1][km1][j][i]*dx[2][3][k]*G3(1,i)*G4(2,j))*mdotp*DS23(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][1][km1][j][i] + (1.0 - Dtot)*dqv[1][km1][j][i]*dx[2][3][k]*g[1][3][i]*g[2][4][j])*mdotp*DS[2][3][k][j][i];
+1113c1113
+< 	fl[3][k][j][i] = (v[1][1][k][j][i] + (-1.0 - Dtot)*dqv[1][k][j][i]*dx[2][3][k]*G3(1,i)*G4(2,j))*mdotp*DS23(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][1][k][j][i] + (-1.0 - Dtot)*dqv[1][k][j][i]*dx[2][3][k]*g[1][3][i]*g[2][4][j])*mdotp*DS[2][3][k][j][i];
+1116,1117c1116,1117
+< 	ftemp=mdotp*DS23(k,j,i);
+< 	ftemp2=dx[2][3][k]*G3(1,i)*G4(2,j);
+---
+> 	ftemp=mdotp*DS[2][3][k][j][i];
+> 	ftemp2=dx[2][3][k]*g[1][3][i]*g[2][4][j];
+1126c1126
+<       p[1][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL2(k,j,i)*ODX(1,3,k);
+---
+>       p[1][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL[2][k][j][i]*ODX[1][3][k];
+1132c1132
+< 	fl[3][k][j][i] =v1tov3(v[1][1],k,j,i)*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] =v1tov3(v[1][1],k,j,i)*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1137,1138c1137,1138
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(3,5,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(3,5,fl);
+1152c1152
+< 	fl[3][k][j][i] = (v[1][2][km1][j][i] + (dx[2][3][k]*G3(2,i)*G4(1,j) - vpp)*dqv[2][km1][j][i])*G2(2,i)*mdotp*DS33(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][2][km1][j][i] + (dx[2][3][k]*g[2][3][i]*g[1][4][j] - vpp)*dqv[2][km1][j][i])*g[2][2][i]*mdotp*DS[3][3][k][j][i];
+1154c1154
+< 	fl[3][k][j][i] = (v[1][2][k][j][i] + (-dx[2][3][k]*G3(2,i)*G4(1,j) - vpp)*dqv[2][k][j][i])*G2(2,i)*mdotp*DS33(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][2][k][j][i] + (-dx[2][3][k]*g[2][3][i]*g[1][4][j] - vpp)*dqv[2][k][j][i])*g[2][2][i]*mdotp*DS[3][3][k][j][i];
+1156c1156
+<       Dtot=vpp*OARC33(k,j,i);
+---
+>       Dtot=vpp*OARCL[3][3][k][j][i];
+1158c1158
+< 	fl[3][k][j][i] = (v[1][2][km1][j][i] + (1.0 - Dtot)*dqv[2][km1][j][i]*dx[2][3][k]*G3(2,i)*G4(1,j))*G2(2,i)*mdotp*DS33(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][2][km1][j][i] + (1.0 - Dtot)*dqv[2][km1][j][i]*dx[2][3][k]*g[2][3][i]*g[1][4][j])*g[2][2][i]*mdotp*DS[3][3][k][j][i];
+1160c1160
+< 	fl[3][k][j][i] = (v[1][2][k][j][i] + (-1.0 - Dtot)*dqv[2][k][j][i]*dx[2][3][k]*G3(2,i)*G4(1,j))*G2(2,i)*mdotp*DS33(k,j,i);
+---
+> 	fl[3][k][j][i] = (v[1][2][k][j][i] + (-1.0 - Dtot)*dqv[2][k][j][i]*dx[2][3][k]*g[2][3][i]*g[1][4][j])*g[2][2][i]*mdotp*DS[3][3][k][j][i];
+1163,1164c1163,1164
+< 	ftemp=G2(2,i)*mdotp*DS33(k,j,i);
+< 	ftemp2=dx[2][3][k]*G3(2,i)*G4(1,j);
+---
+> 	ftemp=g[2][2][i]*mdotp*DS[3][3][k][j][i];
+> 	ftemp2=dx[2][3][k]*g[2][3][i]*g[1][4][j];
+1174c1174
+<       p[2][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL3(k,j,i)*ODX(1,3,k);
+---
+>       p[2][k][j][i] += (fl[3][k][j][i]-fl[3][kp1][j][i])*OVOL[3][k][j][i]*ODX[1][3][k];
+1180c1180
+< 	fl[3][k][j][i] =v2tov3(v[1][2],k,j,i)*G2(2,i)*mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] =v2tov3(v[1][2],k,j,i)*g[2][2][i]*mdot[3][k][j][i]*DS[1][3][k][j][i];
+1185,1186c1185,1186
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(3,6,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(3,6,fl);
+1195c1195
+<       fl[3][k][j][i] =  mdot[3][k][j][i]*DS13(k,j,i);
+---
+>       fl[3][k][j][i] =  mdot[3][k][j][i]*DS[1][3][k][j][i];
+1200c1200
+<       s[1][k][j][i] += (fl[3][k][j][i] - fl[3][kp1][j][i])*OVOL1(k,j,i)*ODX(1,3,k);
+---
+>       s[1][k][j][i] += (fl[3][k][j][i] - fl[3][kp1][j][i])*OVOL[1][k][j][i]*ODX[1][3][k];
+1210c1210
+< 	fl[3][k][j][i] =  mdot[3][k][j][i]*DS13(k,j,i);
+---
+> 	fl[3][k][j][i] =  mdot[3][k][j][i]*DS[1][3][k][j][i];
+1215,1216c1215,1216
+<   if(DOLOSSDIAG&&(COMPUTELOSSDIAG==0)){
+<     hydro_flux_adv(3,1,fl);
+---
+>   if(DOLOSSDIAG){
+>     hydro_flux(3,1,fl);
+1230c1230
+<       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*G2(2,i)) ; // division by interp may be a problem
+---
+>       v[1][2][k][j][i] = p[2][k][j][i]/(z2e_2(s[1],k,j,i)*g[2][2][i]) ; // division by interp may be a problem
+1237c1237
+<       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*G3(2,i)*G4(2,j));
+---
+>       v[1][3][k][j][i] = p[3][k][j][i]/(z2e_3(s[1],k,j,i)*g[2][3][i]*g[2][4][j]);

@@ -1,0 +1,42 @@
+torus:
+
+1) randomization strength
+5) gridding (nonuniform or not)
+6) gamma
+7) time of run
+8) magnetic beta
+9) qconst
+10) R0
+11) Rint
+12) IEFRACT / VZFRACT
+15) field geometry
+16) atmosphere geometry
+
+bondi:
+
+1) KAPPA
+2) Bernoulli
+
+
+global:
+
+1) resolution
+2) machine precision
+3) Alfven limiter
+4) cs limiter
+
+other:
+
+1) matter+-field distribution/geometry
+2) special relativity
+3) general relativity
+4) resistivity type and strength and heating on/off
+5) Rinner of grid
+6) Router of grid
+7) DENSITYFLOOR
+8) IEFLOOR
+
+
+questions:
+
+1) 

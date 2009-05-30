@@ -1,0 +1,192 @@
+76c76
+<       Dqm = (var[k][j][i] - var[k][j][im1])*OARC11(k,j,i);
+---
+>       Dqm = (var[k][j][i] - var[k][j][im1])*OARCL[1][1][k][j][i];
+78c78
+<       Dqp = (var[k][j][ip1] - var[k][j][i])*OARC11(k,j,ip1);
+---
+>       Dqp = (var[k][j][ip1] - var[k][j][i])*OARCL[1][1][k][j][ip1];
+84,85c84,85
+<       Dqp = (var[k][j][ip1] - var[k][j][i])*OARC11(k,j,ip1);
+<       Dqm = (var[k][j][i] - var[k][j][im1])*OARC11(k,j,i);
+---
+>       Dqp = (var[k][j][ip1] - var[k][j][i])*OARCL[1][1][k][j][ip1];
+>       Dqm = (var[k][j][i] - var[k][j][im1])*OARCL[1][1][k][j][i];
+106c106
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC21(k,j,im1);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[2][1][k][j][im1];
+108c108
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC21(k,j,i);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[2][1][k][j][i];
+114c114
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC31(k,j,i);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[3][1][k][j][i];
+116c116
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC31(k,j,ip1);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[3][1][k][j][ip1];
+122c122
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC11(k,j,i);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[1][1][k][j][i];
+124c124
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC11(k,j,ip1);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[1][1][k][j][ip1];
+132,133c132,133
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC21(k,j,i);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC21(k,j,im1);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[2][1][k][j][i];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[2][1][k][j][im1];
+138c138
+<       // OARC31=OARC11, so ok for scalar, v2 or v3
+---
+>       // OARCL[3][1]=OARCL[1][1], so ok for scalar, v2 or v3
+140,141c140,141
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC31(k,j,ip1);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC31(k,j,i);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[3][1][k][j][ip1];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[3][1][k][j][i];
+147,148c147,148
+< 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARC11(k,j,ip1);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARC11(k,j,i);
+---
+> 	Dqp = (var[wcom][k][j][ip1] - var[wcom][k][j][i])*OARCL[1][1][k][j][ip1];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][j][im1])*OARCL[1][1][k][j][i];
+168,170c168,170
+<       Dqm = (var[k][j][i] - var[k][jm1][i])*OARC12(k,j,i);
+<       Dqc = (var[k][jp1][i]-var[k][jm1][i])/(G2(2,i)*(dx[2][2][jp1]+dx[2][2][j]));
+<       Dqp = (var[k][jp1][i] - var[k][j][i])*OARC12(k,jp1,i);
+---
+>       Dqm = (var[k][j][i] - var[k][jm1][i])*OARCL[1][2][k][j][i];
+>       Dqc = (var[k][jp1][i]-var[k][jm1][i])/(g[2][2][i]*(dx[2][2][jp1]+dx[2][2][j]));
+>       Dqp = (var[k][jp1][i] - var[k][j][i])*OARCL[1][2][k][jp1][i];
+176,177c176,177
+<       Dqp = (var[k][jp1][i] - var[k][j][i])*OARC12(k,jp1,i);
+<       Dqm = (var[k][j][i] - var[k][jm1][i])*OARC12(k,j,i);
+---
+>       Dqp = (var[k][jp1][i] - var[k][j][i])*OARCL[1][2][k][jp1][i];
+>       Dqm = (var[k][j][i] - var[k][jm1][i])*OARCL[1][2][k][j][i];
+196,198c196,198
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC22(k,j,i);
+< 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(G2(1,i)*(dx[2][2][jp1]+dx[2][2][j]));
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC22(k,jp1,i);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[2][2][k][j][i];
+> 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(g[1][2][i]*(dx[2][2][jp1]+dx[2][2][j]));
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[2][2][k][jp1][i];
+205,207c205,207
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC32(k,jm1,i);
+< 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(G2(2,i)*(dx[1][2][j]+dx[1][2][jm1]));
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC32(k,j,i);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[3][2][k][jm1][i];
+> 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(g[2][2][i]*(dx[1][2][j]+dx[1][2][jm1]));
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[3][2][k][j][i];
+214,216c214,216
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC12(k,j,i);
+< 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(G2(2,i)*(dx[2][2][jp1]+dx[2][2][j]));
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC12(k,jp1,i);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[1][2][k][j][i];
+> 	Dqc = (var[wcom][k][jp1][i] - var[wcom][k][jm1][i])/(g[2][2][i]*(dx[2][2][jp1]+dx[2][2][j]));
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[1][2][k][jp1][i];
+224,225c224,225
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC22(k,jp1,i);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC22(k,j,i);
+---
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[2][2][k][jp1][i];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[2][2][k][j][i];
+228c228
+< 	dqv[wcom][k][j][i]+=-v2tov1(v[1][2],k,j,i)/G2(1,i)*DG2(1,i);
+---
+> 	dqv[wcom][k][j][i]+=-v2tov1(v[1][2],k,j,i)/g[1][2][i]*dg[1][2][i];
+234,235c234,235
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC32(k,j,i);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC32(k,jm1,i);
+---
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[3][2][k][j][i];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[3][2][k][jm1][i];
+238c238
+< 	dqv[wcom][k][j][i]+=v1tov2(v[1][1],k,j,i)/G2(2,i)*DG2(2,i);
+---
+> 	dqv[wcom][k][j][i]+=v1tov2(v[1][1],k,j,i)/g[2][2][i]*dg[2][2][i];
+244,245c244,245
+< 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARC12(k,jp1,i);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARC12(k,j,i);
+---
+> 	Dqp = (var[wcom][k][jp1][i] - var[wcom][k][j][i])*OARCL[1][2][k][jp1][i];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][k][jm1][i])*OARCL[1][2][k][j][i];
+266,268c266,268
+<       Dqm = (var[k][j][i] - var[km1][j][i])*OARC13(k,j,i)*ODX(2,3,k);
+<       Dqc = (var[kp1][j][i]-var[km1][j][i])*OARC13(k,j,i)*(ODX(2,3,kp1)+ODX(2,3,k));
+<       Dqp = (var[kp1][j][i] - var[k][j][i])*OARC13(kp1,j,i)*ODX(2,3,kp1);
+---
+>       Dqm = (var[k][j][i] - var[km1][j][i])*OARCL[1][3][k][j][i]*ODX[2][3][k];
+>       Dqc = (var[kp1][j][i]-var[km1][j][i])*OARCL[1][3][k][j][i]*(ODX[2][3][kp1]+ODX[2][3][k]);
+>       Dqp = (var[kp1][j][i] - var[k][j][i])*OARCL[1][3][kp1][j][i]*ODX[2][3][kp1];
+274,275c274,275
+<       Dqp = (var[kp1][j][i] - var[k][j][i])*OARC13(kp1,j,i)*ODX(2,3,kp1);
+<       Dqm = (var[k][j][i] - var[km1][j][i])*OARC13(k,j,i)*ODX(2,3,k);
+---
+>       Dqp = (var[kp1][j][i] - var[k][j][i])*OARCL[1][3][kp1][j][i]*ODX[2][3][kp1];
+>       Dqm = (var[k][j][i] - var[km1][j][i])*OARCL[1][3][k][j][i]*ODX[2][3][k];
+294,296c294,296
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC23(k,j,i)*ODX(2,3,k);
+< 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARC23(k,j,i)*(ODX(2,3,kp1)+ODX(2,3,k));
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC23(kp1,j,i)*ODX(2,3,kp1);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[2][3][k][j][i]*ODX[2][3][k];
+> 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARCL[2][3][k][j][i]*(ODX[2][3][kp1]+ODX[2][3][k]);
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[2][3][kp1][j][i]*ODX[2][3][kp1];
+303,305c303,305
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC33(k,j,i)*ODX(2,3,k);
+< 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARC33(k,j,i)*(ODX(2,3,kp1)+ODX(2,3,k));
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC33(kp1,j,i)*ODX(2,3,kp1);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[3][3][k][j][i]*ODX[2][3][k];
+> 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARCL[3][3][k][j][i]*(ODX[2][3][kp1]+ODX[2][3][k]);
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[3][3][kp1][j][i]*ODX[2][3][kp1];
+312,314c312,314
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC13(km1,j,i)*ODX(1,3,km1);
+< 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARC13(k,j,i)*(ODX(1,3,k)+ODX(1,3,km1));
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC13(k,j,i)*ODX(1,3,k);
+---
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[1][3][km1][j][i]*ODX[1][3][km1];
+> 	Dqc = (var[wcom][kp1][j][i] - var[wcom][km1][j][i])*OARCL[1][3][k][j][i]*(ODX[1][3][k]+ODX[1][3][km1]);
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[1][3][k][j][i]*ODX[1][3][k];
+323,324c323,324
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC23(kp1,j,i)*ODX(2,3,kp1);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC23(k,j,i)*ODX(2,3,k);
+---
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[2][3][kp1][j][i]*ODX[2][3][kp1];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[2][3][k][j][i]*ODX[2][3][k];
+327c327
+< 	dqv[wcom][k][j][i]+=-v3tov1(v[1][3],k,j,i)/G3(1,i)*DG3(1,i);
+---
+> 	dqv[wcom][k][j][i]+=-v3tov1(v[1][3],k,j,i)/g[1][3][i]*dg[1][3][i];
+333,334c333,334
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC33(kp1,j,i)*ODX(2,3,kp1);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC33(k,j,i)*ODX(2,3,k);
+---
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[3][3][kp1][j][i]*ODX[2][3][kp1];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[3][3][k][j][i]*ODX[2][3][k];
+337c337
+< 	dqv[wcom][k][j][i]+=-v3tov2(v[1][3],k,j,i)*OG4(1,j)*DG4(1,j)/(G2(2,i));
+---
+> 	dqv[wcom][k][j][i]+=-v3tov2(v[1][3],k,j,i)*OG[1][4][j]*dg[1][4][j]/(g[2][2][i]);
+344,345c344,345
+< 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARC33(k,j,i)*ODX(1,3,k);
+< 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARC33(km1,j,i)*ODX(1,3,km1);
+---
+> 	Dqp = (var[wcom][kp1][j][i] - var[wcom][k][j][i])*OARCL[3][3][k][j][i]*ODX[1][3][k];
+> 	Dqm = (var[wcom][k][j][i] - var[wcom][km1][j][i])*OARCL[3][3][km1][j][i]*ODX[1][3][km1];
+348c348
+< 	dqv[wcom][k][j][i]+=v1tov3(v[1][1],k,j,i)/G3(2,i)*DG3(2,i)+v2tov3(v[1][2],k,j,i)*OG4(2,j)*DG4(2,j)/(G2(2,i));
+---
+> 	dqv[wcom][k][j][i]+=v1tov3(v[1][1],k,j,i)/g[2][3][i]*dg[2][3][i]+v2tov3(v[1][2],k,j,i)*OG[2][4][j]*dg[2][4][j]/(g[2][2][i]);

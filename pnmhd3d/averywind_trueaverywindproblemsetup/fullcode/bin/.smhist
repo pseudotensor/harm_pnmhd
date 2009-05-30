@@ -1,0 +1,84 @@
+pl dump007.dat vx
+pl dump008.dat vx
+pl dump009.dat vx
+pl dump002.dat vx
+plx dump002.dat vx
+pl dump000.dat ek
+pl dump001.dat ek
+pl dump001.dat e
+pl dump001.dat en
+pl dump001.dat ek
+pl dump001.dat en
+pl dump002.dat en
+pl dump003.dat en
+pl dump004.dat en
+pl dump005.dat en
+pl dump006.dat en
+pl dump007.dat en
+pl dump001.dat en
+pl dump002.dat en
+pl dump003.dat en
+pl dump004.dat en
+pl dump005.dat en
+pl dump006.dat en
+pl dump007.dat en
+pl dump000.dat en
+pl dump000.dat ek
+pl dump001.dat ek
+pl dump001.dat en
+pl dump002.dat en
+pl dump003.dat en
+pl dump004.dat en
+pl dump001.dat en
+pl dump000.dat en
+pl dump001.dat en
+pl dump001.dat ek
+pl dump002.dat ek
+pl dump003.dat ek
+pl dump004.dat ek
+pl dump005.dat ek
+pl dump001.dat ek
+pl dump002.dat ek
+pl dump003.dat ek
+pl dump004.dat ek
+pl dump005.dat ek
+pl dump005.dat r
+pl dump001.dat r
+pl dump002.dat r
+plx dump001.dat r
+plx dump002.dat r
+plx dump003.dat r
+plx dump004.dat r
+plx dump005.dat r
+plx dump005.dat vx
+plx dump002.dat vx
+plx dump001.dat vx
+pl dump000.dat r
+quit
+rd dump005
+rd dump005.dat
+limits X r
+box
+connect X r
+rd dump000.dat
+limits X r
+box
+connect X r
+plx dump005.dat r
+quit
+plx dump000.dat r
+plx dump005.dat r
+rd dump000.dat
+ctype red
+connect X r
+rd dump005.dat
+limits -.5 -.3 r
+box
+ctype white
+box
+connect X r
+points X r
+rd dump010.dat
+ctype yellow
+connect X r
+quit

@@ -1,0 +1,153 @@
+//eat me
+// run in images dir
+// combines image data
+
+// to compile:
+// gcc -Wall -O2 -lm -o sumcpu sumcpu.c
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>    
+
+#define ITYPES 2
+#define NUMSCA 3
+#define NUMVEC 2
+#define MAXFILENAME 1000
+#define DATEXT ".dat"
+
+#define NUMCPUS 4
+
+#define NUMOUTTYPE 1
+
+#define GZIP 0
+
+int main(
+         int argc,
+         char *argv[],
+         char *envp[]
+         )
+{
+  int numimages;
+  FILE* numin;
+  // determine number of dumps
+  int im_cnts[ITYPES][NUMSCA+1];
+  int im_cntv[ITYPES][NUMVEC+1];
+  int iii;
+  int qtip;
+  int myid,numprocs;
+  int i,j,l,m,ll,mm ;
+  int q;
+  int outtype;
+  char dirname[MAXFILENAME];
+  char outname[MAXFILENAME];
+  char fullname[NUMCPUS][MAXFILENAME];
+  char command[MAXFILENAME];
+  char command2[MAXFILENAME];
+  int firsthit;
+
+  numprocs=NUMCPUS;
+
+  if( (numin=fopen("0_numimages.dat","rt"))==NULL){
+    printf("cannot open 0_numimages.dat file\n");
+    exit(1);
+  }
+  // skip comment line
+  while(fgetc(numin)!='\n');
+  fscanf(numin,"%d",&numimages);
+  fclose(numin);
+  
+  printf("%d\n",numimages);
+  
+  sprintf(dirname,"");
+
+  firsthit=1;
+  
+  for(qtip=0;qtip<=numimages;qtip++){
+  
+    for(outtype=0;outtype<NUMOUTTYPE;outtype++){
+    for(ll=1;ll<=NUMSCA;ll++){
+      im_cnts[outtype][ll]=qtip;
+      for(iii=0;iii<=1;iii++){
+	sprintf(dirname,"%simx%01d-%01d-s%01d/","./",outtype,iii,ll);
+	if( (firsthit==1)&&(GZIP==0)){
+	  //ls | egrep '\.txt$'  
+	  //ls ./imx0-0-s1 | egrep 'ppm$'   
+	  //ls | egrep '\.txt$' | xargs rm
+	  sprintf(command,"./zipper.sh %s",dirname);
+	  system(command);
+	}
+	sprintf(outname," %simx%01d-%01d-s%01d-%04d%s",dirname,outtype,iii,ll,im_cnts[outtype][ll],DATEXT);
+	//if(GZIP)
+	strcat(outname,".ppm.gz");
+	//else  strcat(outname,".ppm");
+
+	sprintf(command,"convert -append");
+	sprintf(command2,"rm");
+
+	for(myid=0;myid<numprocs;myid++){
+	  
+	  sprintf(fullname[myid]," %simx%01d-%01d-s%01d-%04d%s.%02d",dirname,outtype,iii,ll,im_cnts[outtype][ll],DATEXT,myid);
+	  //if(GZIP)
+	  strcat(fullname[myid],".ppm.gz");
+	  //else  strcat(fullname[myid],".ppm");
+
+	  strcat(command,fullname[myid]);
+	  strcat(command2,fullname[myid]);
+	}
+	strcat(command,outname);
+	printf("%s\n",command);
+	system(command);
+	// now remove old single cpu files
+	printf("%s\n",command2);
+	system(command2);	
+
+      }
+    }
+  }
+  for(outtype=0;outtype<NUMOUTTYPE;outtype++){
+    for(ll=1;ll<=NUMVEC-1;ll++){
+      im_cntv[outtype][ll]=qtip;
+      for(iii=0;iii<=1;iii++){
+	for(q=0;q<=3;q++){
+	  sprintf(dirname,"%simx%01d-%01d-v%01d-%01d/","./",outtype,iii,ll,q);
+
+	  if( (firsthit==1)&&(GZIP==0)){
+	    sprintf(command,"./zipper.sh %s",dirname);
+	    system(command);
+	  }
+	  sprintf(outname," %simx%01d-%01d-v%01d-%01d-%04d%s",dirname,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT);
+	  //if(GZIP)
+	  strcat(outname,".ppm.gz");
+	  //else  strcat(outname,".ppm");
+	  
+	  sprintf(command,"convert -append");
+	  sprintf(command2,"rm");
+
+	  for(myid=0;myid<numprocs;myid++){ 
+	    
+	    sprintf(fullname[myid]," %simx%01d-%01d-v%01d-%01d-%04d%s.%02d",dirname,outtype,iii,ll,q,im_cnts[outtype][ll],DATEXT,myid); 
+	    //if(GZIP)
+	    strcat(fullname[myid],".ppm.gz");
+	    //else  strcat(fullname[myid],".ppm");
+
+	    strcat(command,fullname[myid]);
+	    strcat(command2,fullname[myid]);
+	  
+	  } 
+	  strcat(command,outname);
+	  printf("%s\n",command);
+	  system(command);
+	  // now remove old single cpu files
+	  printf("%s\n",command2);
+	  system(command2);
+
+	}
+      }
+    }
+  }
+  firsthit=0;
+  }
+
+  return(0);
+}

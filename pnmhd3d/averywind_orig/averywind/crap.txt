@@ -1,0 +1,96 @@
+Comparison, affectin dot's and dynamics:
+1) Rin changing:
+   n17 vs n16 vs n25
+   n28 vs f9 (show how similar)
+   f2 vs f4 (show how sim and how diff)
+   (f11) vs f3 vs f6
+   n7 vs f8
+   a1 vs a2
+   a3 vs a4 (a4 not going yet)
+   n7 vs (n12) vs n11 vs n10
+   n6 vs n15
+   n1 vs n23 (res changes too) (how similar)
+2) Rout/Rinj changing
+   n31 vs n32
+3) Rinj changing
+   n16 vs f2 vs f5 (how different)
+   f16 vs f18
+   n31 vs g3 (bug MG->IGUR)
+   f3 vs f7
+   f10 vs a1
+   tori: n38 vs n40
+4) u_inj changing
+5) perscription changing:
+   n28 vs n16 (contour plot of polar eddies)
+   f8 vs f10
+   tori: n23 vs n27
+6) Resolution
+   n16 vs n28 vs n30
+   tori: n1 vs n23 (and 2rg->1.4rg) (how similar)
+   o7 vs o10
+   n37 vs n38
+7) gamma
+   n25 vs n26
+   f13 vs f14 vs f12 (3/2,4/3,5/3)
+8) alpha
+   f18, g1, g2, g4, (f7)
+   f14, f15
+   n7 vs n6
+9) Like IGU runs/results
+   n7, f13, f14, f12, f15
+   (f3,f6,f7 for alpha=0.1 gam=5/3) Model G
+   (n10, (n13, n7,n12, n11, n10) for alpha=0.1,gam=3/2) Model H
+   (f2, (n8,n17), n16, n28, n30) for Model M
+   n6
+10) PW vs Newt
+    f11 vs f12 at 3rg
+    o10 vs n1 at 2rg (o10 scaled)
+11) tori vs inj
+    n16 vs n37 (but Rinj/Rout changes)
+
+conclusions: Rin changes Edot/Mdot alot, Mdot a bit, even for similar looking flow
+
+Question convergence of all rates, flow properties, etc.
+
+Gammie todo:
+1) Rin
+2) Torus vs Injection
+3) uni polar outflows on viscosity(stress) prescription.
+4) injection entropy/Rout dependency
+
+Theory: related to bondi
+-------
+gam=5/3 is unstable for a certain heated fluid, bi-lobe forms, etc.
+
+other gams are not unstable, won't show unioutflow.
+
+Rout does control how much heating can occur, and 20rg is much diff than 200rg, with gam=5/3 at least.
+
+resolution introduces pole death only for Rout large enough.  Again, Rout matters in heating things enough so activity takes place to cause PD.  possible other gam!=5/3 has no PD, so may be an unstable thing again.
+
+gam=5/3 with enough heating seems to causing PD and related wave stuff, need to see if other gam!=5/3 has no wave stuff at alpha=0.01.
+
+----------
+bondi with larger Be to see how heating affects bondi(Mdot).
+do IGU-like run with hotter heating
+
+g6: do hotter injection at lower radius to see if goes outflow
+
+Check bondi for the billionth time(email says gam=5/3 ok with R<1/4!  Just not long enough run time?
+
+
+Problems:
+1) P: double makes diff ,  Q: where's the fault in using floats?
+a) 
+
+2) P: hotter injection makes diff, Rout/Rinj makes diff.   Q: how different?
+3) P: gam=5/3,3/2,4/3 vs alpha, unipolar outflow, general convection, Rin. Q: Does Rin really matter for Rinj out far enough?
+4) P: Resolution makes diff, Q: Why, how, and what resolution is good enough?
+5) P: Pole death at high res when Rout large enough Q: Why happens, can "fix"?
+6) P: Bondi unstable Q: what pararms, why?  how long till for given params(res, rin, n1, etc.)
+TODO:
+
+1) Paper, references on little items, and big ones too
+2) comps:
+a) as in problems
+

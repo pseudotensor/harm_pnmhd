@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+#  Sample Batch Script for a Platinum cluster job
+#
+#  Submit this script using the command: qsub batch.sample
+#
+#  Use the "qstat" command to check the status of a job.
+#
+# The following are embedded QSUB options. The syntax is #PBS (the # does
+# _not_  denote that the lines are commented out so do not remove).
+#
+# resource limits  walltime: maximum wall clock time (hh:mm:ss)
+#                  nodes: number of 2-processor nodes
+#                  ppn: how many processors per node to use (1 or 2)
+#                      (you are always charged for the entire node)
+#                  pt: production Platinum cluster nodes
+#PBS -l walltime=23:59:00,nodes=128:ppn=2:prod
+#
+# queue name
+#PBS -q standard
+#
+# export all my environment variables to the job
+#PBS -V
+#
+# Charge job to project abc (recommended for users with multiple projects)
+# [If project is invalid, a valid project will be automatically selected]
+#PBS -A orp
+# 
+# job name (default = name of script file)
+#PBS -N jcm2563
+#
+# filename for standard output (default = <job_name>.o<job_id>)
+#PBS -o jcm2563.o
+# 
+# combine standard output and standard error (optional)
+#PBS -j oe
+#
+# send mail when the job begins and ends (optional)
+#PBS -m be
+# End of embedded QSUB options
+
+#set echo               # echo commands before execution; use for debugging
+
+# Create the scratch directory for the job and cd to it
+export BEFOREDIR=`pwd`
+export SCR=`set_SCR`
+export P4_SOCKBUFSIZE=0x40000
+export P4_GLOBMEMSIZE=33554432
+cd $SCR
+
+msscmd get mhd3d # not working?!
+cp -a ~/pnmhd-mhdturb/bin/* .
+cp ~/pnmhd-mhdturb/bin/mhd3d .
+
+wait
+chmod u+x mhd3d
+wait
+# Get files su3_rmd-pt and input.8.10 from directory in UniTree
+#msscmd cd sample,get input.8.10,get su3_rmd-pt 
+
+#chmod u+x su3_rmd-pt # Since UniTree gives you the same permissions as 
+                     # what your umask is set to (generally only read 
+                     # and write), you need to give yourself
+                     # executable permission to run su3_rmd-pt
+
+# run a command on each host in this job [in the background]
+date
+
+# serial
+#time ./mhd3d
+
+
+
+# parallel (MPI)
+vmirun "./mhd3d 8 8 4 > jcm2563.so"
+
+# sizes GRMHD
+# 26MB for VMEM for 1CPU 64^2 GRMHD
+# batch 2 cpu : VMEM 8600kb mem=4200kb
+
+
+#for host in `cat $PBS_NODEFILE`
+#do
+#	ssh $host "uptime; date; uname -a" &
+#done
+
+wait   # for the ssh's above to complete
+date
+
+# After the job is done, save the output file to UniTree
+#msscmd put output.8.10
+msscmd put $BEFOREDIR/jcm.o # not working?!

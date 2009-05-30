@@ -1,0 +1,41 @@
+numiter[0]=11376
+numiter[1]=28600
+numiter[2]=22520
+numiter[3]=25455
+numiter[4]=25455
+numiter[5]=17224
+numiter[6]=12200
+numiter[7]=12200
+numiter[8]=12200 
+
+ie part of step_visc:
+-----------------------
+1) LOOP no if: .13
+2) LOOP w/ if(mask): .17
+3) SUPERLOOP : .18
+4) NEVERCALC w/mask if: .046
+5) ALWAYScalc w/mask if: .28
+
+more calc:
+1) .23
+2) .22
+3) .21
+4) .043
+5) .34
+
+
+EMF3 in moc_ct_v2
+-----------------------
+1) LOOP no if: .67
+2) LOOP w/ if(mask): .442
+3) SUPERLOOP5/2 : .41/.56
+4) NEVERCALC w/mask if: .07
+5) ALWAYScalc w/mask if: .78
+
+
+
+128^3 : 738M -> ~370bytes/zone  727M total with grid-line first check
+64^3 : 109M -> ~436bytes/zone
+32^3 : 25M -> ~636bytes/zone (34^3 really) 4CPU
+
+

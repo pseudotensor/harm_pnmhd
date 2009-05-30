@@ -1,0 +1,641 @@
+TODO:
+
+
+
+thindisk
+1) convergence test
+#2) hslope
+#3) ener.out has fluxes
+#4) square zones? (too hard)
+#5) MRI resolved? (no, but can't)
+#6) 20M to 40M for outer radius
+#7) 200x600?
+#8) repeated output in ener.out and same as dump method
+9) VHD:
+   a) put on website with paper ref, README, TARBALL
+10) website root: web!69* (rainman.astro)
+11) HD from kerr or metric -> old metric (DHCP or lorentz) 
+
+general:
+#0) review GRMHD/parallelize
+1) review thindisk calcs - few data points
+H/R=0.1,0.05,0.025,0.0125
+depends on R0=Rin varies & Risco: const.
+ a) setup of disk, near eq. but kep-like
+ b) cooling -> H/R constant
+ c) very complicated behavior
+ d) not smooth, knows it's getting thinner, more thin gets more activity
+2) review jet calcs - all params done, good results, hard to explain
+
+3) new coord: kstoksp: another statement of gridding (redundant)
+   ksp = kerr schild prime = ks in grid coords, factor between them
+
+
+MPI - header output for dump,pdump, not consistent
+
+SLICELOOP not correct for MPI in image.c
+SMOOTh not correct for MPI
+
+
+512^2 Rout=200M MHD b2mdot run on O2K time
+
+make smooth() MPI capable
+
+2dpp-64eq got nan near outer edge (left right center), in middle of grid.
+
+strnage problem with Rinner=50 and large v-viscsosity
+
+check if timestep requires LOOPC or LOOPSUPERGEN(5) for LOOPTYPE==3
+
+do HD and MHD (if possible) bondi test in 3D cart
+
+MAJOR todos:
+
+1) SP01 conflict resolution (call Stone)
+
+other:
+0) 256^3 on tro time: batch submitted, just need to test 3D 64^3 in MPI  case again and make binary
+1) 128^3 on okj time
+1) redo 2D PNMHD run at 512^2 for thin and fat torus models like GRMHD run (okj)
+2) what happens with cylindrical coordinates vs spherical (Hawley vs us?) (okj?)
+3) what happens with huge Rout (other bc issue) perhaps related to jets?  (okj?)  (must resolve SP01 problem first)
+4) 2D vs 3D (okj?)
+5) varying Tdisk or Hdisk/R0  (results as a function of Tdisk) (okj)
+
+other other:
+1) install rh7.2 and updates on metric (have to wait for grmhdslim-512-2 to get done
+2) get code to compile on metric/kerr
+3) regorganize modularization of PNMHD code
+
+
+
+
+inner edge still has 2-zone offset thingy with gammie tori, but not my tori. ??  density floor?  something getting railed?
+
+see if can resimulate /us2/jon/mhdtorin2 -- more crap than before even with alflim=0?  nope, no crap this time.
+
+mpi run on o2k failed, 1st cpu, but works on my cluster
+
+average stuff or calc stuff needs testing: issue with interp -> no longer phi was z!!!
+
+add a bunch of stuff to npdump for MHD or gen, not just sig
+
+fieldline plot in MPI is wrong, can't find problem
+
+1) mathematica cd & password a) laptop b) home computers
+
+single cpu run has problems writting to disk (can't open file pointers)
+doesn't seem to be problem when no image output
+
+
+divb clean isn't working in my code in 128^2 X 4 MPI test: internal grid fine, just outer edges a problem
+
+could corner problem with old sequential method be due to not taking care of reflective condition properly?  check and rerun.
+
+code creates read macros, used by my other macros, instead of permenant and diff or versions?
+
+sm reads in HDF/bin
+
+2) GRMHD - code debug / optimize
+5) review NCSA runs!! (seem all not gone long enough)
+
+mhd128ded.tar : 704^2 only to t=300 though, turbulence stars.  HK00 parms, 10M ZCPS, 121CPUs, 11x11
+
+test fluxes and integrals
+
+add types to symmetry check so can choose only certain types of symmetry (since analoutput's are different)
+
+postproc garbage when gzipping...asdasdf
+
+currently MPI overwrites <90 zones as setup by init_bc_gen1
+
+why does bondi collapse to another solution in cart? (maybe inner edge outflow condition?) (no)
+check 2D axi solution
+
+is field 1/2 components mixed?  evolution tends towards rotation by 90deg of field
+
+
+why only 80K ZCPS in real run? while 102K in perf run with diags?
+
+may want to keep masks around for various things: images, dumps, etc. to kill nowhere and maybe bzone region
+
+could setup slightly new LOOPSUPERGEN3 for fluxes since don't need k,j,i
+
+why beflux onto grid so dominant?
+
+
+consider whether diagnanol bzones needed
+
+use v-field masks to make loop for v-field
+use b-field mask for bound for loop for b-field instead of seperate mask?
+
+
+have init of s from sanal stuff use special loops if boundtype>1
+
+
+should make inflow check more extensive? (include more bzones that don't just touch the comp zone)
+
+should distance weight the averages for bounding
+
+seperate bound/loop types
+
+do memory reduction (e.g. maskv1a, etc. not needed anymore after init) (1-5 indx not needed except BT=2)
+
+add flux loop for inner/outer edges using special LOOP
+
+no mag field all new: 150K-170K 64^3
+mag field all new(skip-bound): 95K 64^3
+
+
+old method: 363K
+NEW 121K
+NEW-OUTERMASK 178K
+NEW-BOUND: 280K
+NEW-BOUND-NEWLOOP: 440K
+
+89K 128^3 with skip=10
+84K 64^3 with skip=10 5% bound
+87K 32^3 with skip=10 8% bound
+79K 16^3 with skip=10 11% bound
+
+ 
+ie part of step_visc:
+-----------------------
+1) LOOP no if: .13
+2) LOOP w/ if(mask): .17
+3) SUPERLOOP : .18
+4) NEVERCALC w/mask if: .046
+5) ALWAYScalc w/mask if: .28
+ 
+more calc:
+1) .23
+2) .22
+3) .21
+4) .043
+5) .34
+ 
+ 
+EMF3 in moc_ct_v2
+-----------------------
+1) LOOP no if: .67
+2) LOOP w/ if(mask): .442
+3) SUPERLOOP5/2 : .41/.56
+4) NEVERCALC w/mask if: .07
+5) ALWAYScalc w/mask if: .78
+ 
+
+new:
+----
+128^3: 687MB -> 327bytes/zone
+
+old:
+----
+128^3 : 738M -> ~370bytes/zone  727M total with grid-line first check
+64^3 : 109M -> ~436bytes/zone
+32^3 : 25M -> ~636bytes/zone (34^3 really) 4CPU
+
+move most conditionals for <floor to outside inernal loops in diagnostic.  Assumes when <floor that not <0, so although valid must adjust to avoid <0.  if <0, screwed calc and must restart from checkpoint or hope no big diff.
+this is to avoid the terrible branch prediction(50% hit).
+
+staggered grid means velocity bounded from different other zones
+1) could have own loop for each vector
+2) somehow deal with this offset consistently
+
+
+OUTFLOW weight value by relative distance(should probably do anyways if above isn't true)
+
+flux should always be out, so e.g. vx's should slope in 1-sign at boundary, 0 may be bad idea to force
+
+
+may want to fix velocities->0 for all zones on outer edge that satisfy inflow check or are reflective in seperate routine from actual said boundary zones since different really(may miss some since who I copy from isn't necessarily ALL computational zones on boundary)
+
+redo fluxes to use mask as boundary detection
+
+outflow along flow lines
+outflow along weighted coordinate lines(velocity hat weights values)
+outflow in an interpolated radial line
+
+why isn't point shock with outflow symmetric?  reflect (was) pretty good but not perfect
+
+mass flux can't be outflowed.  Thus, only periodic and MPI transfer should assign mass flux on boundaries.  Thus, otherwise should not bound mass flux, and edge values should be assigned by boundary conditions, not by computation(or overwritten by boundary values).
+
+need to make bound edge/corner not do unwanted components(docom,wcom)
+
+periodicx2special fails(dt->0) for MHD tori
+
+Charlie Questions:
+-----------------
+5) SP00 duplication problem(bounce+velocities)
+
+D. Clarke 96-98 ApJ
+Blaes & Hawley Slender tori
+Christodulu & Narayan more tori
+
+List of global numerical accretion simulation papers, all types, various IC types.
+
+make everything consistent with fact that if N?=1, then no boundary zones should be used(e.g. had problem with fluxes)
+how about no boundary zones allocated in memory? (make sure never used or initialized then)
+
+compdim vs Nx stuff
+
+setup shock for general direction
+
+TODO:
+
+rethink reflect condition on flux loss bins for viscosity
+
+switch all /dx to ODX, switch all to inverses where exist
+
+interpolation only for 2D right now
+"" same for output of images
+
+
+3D: 1-week setup, 1-week test
+sings:
+1) consider cone volume for polar axis sing
+2) consider sphere for r=0 sing
+-- where you add up the vectors on the surface for the flux through that volume
+-- or just interpolate to singular edge
+note: reflect condition in dvl calcs change for 3d
+skipix's are different in 3d
+upwind to or calc on a singularity should be reconsidered
+if using zeud method, must never divide by sin(theta=0,pi), so use volume differencing always)
+maybe need to consider emf from rotational terms to get rotational emf
+
+2) Make code so don't have to make bzones if 1D
+
+consider poor man's AMR: fixed mesh/grid but cycle over grid in extended or down to single grid line fashion
+
+3d: avg messed more
+
+new paper on BZ effect (B_{pole}^2/rhoc^2 <- Mdot) for various runs
+
+velocities in sp00
+
+image dump CPU hit issue on origins
+( see if really file writting or if processing)
+use parallel I/O (#define or if() it incase a system doesn't use MPI-2)
+
+init_rundat() section for fieldline data file
+
+proposal for Pittsburg time
+
+god1234 intellx1/2 password
+
+
+hjyo@astro.physics.uiuc.edu
+
+
+???figure out why SP00 and my results so different
+
+
+SYM/PS issues:
+1) why torus crispy with floats and sym but not doubles and sym
+2) explodes the torus early in time
+3) the one MHD term that I can't symmetrize
+
+
+averaging still messed up? sure.
+
+test resistivity against analytic and comparison
+
+Clean code and make available for MIT guy
+
+
+Gammie questions:
+1) force that makes atm move outward at poles with afvenlimiter=1?
+2) force that makes tori bounce
+
+
+
+didn't a run before have the IE blast input from Rin before?
+
+
+BC: AOS(gen B & v cases):
+1) sign of aos in corner zones and add independent aos for b and v
+
+
+
+
+origins: 342920
+64x64tiles, floats, 64cpus: 3145K - 56%
+64x64tiles, floats, 49cpus: 4021K - 89%
+64x64tiles, floats, 36cpus: 2855K - 89%
+64x64tiles, floats, 25cpus: 1807K - 89%
+64x64tiles, floats, 16cpus: 1325K - 90%
+64x64tiles, floats, 9cpus: 745K - 90%
+64x64tiles, floats, 4cpus: 343K - 93%
+128x128tiles, floats, 64cpus: 3871K - 70%
+64x64tils, doubles, 64cpus: 2462K - 47%
+128x128, doubles, 64cpus: 2871K - 60%
+
+1float 64x64: 92K
+1float 128x128: 87K
+1double 64x64: 82K
+1double 128x128: 74K
+
+1float 128x128 photon: 265K
+1float 64x64 photon: 280K
+1double 64x64 photon: 244K
+1float 64x64 rainman: 216K
+1float 128x128 rainman: 200K
+1double 64x64 rainman: 196K
+4-cpu 64x64/cpu floats: 800K // after speedup from 770K
+4-cpu 64x64/cpu doubles: 681K
+ 
+8MB per cpu at 128x128 (no mpich static lib)
+8MB per cpu at 64x64 with MPICH or MPI at ncsa and here
+
+MHD:
+*1) Change IC to quadrapole field(2 circles in tori)
+*2) Change BC to HK00 version: Do HK00 version of boundary condition on B_transerse (set them = 0 instead of project)
+*3) try changing the speed of light, or no limiter at all
+*4) Move Rin in
+*5) Change resolution: back to 128x128 for now?
+*6) Add vertical beta=1000 field: add vertical field with strength some fraction of developed MRI field strength.
+*7) flip single rotation direction
+*8) stronger vertical field
+9) check eigenvalues
+*10) change floor
+*11) change T of disk(using q)
+12) gravitomagnetic effect 3.36 of BHTM, 3.59': tensor form of gravity with GM term
+    a) Ghosh & Abramowicz '98? -> Blandford-Znajek
+    b) Livio Pringle & Ogilvie -> Blandford-Znajek
+*13) 3, but lower floor with alfvenlimit=0 and Rin=1.05rg
+14) low-temperature disk, otherwise same as #3
+
+
+RUNS:
+d1) P: mhdtorin1: 128x128 nonr/nontheta, alfvenlimit=0 doubles HK00 like
+D2) P: mhdtorin2: " " " float
+D3) R: mhdtorin3: " " alfvenlimit=1 "
+D4) R: mhdtorin4: BC like HK00 """"
+D5) P: mhdtorin5: MYBC """" 2circle (counter rotation: sin(2theta))
+D6) R: mhdtorin6: """"" (same rotation) |sin(2theta)|
+D7) M: mhdtorin7: """" vertical field
+D8: 4-cpu test
+9) P: mhdtorin9: 3) Rin=1.05rg
+10) P: mhdtorin10: 3) Vertical field=10*tori field
+11) R: mhdtorin11: 3) floor=10^{-8}
+12) R: mhdtorin12: 3) change to H00 axi#3 x1out=21.5rg,R0=10rg,Rint=4rg
+NCSA1: 704x704 #3
+NCSA2: 1024x1024 #3 with double rotation
+NCSA0: 160x160 #2, floor=10^{-8}, Rin=1.05rg
+13) SP00 RunA: all same!
+14) SP00 RunA: all same except aflvenlimiter=1
+15) #3 but with resistivity
+16) #14 with resistivity (SP00)
+17) #1 alf=1 (check on doubles effect on alflim)
+csres1: resistive current sheet high res
+vortexres1: resistive vortex
+mhdsp00: sp00 but not run long enough
+mhdgravitom: mhdgravitomagnetic terms added, HK00 otherwise
+mhdsp00-2: sp00 with alf=0 and Rin=1.5rg R0/2 and Rout/2: 128x88
+18) SP00 with Rin=1.2rg at 128x128 AFL=0 reson, R0/4 Rout/4
+
+
+NCSA runs:
+tarball      / filedir          / purpose
+1) tro121god.tar -> /us1/jon/ncsa1 / see above
+2) tro121god2.tar -> /us1/jon/ncsa2 / see above
+3) tro121god3.tar ? / not yet, crashed, probably useless
+4) tro256god1.tar = slow but ok(1024x1024 SP00) (on mss)
+
+ 10250373120 Mar 15 02:35 tro121god.tar
+ 17271255040 Mar 13 16:48 tro121god2.tar
+   797358080 Mar 14 04:12 tro121god3.tar
+ 22867404800 Mar 19 18:58 tro121long.tar
+ 19695452160 Mar 25 15:56 tro240long.tar
+  4029458649 Mar 27 18:43 tro240longpostproc.tgz
+ 12011100160 Mar 14 15:46 tro256god1.tar
+  5967431680 Apr  5 19:52 tro64long.tar
+  4970803200 Apr  9 10:24 tro64long2.tar
+
+
+
+doing:
+
+runname    / tarball / usdir name / purpose
+tro121long / <       / ncsa3    / HK00 Rin=1.2rg ALF=0 reson 704x704
+tro240long / <       / ncsa4        / HK00 Rin=1.2rg ALF=0 reson 1024x960 (so see if makes past death spot) see if corner zones thing gone too
+tro240long-1 original of above that crashed due to ALF=1
+tro64long  / <       / ?        / SP00 with Rin=1.5rg at 512x512 ALF=0 reson
+tro64long2 / <       / ?        / SP00 with Rin=1.2rg at 512x512 ALF=0 reson (correct outer distance)
+
+
+
+?'s of runs:
+1) does doubles affect anything
+2) does floats affect anything
+3) does alfvenlimiter affect anything
+4) does HK00 BC affect anything
+5) does 2circle affect anything
+6) does samerot 2circle affect anything
+7) does vert. field affect anything
+
+VISC:
+3) Show visc Fm vector
+
+mhdv9test's:
+1: 1024^2 vortex -old method (non-split)
+4: vortex x-y
+5: vortex x-y
+6: 3D square shock highamp
+7: 3D spherical shock high amp
+8: ""
+9: "" med amp
+10: "" low amp
+12: 1D MHD shocks
+13: 3D invisid tori, no pert
+15: 3D low odd rand
+17: 2D low odd
+18: 2D high odd
+20: 2D med odd
+21: 2D low good
+22: 2D med good
+23: 3D slow good
+24: 2D med NONUNI of 22
+25: NONUNI + Rout=50M of 22 Rin=5M
+26: Stable tori--kinda
+27: 64x64x16 3D MHD tori
+28: 32^3 3D MHD Tori
+
+
+make: getcwd on rainman?
+ssh-agent /bin/bash on photon gives:
+shell-init: could not get current directory: getcwd: cannot access parent directories: No such file or directory 
+
+QUESTIONS:
+1) Bondi gam=5/3 with high Bern(flow passes through sonic point) is still unstable
+
+
+COMPUTER CRAP:
+1) metric gcc causes problem with my code.  reinstall egcs-2.91.66?  Or really some kind of issue with my code?
+3) photon/rainman: -o loop doesn't work
+
+Others:
+6) Use Toth VAC to compared vortex problem: see how center structure forms
+
+
+
+MPI:
+1) Developed x1-x2 MPI
+   1) fix all the SUPERMARK S
+   2) HARDER: make so not computing flux on those cpus that aren't on relevant boundary
+   3) HARDER: only sum up in mpich (allreduce/reduce) those relevant cpus
+
+
+
+zues2d in fortran:
+./Make_zeus2d -v -m sun -p shkset.mhd.1 compile 
+./Make_zeus2d -m x86 -p alfvenwave1 compile 
+./Make_zeus2d -m x86 -p blast.RT compile 
+1) f77
+2) -c -w -mcpu=pentiumpro -march=pentiumpro -O4 -ffast-math -finline-functions 
+3) cc
+4) /lib/cpp
+5) f77
+6) -lmfhdf -ldf -ljpeg -lz
+
+
+
+mhdt8: 512x512 tvdlf
+mhdt5: 512x512 zeus
+mhdt10: 1024 zeus
+mhdt11: 1024 tvdlf
+mhdt12: 256 zeus
+mhdt13: 256 tvdlf
+mhdt14: 128 zeus
+mhdt15: 128 tvdlf
+
+
+a11 used test8.backup.06.tar.gz
+a11: need to reassemble data for a11 since appendold==1 was crashing and just appendold=0'ed for now.
+
+fix code as below:
+1) 
+
+appendold==1 GMMPICH crashes now that NUMVEC!=NUMREALVEC after NRV=2 changes
+::::::::::::
+changes that made work:
+init():
+bound kill (problem with reentrance?), memory leak with non simple bc?
+That is, bound() sticks value ON grid instead of boundary?  that would do it.
+init of bound kill (""): only a possible memory leak
+
+still need to make sure bound is ok since screwed tvdlf up
+
+fix image rho*v output
+
+really 1D for x or y, need to fix interps and probably bound.c
+
+deal with perf vs. ability to turn on/off stuff like mag,pmag
+
+
+
+1) Bondi:
+ApJ 336, 313 1989     and Moncies
+a) bondi with larger Be to see how heating affects bondi(Mdot).
+b) Check bondi for the billionth time(email says gam=5/3 ok with R<1/4!  Just not long enough run time? -- still can't find anythingn wrong
+c) P: Bondi unstable Q: what pararms, why?  how long till for given params(res, rin, n1, etc.)
+
+2) Pole Death
+a) P: Pole death at high res when Rout large enough Q: Why happens, can "fix"?
+b) 
+
+
+Legend:
+!=interesting
+X=bad for some reason
+N=Don't do plots
+~=need to run some more stuff, or continue runs cut short
+G: good.
+
+Comparison, affectin dot's and dynamics:
+1) Rin changing:
+   n17 vs n16 vs n25
+   n28 vs f9 (show how similar)
+   f2 vs f4 (show how sim and how diff)
+!  f3 vs f6 vs (f11)
+G  n7 vs f8
+!G a1 vs a2(a1 is pw)
+   a4 vs a3(a4 is pw)
+!G n10 n11 n7
+G  n6 vs n15
+X  tori:   n1 vs n23 (res changes too) (how similar)
+2) Rout/Rinj changing (no plots)
+GN n31 vs n32
+3) Rinj changing
+G~ n16 vs f2 vs f5 vs a4 (how diff) (do when a4 done)
+G  f16 vs f18
+G  n31 vs g3 (bug MG->IGUR)
+   f3 vs f7
+G  f10 vs a1
+?  tori: n38 vs n40 (no effect?)
+4) u_inj changing (none yet)
+5) perscription changing:
+   n28 vs f16
+G  f8 vs f10
+G  tori: n23 vs n27
+6) Resolution
+   a01 a07
+G  n16 vs n28 vs n30 (how sim,diff)
+X  tori: n1 vs n23 (and 2rg->1.4rg) (how similar)
+X  o7 vs o10
+G  Tori: n37 vs n38 (how sim,diff)
+7) gamma
+G  n25 vs n26 (use)
+G   f14 vs f13 vs f12 (4/3,3/2,5/3) (don't use since not PW)
+8) alpha
+~  f18, g1, g2, g4, (f7) (must make g's longer)
+X  f14, f15
+X  n7 vs n6
+9) Like IGU runs/results
+   n7, f13, f14, f12, f15
+   (f3,f6,f7 for alpha=0.1 gam=5/3) Model G
+   (n10, (n13, n7,n12, n11, n10) for alpha=0.1,gam=3/2) Model H
+   (f2, (n8,n17), n16, n28, n30) for Model M
+   n6
+10) PW vs Newt
+    f11 vs f12 at 3rg
+    a02 a06 at 3rg
+G   o10 vs n1 at 2rg (o10 scaled)
+11) tori vs inj
+X   n16 vs n37 (but Rinj/Rout changes)
+
+
+
+
+avg1d old: (old files just plain wrong! Actually, 2cpu stuff kinda fine since averaged half of data only, which is ok since mostly axi-sym on average!
+
+
+
+
+1) recently, sometimes a cpu won't be with group(GM)??? start and slow, restart same code and fast, caught 1 cpu not starting init, or at least returning stderr.
+
+MHD:
+1) worry about alfven wave reflection? -- nah, magnetosonic isn't helped, so...
+3) why divb grows on inner radial edge with floats NONSYM MHDTORI, same with doubles but much lower level
+
+
+
+
+TODO: Bottom on cooling theta=.1, maybe function of R s.t. H/R = constant
+-11) eclipse of BH in count of radiation
+-12) compute spectrum if variability interesting
+-13) parameter space of alpha and cooling
+-16) read papers gammie sent about radiation, find new papers on visc/turb
+
+-1) Change equation of state to T dep instead of u dep
+
+
+
+50) binary dumps (make sm use binary, maybe it does already?)
+
+
+
+Dq curvature terms needed? : interpolation not really right, need to account for how vectors twist, but not dx\cdot grad(v)
+
+Why doesn't r,theta,phi coord transform work?  See mathematica.
+
+3681 ref, sales@swt.com 972-907-0871
